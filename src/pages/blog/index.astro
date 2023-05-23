@@ -11,7 +11,7 @@ const allPosts = await getCollection("blog", ({ data }) => {
 })
 
 const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month: 'long', day: 'numeric' })
-console.log(allPosts[0].tags)
+// console.log(allPosts[0].tags)
 
 // astro directive to return array of objects, all of them
 // const allPosts = await getCollection("blog")

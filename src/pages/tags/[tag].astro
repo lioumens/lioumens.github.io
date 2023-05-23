@@ -16,7 +16,7 @@ const allPosts = await getCollection("blog");
     const filteredPosts = allPosts.filter((post) => post.data.tags.includes(tag));
     return {
       params: { tag },
-      props: { posts: filteredPosts },
+      props: { posts: filteredPosts }, // the return of filtered posts here is mapped to posts (which is the prop below)
     };
   });
 // example of returning every route manually
@@ -30,14 +30,24 @@ const allPosts = await getCollection("blog");
 //   ]
 }
 
+const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month: 'long', day: 'numeric' })
+
 // Astro.params is special here because it dynamically is doing the routes
 const { tag } = Astro.params;
 const { posts } = Astro.props;
 
+console.log(posts)
 ---
 <BaseLayout pageTitle={tag}>
-  <p>Posts tagged with {tag}</p>
+    <h2> Posts tagged with {tag}</h2>
+    <hr />
   <ul>
-    {posts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title}/>)}
+    {posts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags} />)}
   </ul>
 </BaseLayout>
+
+<style lang="scss">
+    ul {
+        padding: 0px;
+    }
+</style>
