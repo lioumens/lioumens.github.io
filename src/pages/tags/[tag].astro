@@ -34,11 +34,12 @@ const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month:
 
 // Astro.params is special here because it dynamically is doing the routes
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { posts } = Astro.props; // posts here is actually the filtered posts from above
 
-console.log(posts)
+const activeNav = 3;
+// console.log(posts)
 ---
-<BaseLayout pageTitle={tag}>
+<BaseLayout pageTitle={tag} activeNav={activeNav}>
     <h2> Posts tagged with {tag}</h2>
     <hr />
   <ul>

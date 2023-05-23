@@ -8,6 +8,8 @@ const allPosts = await getCollection("blog")
 // get tags from each front matter post, then flatten the array and remove duplicate
 const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
 const pageTitle = "Tag Index";
+
+const activeNav = 3; // which
 ---
 <!-- <style lang=scss>
     
@@ -34,7 +36,7 @@ const pageTitle = "Tag Index";
     }
   </style>
 
-<BaseLayout>
+<BaseLayout pageTitle={pageTitle} activeNav={activeNav}>
 <p> This is the index tags page?</p>
 <!-- <iframe width="100%" height="635"
   src="https://observablehq.com/embed/@d3/sortable-bar-chart?cell=viewof+order&cell=chart"></iframe> -->
