@@ -1,0 +1,293 @@
+---
+import Hamburger from "./Hamburger.astro"
+const { activeNav } = Astro.props;
+---
+
+<nav class="side">
+	<div class="card"> 
+		<img src="https://secure.gravatar.com/avatar/cff471ff7d771f85f7c842ee87eb095c?s=150" alt="icon">
+		<h2>Michael Liou</h2>
+		<h3>Statistical Sorcery</h3>
+		<!-- statistical sorcery, numbers with personality, beyond the average, mildly chaotic, anything but normal -->
+	</div>
+	<div class="nav-section">
+		<span class="nav-divider"/>
+		<span class="nav-divider"/>
+		<ul>
+			<a href="/"><li>About</li></a>
+			<a href="/blog"><li>Blog</li></a>
+			<a href="/resources"><li>Resources</li></a>
+			<a href="/tags"><li>Archive</li></a>
+			<div class="active"></div>
+		</ul>
+		<span class="nav-divider" />
+		<span class="nav-divider" />
+	</div>
+</nav>
+<nav class="top">
+<div class="top-strip">
+    <div class="top-card">
+		<img src="https://secure.gravatar.com/avatar/cff471ff7d771f85f7c842ee87eb095c?s=150" alt="icon">
+        <h2>Michael Liou</h2>
+        <!-- <span>Michael Liou</span> -->
+    </div>
+    <!-- <Hamburger />  -->
+   <div class="hamburger">
+    <span class="line"></span>
+    <span class="line"></span>
+    <span class="line"></span>
+    </div>
+</div>
+<div class="top-drawer">
+    <ul>
+        <a href="/"><li>About</li></a>
+        <a href="/blog"><li>Blog</li></a>
+        <a href="/resources"><li>Resources</li></a>
+        <a href="/tags"><li>Archive</li></a>
+    </ul>
+
+</div>
+</nav>
+
+<script>
+    document.querySelector(".hamburger").addEventListener("click", () => {
+        document.querySelector(".top-drawer").classList.toggle("expanded");
+        document.querySelector(".hamburger").classList.toggle("expanded");
+        // document.querySelector("main").classList.toggle("expanded");
+    })
+</script>
+
+<style lang="scss" define:vars={{ activeNav }}>
+	@import "../../node_modules/nord/src/sass/nord.scss";
+    .card {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		text-align: center;
+		align-items: center;
+		justify-content: center;
+		margin-top: 30px;
+		margin-bottom: 20px;
+	}
+	.card img {
+		border-radius: 300px;
+		margin-bottom: 20px;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+	.card h2 {
+		color: $nord6;
+		margin-bottom: 0px;
+	}
+	.card h3 {
+		color: #9f9f9f;
+		margin-top: 0px;
+	}
+	.nav-divider {
+		display: block;
+		margin-top: 3px;
+		width: 220px;
+		height: 3px;
+		background-color: $nord9;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+	nav.side {
+		position: fixed;
+		width: 250px;
+        height: 100vh;
+        // height: 100vh; // includingt his messes it up
+		background-color: $nord1;
+		
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		align-content: center;
+		justify-items: center;
+
+		box-shadow: 0px 5px 10px rgba(255, 255, 255, .1);
+		
+		// fill out the rest of sidebar nav
+		padding-left: 0px;
+		padding-right: 0px;
+		
+		
+		& .nav-section {
+			display: flex;
+			flex-direction: column;
+			align-content: space-between;
+		}
+
+		& ul {
+			padding-left: 10px;
+			position: relative;
+		}
+
+		& li {
+			list-style-type: none;
+			padding: 10px 20px;
+			margin-left: 0px;
+		}
+		// Hover elements need to change math depending on how many elements
+		& a:nth-child(1):hover ~ .active {
+			top: 4.5%;
+		}
+		& a:nth-child(2):hover ~ .active {
+			top: 29%;
+		}
+		& a:nth-child(3):hover ~ .active {
+			top: 54%;
+		}
+		& a:nth-child(4):hover ~ .active {
+			top: 79%;
+		}
+		& a {
+			color: $nord6;
+			// padding: 10px 14px;
+			text-decoration: none;
+			font-size: 1.2rem;
+		}
+	}
+
+	.active {
+		height: 30px;
+		width: 220px;
+		background-color: $nord9;
+		margin-left: 20px;
+		border-radius: 5px;
+		position: absolute;
+		top: calc(var(--activeNav) * 25% + 4.5%); // might need to adjust this math for hover
+		left:0;
+		z-index: -1;
+		box-shadow: 0 5px 10px rgba(255, 255, 255, .2);
+		transition: top .15s cubic-bezier(0, 0, 0.38, 0.9);
+	}
+
+    nav.top {
+        display: none;
+    }
+@media screen and (max-width: 700px) {
+    nav.top {
+        display: flex;
+        flex-direction: column;
+    }
+    nav.side {
+        display: none;
+    }
+    .top-strip {
+        display: flex;
+        justify-content: space-between;
+        // justify-items: center;
+        // align-content: center;
+        align-items: center;
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 25px; 
+        padding: 20px; // total height of 45px;
+        width: 100%;
+        background-color: $nord1;
+		box-shadow: 0px 5px 10px rgba(255, 255, 255, .1);
+    }
+    .top-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        & img {
+            height: 30px;
+            border-radius: 50px;
+        }
+        & h2 {
+            margin-left: 15px;
+            color: $nord4;
+        //     margin-bottom: 20px;
+        }
+    }
+    .hamburger {
+        background-color: $nord1;
+        height: 30px;
+        width: 40px;
+        margin-right: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+           border-radius: 5px;
+        & .line {
+            display: block;
+            height: 3px;
+            margin-bottom: 2px;
+            margin-top: 2px;
+            width: 20px;
+            background-color: $nord9;
+            transition: transform .2s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+        &:hover {
+            background-color: $nord0;
+            transition: background-color .2s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+    }
+    .hamburger.expanded .line:first-child {
+        transform: translateY(7px) rotate(45deg);
+        // transition: transform .2s ease-in;
+    }
+    .hamburger.expanded .line:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.expanded .line:last-child {
+        transform: translateY(-7px) rotate(-45deg) ;
+        // transition: transform .2s ease-in;
+    }
+    .top-drawer.expanded {
+        top: 65px;
+        transition: top .2s ease-in;
+    }
+    .top-drawer {
+        position: fixed;
+        background-color: cyan;
+        top: -100px; // how large d
+        left:0px;
+        width: 100%;
+        z-index: 1;
+        transition: top .2s ease-out;
+        
+        & ul {
+            // 4 items times 30 px;
+            height: 160px;
+            line-height: 40px;
+            display: flex;
+            flex-direction: column;
+            // align-items: center;
+            // align-items: stretch;
+            // justify-items: stretch;
+            justify-content: space-evenly;
+            margin: 0px 0px;
+            // padding-bottom: 5px;
+            padding: 0 0 0 0px;
+            // border-top: 1px solid $nord0;
+            border-bottom: 2px solid $nord0;
+            // box-shadow: 0px 2px 5px rgba(255, 255, 255, .1);
+            // align-content: space-around;
+            // margin-bottom: 20px;
+        }
+        & li {
+            text-align: center;
+            list-style-type: none;
+            background-color: $nord1;
+            color: $nord6;
+        }
+        & a {
+            text-decoration: none;
+        }
+        & li:hover {
+            background-color: $nord0;
+            color: $nord9;
+            transition-property: background-color, color;
+            transition-duration: .2s;
+            transition-timing-function: ease-in;
+        }
+
+    }
+}
+</style>

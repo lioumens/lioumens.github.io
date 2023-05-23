@@ -1,0 +1,39 @@
+---
+// this connects the frontmatter in the markdown file to this component
+import BaseLayout from './BaseLayout.astro';
+const { frontmatter } = Astro.props;
+const tags = frontmatter.tags;
+const activeNav = 1;
+---
+
+<BaseLayout pageTitle={frontmatter.title} activeNav={1}>
+<p>Written by {frontmatter.author}</p>
+<p>Published on {frontmatter.pubDate.toDateString()}</p>
+<div class="tags">
+    {tags.map((tag) => (
+      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+    ))}
+  </div>
+<slot />
+</BaseLayout>
+
+<style>
+    a {
+      color: #00539F;
+    }
+  
+    .tags {
+      display: flex; 
+      flex-wrap: wrap; 
+      margin: 0 auto;  
+    }
+  
+    .tag {
+      margin: 0.25em;
+      border: dotted 1px #a1a1a1;
+      border-radius: .5em;
+      padding: .5em 1em;
+      font-size: 1.15em;
+      background-color: #F8FCFD;
+    }
+  </style>

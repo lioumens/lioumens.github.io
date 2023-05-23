@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPost from '../../components/BlogPost.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+    // replace with getCollection("blog") when using content collections
+//   const allPosts = await Astro.glob('../posts/*.md');
+const allPosts = await getCollection("blog");
+
+  // retrieve all tags from all posts
+  const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
+
+  // iterate over tags and return the array of objects
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post) => post.data.tags.includes(tag));
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+// example of returning every route manually
+//   return [
+//     {params: {tag: "astro"}, props: {posts: allPosts}},
+//     {params: {tag: "successes"}, props: {posts: allPosts}},
+//     {params: {tag: "community"}, props: {posts: allPosts}},
+//     {params: {tag: "blogging"}, props: {posts: allPosts}},
+//     {params: {tag: "setbacks"}, props: {posts: allPosts}},
+//     {params: {tag: "learning in public"}, props: {posts: allPosts}}
+//   ]
+}
+
+// Astro.params is special here because it dynamically is doing the routes
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+
+---
+<BaseLayout pageTitle={tag}>
+  <p>Posts tagged with {tag}</p>
+  <ul>
+    {posts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title}/>)}
+  </ul>
+</BaseLayout>

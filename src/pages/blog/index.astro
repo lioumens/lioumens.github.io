@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+
+// Component Imports
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import BlogPost from '../../components/BlogPost.astro'
+
+// if you want to filter the posts and display something 
+const allPosts = await getCollection("blog", ({ data }) => {
+	return data.draft !== true
+})
+
+const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month: 'long', day: 'numeric' })
+console.log(allPosts[0].tags)
+
+// astro directive to return array of objects, all of them
+// const allPosts = await getCollection("blog")
+
+// Full Astro Component Syntax:
+// https://docs.astro.build/core-concepts/astro-components/
+const pageTitle = "Blog - Michael Liou"
+const activeNav = 1 // sets side nav position
+---
+
+<BaseLayout pageTitle={pageTitle} activeNav={activeNav}>
+			<h1>Recent Posts</h1>
+			<hr />
+			<ul>
+				{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
+			</ul> 
+</BaseLayout>
+
+<style lang="scss">
+	ul {
+		// margin: 0px;
+		padding: 0px;
+	}
+</style>
+

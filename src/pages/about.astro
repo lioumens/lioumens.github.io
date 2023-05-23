@@ -1,0 +1,90 @@
+---
+// Styles import
+// import '../styles/global.css';
+
+// Component Imports
+import Counter from '../components/Counter.vue';
+import BaseLayout from '../layouts/BaseLayout.astro';
+const pageTitle = "About Me";
+
+const identity = {
+	firstName: "Sarah",
+	country: "Canada",
+	occupation: "Technical Writer",
+	hobbies: ["photography", "birdwatching", "baseball"],
+};
+
+const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
+
+
+// conditional rendering in html template
+const happy = true;
+const finished = false;
+const goal = 3;
+
+// can define variables in js, pass to style sheet
+const skillColor = "navy";
+const fontWeight = "bold";
+const textCase = "uppercase";
+
+// Full Astro Component Syntax:
+// https://docs.astro.build/core-concepts/astro-components/
+---
+
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<meta name="generator" content={Astro.generator} />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<style define:vars={{skillColor, fontWeight, textCase}}>
+		html,
+		body {
+			font-family: system-ui;
+			margin: 0;
+		}
+		body {
+			padding: 2rem;
+		}
+		h1 {
+			color: purple;
+			font-size: 4rem;
+		}
+		.skill {
+			color: var(--skillColor);
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<BaseLayout pageTitle={pageTitle}>
+		<h1>{pageTitle}</h1>
+		<h1>This is the about page now</h1>
+		<p>Here are a few facts about me:</p>
+		<ul>
+			<li>My name is {identity.firstName}.</li>
+			<li>I live in {identity.country} and I work as a {identity.occupation}.</li>
+			{identity.hobbies.length >= 2 && 
+				<li>Two of my hobbies are: {identity.hobbies[0]} and {identity.hobbies[1]}</li>
+			} 
+		</ul>
+		<p>My skills are:</p>
+		<ul>
+			{skills.map((skill) => <li class="skill">{skill}</li>)}
+		</ul>
+		
+		<!-- conditional rendering -->
+		{happy && <p>I am happy to be learning Astro!</p>}
+		
+		{finished && <p>I finished this tutorial!</p>}
+		
+		{goal === 3 ? <p>My goal is to finish in 3 days.</p> : <p>My goal is not 3 days.</p>}
+		
+		</BaseLayout>
+		<!-- <Counter client:visible>
+			<h1>Hello, Vue!</h1>
+		</Counter> -->
+	</main>
+</body>
+</html>

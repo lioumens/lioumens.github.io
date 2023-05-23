@@ -1,0 +1,120 @@
+---
+const { url, title, date, tags } = Astro.props
+import { Icon } from 'astro-icon'
+---
+<li>
+    <!-- <a href={url}> 
+        <Icon name="fe:calendar" /> <span class="date"> {date}  ►  </span> {title}
+    </a> -->
+    
+    <!-- trying the table approach -->
+    <!-- <table style="width:100%">
+        <tr>
+            <td><a class="title" href={url} >{title}</a></td>
+             <th class="date"><Icon name="fe:calendar" /> {date}</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td style="font-size: .8rem">{tags.map((tag) => <span class="tag-cell"><nobr><a class="tag" href="#"><Icon name="fe:tag" />{tag}</a></nobr>&nbsp</span>)}</td>
+        </tr>
+    </table> -->
+
+    <!-- I think with css grid, they can just all be spans. -->
+    <div class="title"><a class="title" href={url} >{title}</a></div>
+    <div class="date"><Icon name="fe:calendar" /> {date}</div>
+    <div class="tag-list">{tags.map((tag) => <span class="tag-cell"><nobr><a class="tag" href="#"><Icon name="fe:tag" />{tag}</a></nobr>&nbsp</span>)}</div>
+
+</li>
+
+<style lang="scss">
+    @import "../../node_modules/nord/src/sass/nord.scss";
+    [astro-icon="fe:calendar"] {
+        width: 16px;
+        height: 16px;
+        color: lightslategrey;
+        transform: translate(0px, 2.5px)
+    }
+    [astro-icon="fe:tag"] {
+        width: 16px;
+        height: 16px;
+        color: lightslategrey;
+        transform: translate(0px, 3.5px);
+    }
+    .date {
+        color: lightslategray;
+    }
+    .tag {
+        color: lightslategray;
+        text-decoration: none;
+        background-color: $nord2;
+        border-radius: 7px;
+        padding: 2px;
+        // margin-bottom: 10px;
+    }
+    .title {
+        text-decoration: none;
+        color: $nord6;
+    }
+    a:hover {
+        color: $nord9;
+        transition: color .1s ease-in;
+    }
+    li {
+        list-style-type: none;
+        margin: 20px 0px;
+        // font-weight: 300;
+        // font-variation-settings: "wdth" 20, "wght" 300;
+    }
+
+    .tag-list {
+        grid-area: tags;
+        line-height: 25px;
+        font-size: .8rem;
+    }
+    .title {
+        grid-area: title;
+        font-size: 1.2rem;
+    }
+    .date {
+        grid-area: date;
+        font-weight: bold;
+    }
+    // mobile first 
+    // tr {
+    //     display: grid;
+    //     grid-template-columns: 1fr;
+    // }
+    // // right align last column of table elements
+    // th:last-child, td:last-child {
+    //     text-align: left;
+    //     line-height: 25px;
+    //     // background-color: aqua; // to see the cells
+    // }
+
+    @media screen and (min-width:800px) {
+        li {
+            display:grid;
+            grid-template-columns: 50% 1fr;
+            grid-template-areas: "title date" 
+            "title tags";
+        }
+        .date, .tag-list {
+            text-align: right;
+        }
+
+
+    // tr {
+    //     display: grid;
+    //     grid-template-columns: 50% 1fr;
+    // }
+    // right align last column of table elements
+    // th:last-child, td:last-child {
+    //     text-align: right;
+    //     // background-color: aqua; // to see the cells
+    // }
+
+    }
+
+    
+    
+</style>
