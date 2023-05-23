@@ -7,5 +7,5 @@ import preact from "@astrojs/preact";
 export default defineConfig({
   // Enable Vue to support Vue components.
   integrations: [vue(), preact()],
-  base: "/astro-website"
+  // base: "/astro-website" // base routing also given here....since deployed at subpath
 });

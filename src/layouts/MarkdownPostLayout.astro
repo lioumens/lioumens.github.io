@@ -1,12 +1,14 @@
 ---
 // this connects the frontmatter in the markdown file to this component
 import BaseLayout from './BaseLayout.astro';
+import Giscus from "../components/Giscus.astro";
 const { frontmatter } = Astro.props;
 const tags = frontmatter.tags;
 const activeNav = 1;
 ---
 
 <BaseLayout pageTitle={frontmatter.title} activeNav={1}>
+<h1>{frontmatter.title}</h1>
 <p>Written by {frontmatter.author}</p>
 <p>Published on {frontmatter.pubDate.toDateString()}</p>
 <div class="tags">
@@ -15,6 +17,7 @@ const activeNav = 1;
     ))}
   </div>
 <slot />
+<Giscus />
 </BaseLayout>
 
 <style>

@@ -11,7 +11,7 @@ export default defineConfig({
   build: {
     outputFolder: "admin",
     publicFolder: "public",
-    basePath: "astro-website" // deployed at subpath, later probably not needed
+    basePath: "astro-website" // deployed at subpath, later probably not needed, when fully deployed
   },
   media: {
     tina: {
@@ -21,6 +21,56 @@ export default defineConfig({
   },
   schema: {
     collections: [
+      {name: "blog",
+      label: "Blog",
+      path: "src/content/blog",
+      fields: [
+        {
+          type: "string",
+          name: "title",
+          label: "Title",
+          isTitle: true,
+          required: true,
+        },
+        {
+          type: "string",
+          name: "description",
+          label: "Description",
+        },
+        {
+          type: "string",
+          name: "author",
+          label: "Author",
+        },
+        {
+          type: "datetime",
+          name: "pubDate",
+          label: "Date Published",
+          required: true,
+          ui: {
+            component: "date",
+            dateFormat: "YYYY-MM-DD",
+          }
+        }, 
+        {
+          label: "Tags",
+          name: "tags",
+          type: "string",
+          list: true,
+          required: true,
+          options: [
+            {value: "astro", label: "astro"},
+            {value: "web", label: "web"},
+            {value: "statistics", label: "statistics"}
+          ]
+        },
+        {
+          type: "rich-text",
+          name: "body",
+          label: "Body",
+          isBody: true,
+        }]
+      },
       {
         name: "post",
         label: "Posts",
