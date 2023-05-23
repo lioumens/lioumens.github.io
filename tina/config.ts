@@ -11,6 +11,7 @@ export default defineConfig({
   build: {
     outputFolder: "admin",
     publicFolder: "public",
+    basePath: "astro-website" // deployed at subpath, later probably not needed
   },
   media: {
     tina: {
