@@ -1,35 +1,69 @@
 ---
-// this connects the frontmatter in the markdown file to this component
+
+// style sheets
+// import "../../node_modules/katex/dist/katex.min.css"
+import "katex/dist/katex.min.css" // include katex support explicitly
+
+// components
 import BaseLayout from './BaseLayout.astro';
 import Giscus from "../components/Giscus.astro";
+import TagList from "../components/TagList.astro"
+
+
+// properties
 const { frontmatter } = Astro.props;
 const tags = frontmatter.tags;
+
+// constants
 const activeNav = 1;
+const tagSize = 1; // scales rem
 ---
 
 <BaseLayout pageTitle={frontmatter.title} activeNav={1}>
-<h1>{frontmatter.title}</h1>
-<p>Written by {frontmatter.author}</p>
-<p>Published on {frontmatter.pubDate.toDateString()}</p>
+    <div class="blog-meta">
+<span class="date" style="color: lightgrey; font-size: .8rem;">{frontmatter.pubDate.toDateString()}</span>
 <div class="tags">
+<TagList tags={tags} />
+</div>
+</div>
+<h1 class="title">{frontmatter.title}</h1>
+<!-- <p>Written by {frontmatter.author}</p> -->
+<!-- <p>Published on {frontmatter.pubDate.toDateString()}</p> -->
+<!-- <div class="tags">
     {tags.map((tag) => (
       <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
     ))}
-  </div>
+  </div> -->
+
 <slot />
 <Giscus />
 </BaseLayout>
 
 <style>
+    .blog-meta {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
     a {
       color: #00539F;
     }
   
-    .tags {
+    /* .tags {
       display: flex; 
       flex-wrap: wrap; 
       margin: 0 auto;  
+    } */
+
+    .date {
+        margin-bottom: 0px;
+        padding-bottom: 0px;
     }
+    .title {
+        margin-top: 5px;
+    }
+
   
     .tag {
       margin: 0.25em;
@@ -39,4 +73,5 @@ const activeNav = 1;
       font-size: 1.15em;
       background-color: #F8FCFD;
     }
+
   </style>

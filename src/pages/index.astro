@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Greeting from "../components/Greeting.jsx";
+import {Image} from "astro:assets"
+import profpic from "../assets/cals_profile_shot.jpg"
 
 // console.log(__filename, __dirname);
 // import "../../node_modules/nord/src/sass/nord.scss"
@@ -12,6 +14,9 @@ const activeNav = 0;
 <h1>About Me</h1>
 <hr />
 <p>Hello, I'm a Statistics PhD student at the University of Wisconsin, Madison. I also currently work as a statistical consultant for the College of Agriculture and Life Sciences. M </p>
+
+<Image src={profpic} width="300px" aspectRatio="9:16" alt="Profile Picture"/>
+
 </BaseLayout>
 
 <!-- <BaseLayout pageTitle={pageTitle}>

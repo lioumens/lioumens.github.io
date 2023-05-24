@@ -1,0 +1,45 @@
+---
+const { tags, tagAlign = "left",  tagSize = 1, tagDisplay = "block"} = Astro.props
+import { Icon } from 'astro-icon'
+---
+
+<div class="tag-list">
+  {tags.map((tag) => 
+    <span class="tag-cell">
+      <nobr>
+        <a class="tag" href={`/tags/${tag}`}><Icon name="fe:tag" />{tag}</a>
+        </nobr>&nbsp
+    </span>)}
+</div>
+
+<style lang="scss" define:vars={{ tagAlign, tagSize, tagDisplay }}>
+    @import "../../node_modules/nord/src/sass/nord.scss";
+    [astro-icon="fe:tag"] {
+        // width: 16px;
+        // height: 16px;
+        height: calc(1rem * var(--tagSize));
+        width: calc(1.1rem * var(--tagSize));
+        color: lightslategrey;
+        transform: translate(0px, calc(0.21875rem * var(--tagSize)));
+    }
+    .tag {
+        color: lightslategray;
+        text-decoration: none;
+        background-color: $nord2;
+        border-radius: 7px;
+        padding: 2px;
+        // margin-bottom: 10px;
+    }
+
+    a:hover {
+        color: $nord9;
+        transition: color .1s ease-in;
+    }
+    .tag-list {
+        // line-height: 25px;
+        line-height: calc(1.56rem * var(--tagSize));
+        font-size: calc(.8rem * var(--tagSize));
+        text-align: var(--tagAlign);
+        display: var(--tagDisplay)
+    }
+</style>

@@ -1,6 +1,14 @@
 ---
-const { url, title, date, tags } = Astro.props
 import { Icon } from 'astro-icon'
+
+// components
+import TagList from "./TagList.astro"
+
+// props
+const { url, title, date, tags } = Astro.props
+
+// constants
+const tagSize = 1
 ---
 <li>
     <!-- <a href={url}> 
@@ -21,8 +29,13 @@ import { Icon } from 'astro-icon'
 
     <!-- I think with css grid, they can just all be spans. -->
     <div class="title"><a class="title" href={url} >{title}</a></div>
-    <div class="date"><Icon name="fe:calendar" /> {date}</div>
-    <div class="tag-list">{tags.map((tag) => <span class="tag-cell"><nobr><a class="tag" href="#"><Icon name="fe:tag" />{tag}</a></nobr>&nbsp</span>)}</div>
+    <div class="date"><Icon name="fe:calendar" /> {date}&nbsp</div>
+
+    <!-- hack to media query class since the child component needs to be responsive-->
+    <div class="right-tags tag-list"><TagList tags={tags} tagAlign=right tagSize={tagSize}/></div>
+    <div class="left-tags tag-list"><TagList tags={tags} tagAlign=left/ tagSize={tagSize}></div>
+
+    <!-- <div class="tag-list">{tags.map((tag) => <span class="tag-cell"><nobr><a class="tag" href={`/tags/${tag}`}><Icon name="fe:tag" />{tag}</a></nobr>&nbsp</span>)}</div> -->
 
 </li>
 
@@ -42,6 +55,8 @@ import { Icon } from 'astro-icon'
     }
     .date {
         color: lightslategray;
+        grid-area: date;
+        font-weight: bold;
     }
     .tag {
         color: lightslategray;
@@ -52,6 +67,8 @@ import { Icon } from 'astro-icon'
         // margin-bottom: 10px;
     }
     .title {
+        grid-area: title;
+        font-size: 1.2rem;
         text-decoration: none;
         color: $nord6;
     }
@@ -71,14 +88,6 @@ import { Icon } from 'astro-icon'
         line-height: 25px;
         font-size: .8rem;
     }
-    .title {
-        grid-area: title;
-        font-size: 1.2rem;
-    }
-    .date {
-        grid-area: date;
-        font-weight: bold;
-    }
     // mobile first 
     // tr {
     //     display: grid;
@@ -90,28 +99,32 @@ import { Icon } from 'astro-icon'
     //     line-height: 25px;
     //     // background-color: aqua; // to see the cells
     // }
+    .right-tags {
+        display: none;
+    }
+    .left-tags {
+        display: block;
+    }
 
-    @media screen and (min-width:800px) {
+    @media screen and (min-width:900px) {
         li {
             display:grid;
             grid-template-columns: 50% 1fr;
             grid-template-areas: "title date" 
             "title tags";
         }
-        .date, .tag-list {
+        // .date, .tag-list {
+        //     justify-self: end;
+        // }
+        .date {
             text-align: right;
         }
-
-
-    // tr {
-    //     display: grid;
-    //     grid-template-columns: 50% 1fr;
-    // }
-    // right align last column of table elements
-    // th:last-child, td:last-child {
-    //     text-align: right;
-    //     // background-color: aqua; // to see the cells
-    // }
+        .left-tags {
+            display: none;
+        }
+        .right-tags {
+            display: block;
+        }
 
     }
 

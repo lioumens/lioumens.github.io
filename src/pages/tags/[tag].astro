@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogPost from '../../components/BlogPost.astro';
+import TagList from '../../components/TagList.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -40,7 +41,7 @@ const activeNav = 3;
 // console.log(posts)
 ---
 <BaseLayout pageTitle={tag} activeNav={activeNav}>
-    <h2> Posts tagged with {tag}</h2>
+    <h2> Posts with the tag</h2> <TagList tags={[tag]} tagSize=2 tagDisplay="inline"/>
     <hr />
   <ul>
     {posts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags} />)}
@@ -50,5 +51,8 @@ const activeNav = 3;
 <style lang="scss">
     ul {
         padding: 0px;
+    }
+    h2 {
+      display: inline;
     }
 </style>
