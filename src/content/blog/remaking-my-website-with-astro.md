@@ -201,6 +201,7 @@ Overall, the Astro framework has been a joy to work with. I'll slowly be migrati
       grid-column:1;
       color: #9f9f9f;
       padding-right: 0;
+      padding--left: 0;
    }
 
 }

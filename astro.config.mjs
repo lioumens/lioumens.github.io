@@ -8,7 +8,7 @@ import mdx from "@astrojs/mdx";
 export default defineConfig({
   // Enable Vue to support Vue components.
   integrations: [vue(), preact(), mdx()],
-  base: "/astro-website" // base routing also given here....since deployed at subpath
+  // base: "/astro-website" // base routing also given here....since deployed at subpath
   experimental: {
     assets: true
   },
