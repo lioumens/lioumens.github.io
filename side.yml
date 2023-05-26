@@ -1,0 +1,7 @@
+project:
+  type: astro
+  render:
+    - "quarto/*.qmd"
+  execute-dir: file
+  output-dir: "src/content"
+

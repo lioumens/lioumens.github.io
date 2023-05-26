@@ -1,8 +1,14 @@
 ---
 
+// modules
+// tippy js, for hover tooltips
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css'; // optional for styling
+
 // style sheets
 // import "../../node_modules/katex/dist/katex.min.css"
 import "katex/dist/katex.min.css" // include katex support explicitly
+import "../styles/mdpost.scss"
 
 // components
 import BaseLayout from './BaseLayout.astro';
@@ -12,6 +18,7 @@ import TagList from "../components/TagList.astro"
 
 // properties
 const { frontmatter } = Astro.props;
+import { Image } from "astro:assets";
 const tags = frontmatter.tags;
 
 // constants
@@ -35,11 +42,13 @@ const tagSize = 1; // scales rem
     ))}
   </div> -->
 
+<!-- <Image src={frontmatter.image.url} alt={frontmatter.title} height="405" width="720"/> -->
 <slot />
 <Giscus />
 </BaseLayout>
 
-<style>
+<style lang="scss">
+    @import "../../node_modules/nord/src/sass/nord.scss";
     .blog-meta {
         display: flex;
         flex-direction: row;
@@ -72,6 +81,58 @@ const tagSize = 1; // scales rem
       padding: .5em 1em;
       font-size: 1.15em;
       background-color: #F8FCFD;
+    }
+
+  </style>
+
+  <style lang="scss" is:global>
+    @import "../../node_modules/nord/src/sass/nord.scss";
+    .astro-code {
+        padding: 10px 15px;
+        font-size: 1rem;
+        line-height: 1.1rem;
+        border-radius: 10px;
+    }
+
+    .nord_table {
+        width: 90%;
+        // font-family:Verdana, Geneva, Tahoma, sans-serif;
+        // font-family: 'Fira Code', monospace;
+        font-family: 'Space Mono', monospace;
+        font-weight: 100;
+        // font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        // padding: 5px 15px;
+        // background-color: #eb7113;
+        border-top: .25rem solid darken($nord0, 5%);
+        border-bottom: .25rem solid darken($nord0, 5%);
+        margin-bottom: 20px;
+        border-collapse: collapse;
+        line-height: 1.5rem;
+        border-radius: 100%;
+        
+        & thead th {
+            height: 2px;
+            // width: 100%;
+            // background-color: aquamarine;
+            color: $nord6;
+            font-weight: 800;
+            border-bottom: .2rem solid $nord0;
+            padding-bottom: 0px;
+            // height: auto;
+        }
+        & tbody tr:nth-child(even) {
+            // padding-top: 10px;
+            // border-spacing: 0 15px;
+            background-color: lighten($nord1, 4%);
+            // background-color: $nord2;
+        }
+
+        & tbody tr:hover {
+            background-color: $nord9;
+        }
+
+
     }
 
   </style>

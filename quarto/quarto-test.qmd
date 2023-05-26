@@ -1,0 +1,89 @@
+---
+title: "testing quarto output"
+author: Michael Liou
+tags:
+  - statistics
+  - web
+  - quarto
+pubDate: 2022-05-25
+extract-media: "."
+format: 
+  astro-md:
+    output-file: "quarto-test.md"
+    toc: true
+    df-print: kable
+prefer-html: true
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a
+finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that
+includes both content and the output of embedded code. You can embed
+code like this:
+
+
+
+```{r results="hold", collapse=TRUE, comment="##", prompt=TRUE}
+#| code-fold: true
+1 + 1
+x <- 1:10
+y <- rnorm(10)
+mod <- lm(y~x)
+summary(mod)
+
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is
+displayed).
+
+$$
+\int_{a}^b \exp(x) \,\mathrm{d}x = \frac{1}{1 + \frac{1}{1 + \frac{1}{1 + x}}}
+$$
+
+Inline code seems to work okay `r 2 + 2`
+
+## Creating Plots as well
+
+```{r}
+library(tidyverse)
+mtcars |> ggplot(aes(mpg, hp)) +
+  geom_point() + theme_bw() 
+
+# kable_styling
+# kableExtra:::htmlTable_styling
+# kableExtra:::as_kable_xml
+# kableExtra:::read_kable_as_xml
+# kableExtra:::remove_html_doc
+# # 
+# html_fragment()
+# html_dependency_lightable
+# html_dependency_codefolding_lua()
+# html_dependency_tabset()
+# html_dependency_tocify()
+
+```
+
+## Printing Dataframes
+
+I'd also like to customize how dataframes are printed, so I may have to switch over to using `.mdx` components in order to get the styling that I'd like on the tables.
+
+```{r}
+#| echo: false
+#| message: false
+library(kableExtra)
+options(kableExtra_view_html = FALSE) # setting the option to false allows just the table to be printed, then handed off to astro to render
+mtcars |> head() |> kbl("html") |> kable_styling(htmltable_class = "nord_table")
+```
+

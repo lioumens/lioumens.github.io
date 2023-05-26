@@ -10,12 +10,17 @@ tags:
 
 I'm quite impressed that the filename an the rendering all work out!
 
-```javascript
-let i;
-i === 1;
+```js
+let i = 1;
 ```
 
 ```r
+png("Plot3.png", width = 4, height = 4, units = 'in', res = 600)
+plot(x, y) # Make plot
+dev.off()
+```
+
+``` r
 library(tidyverse)
 mod <- lm(y~x)
 summary(mod)

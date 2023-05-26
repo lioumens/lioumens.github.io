@@ -6,10 +6,8 @@ import { Icon } from 'astro-icon'
 <div class="tag-list">
   {tags.map((tag) => 
     <span class="tag-cell">
-      <nobr>
-        <a class="tag" href={`/tags/${tag}`}><Icon name="fe:tag" />{tag}</a>
-        </nobr>&nbsp
-    </span>)}
+      <nobr><a class="tag" href={`/tags/${tag}`}><Icon name="fe:tag" />{tag}</a>
+        </nobr>&nbsp</span>)}
 </div>
 
 <style lang="scss" define:vars={{ tagAlign, tagSize, tagDisplay }}>

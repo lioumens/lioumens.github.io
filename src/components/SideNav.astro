@@ -5,7 +5,7 @@ const { activeNav, topBlurClass } = Astro.props;
 
 <nav class="side">
 	<div class="card"> 
-		<img src="https://secure.gravatar.com/avatar/cff471ff7d771f85f7c842ee87eb095c?s=150" alt="icon">
+		<!-- <img src="/logo_distribution.svg" height=200 width=250 alt="icon"> -->
 		<h2>Michael Liou</h2>
 		<h3>Statistical Sorcery</h3>
 		<!-- statistical sorcery, numbers with personality, beyond the average, mildly chaotic, anything but normal -->
@@ -28,7 +28,7 @@ const { activeNav, topBlurClass } = Astro.props;
 <div class="top-blur"></div>
 <div class="top-strip">
     <div class="top-card">
-		<img src="https://secure.gravatar.com/avatar/cff471ff7d771f85f7c842ee87eb095c?s=150" alt="icon">
+		<!-- <img src="https://secure.gravatar.com/avatar/cff471ff7d771f85f7c842ee87eb095c?s=150" alt="icon"> -->
         <h2>Michael Liou</h2>
         <!-- <span>Michael Liou</span> -->
     </div>
@@ -51,11 +51,23 @@ const { activeNav, topBlurClass } = Astro.props;
 </nav>
 
 <script>
-    document.querySelector(".hamburger").addEventListener("click", () => {
-        document.querySelector(".top-drawer").classList.toggle("expanded");
-        document.querySelector(".hamburger").classList.toggle("expanded");
-        // document.querySelector("main").classList.toggle("expanded");
+    // document.querySelector(".hamburger").addEventListener("click", (event) => {
+    //     document.querySelector(".top-drawer").classList.toggle("expanded");
+    //     document.querySelector(".hamburger").classList.toggle("expanded");
+    //     // document.querySelector("main").classList.toggle("expanded")
+        
+    //     document.
+    // })
+
+    // toggle navigation menu 
+    const hamburger = document.querySelector(".hamburger");
+    const drawer = document.querySelector(".top-drawer");
+
+    hamburger.addEventListener("click", (event) => {
+        drawer.classList.toggle("expanded");
+        hamburger.classList.toggle("expanded");
     })
+
 </script>
 
 <style lang="scss" define:vars={{ activeNav }}>

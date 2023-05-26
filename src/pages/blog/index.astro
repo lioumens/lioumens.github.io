@@ -9,6 +9,9 @@ import BlogPost from '../../components/BlogPost.astro'
 const allPosts = await getCollection("blog", ({ data }) => {
 	return data.draft !== true
 })
+const quartoPosts = await getCollection("quarto", ({ data }) => {
+	return data.draft !== true
+})
 
 const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month: 'long', day: 'numeric' })
 // console.log(allPosts[0].tags)
@@ -26,6 +29,7 @@ const activeNav = 1 // sets side nav position
 			<h1>Recent Posts</h1>
 			<hr />
 			<ul>
+				{quartoPosts.map(post => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
 				{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
 			</ul> 
 </BaseLayout>

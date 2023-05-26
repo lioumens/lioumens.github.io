@@ -1,0 +1,229 @@
+---
+title: 'Remaking my Website with Astro'
+pubDate: 2023-05-25
+description: 'Exploring Astro as a platform for building my website'
+author: 'Astro Learner'
+image:
+    url: './astro_island.svg'
+    alt: 'The full Astro logo.'
+tags: ["astro", "web", "devlog"]
+---
+
+<img src="/astro_island.svg" alt="Astro next to an island" width="90%" title="Astro islands..." />
+
+## Why Astro
+
+ Astro has been making waves in the web development community for implementing an [island architecture](https://www.patterns.dev/posts/islands-architecture) approach to web development. Astro is a framework designed for *content*-focused websites, with little areas for interactivity (think blog or ecommerce). It's a great fit for my personal website, which is mostly static content, with a few interactive elements. Astro also promises to be able to use components built with Vue, React, or Svelte, so it's a great way to tinker with reactive web frameworks.
+
+ 
+ Traditionally, websites online did mostly server-side rendering (SSR), in which every webpage that is requested is first generated on a hosted server, and the entire page is sent to you when you navigate to a different route. For large websites with a lot of routes (amazon, ebay), this is still the architecture of choice. The little bits of interactivity are shipped with the webpage, and it's mostly the case that javascript is not a major component of a website. However, once we started having more interactive bundles like apps on a phone, we had more need to develop similar types of web applications for the browser with smooth transitions and a lot of javascript logic. This is where client-side rendering (CSR) is the architecture of choice. The extreme end of a client-side rendered application is to serve you an empty shell of a webpage, but with a bundle of javascript that helps fetches all the appropriate pages once compiled. This "load-once" approach is more suitable for web applications in which the user will be spending longer sessions in your application (think Spotify or Instagram). Furthermore, since a lot of the logic is done client-side, you can leverage the javascript to create a very smooth, interactive user experience. Most applications live somewhere in the middle of this spectrum, but there are many ways of mixing SSR and CSR depending on the needs of the application (database logic is almost always server-side, and UI elements are generally client-side). [^1]
+
+ [^1]: An incredible [video explanation](https://youtu.be/Dkx5ydvtpCA) of different web rendering patterns.
+ 
+ The "island architecture" is a relatively modern way of mixing both SSR elements and CSR elements on the same webpage, while loading javascript only for components that need it. Often times on content focused websites, there are only certain parts of a webpage that need to be interactive, and we should be able to decide as a developer which parts of the webpage should be SSR and which parts should be CSR, and also when the javascript is delivered to the client for interactivity through a concept called [*partial hydration*](https://ajcwebdev.com/2021/11/22/what-is-partial-hydration-and-why-is-everyone-talking-about-it/#frameworks-built-for-partial-hydration). This is the promise of Astro, by providing a simple `client:load` directive. There are other client directives like `client:idle` that also allow the rendering of the component to happen in the background while the user is idle. These are normally for lower priority components that are interactive, but not the first thing the user will interact with on a web page.
+
+<figure class='ssr-csr-figure'>
+ <video class="csr-video" width="230" height="450" autoplay loop muted > 
+ <source src="/app_store_csr_240_30fps_no_audio.mp4" type="video/mp4">
+ Sorry your browser does not support this video.
+ </video>
+ <video class="ssr-video" width="500" height="250" autoplay loop muted>
+ <source src="/amazon_ssr_322.mp4" type="video/mp4">
+ </video>
+ <figcaption > 
+ Compare the "client"-focused application (app store on iphone) with smoother transitions and animations for opening different web pages, with the "server"-focused application (amazon) that does a full page reload (flashes white) when navigating to a different page.
+ </figcaption>
+</figure>
+ 
+
+
+## Web Development is a Journey
+
+The primary reason for remaking my site is to learn more about web technologies. A personal website is a chance to play with newer technologies and the web is a complicated place that is more than just coding languages and frameworks (html, css, js, etc...). The modern web has been rapidly changing, especially as people connect to the internet with different devices. Formatting, interactivity, search engine optimization, user experience, and good content are just too many things to get right on your first attempt. Rather, they're items that are slowly built up over years of side projects. These are roughly the things I learned with each iteration of website making and my web development journey:
+
+1. Wix (Drag and Drop)
+   - My first website was a drag and drop that was made with Wix. Unfortunately, I don't have access to the site any more, but it was a mess of a website! I think there was even music or sound effects that would play in the background while you browse, just because they had a plugin for it. Back then, there were very few options for drag and drop websites, and thus you were fairly limited to what you could do on a webpage. You can have something online, but it was not very customizable, and you're normally beholden to the company for pricing and domains. The main advantage was that I was able to make a website without any knowledge of html/css!
+2. Static site
+   - The next iteration was a static site made by simply copying an html/css template file from a site like [html5 templates](https://html5up.net/). I learned the basic building blocks like html tags and linking to different pages, but everything was edited manually and every webpage I wanted to make was limited to the page templates that came with the theme. If you want to make a simple, one page website that is strictly informational, I would still recommend going this route. However if you want to find somewhere to host the website, you'll still need to navigate the space about hosting and domain names. Luckily, [Github Pages](https://pages.github.com/) was just getting started, so I found that it was as easy as naming the file "index.html" and putting it in the right place!
+3. Static site with Jekyll
+   - My previous personal site was copied from a starter template called [dbyll](http://dbtek.github.io/dbyll/). At this point I had learned enough to do some custom styling, but I found I was still reliant on the build system and scaffolding that the template provided. There was a tagging system, but I couldn't tell you how the tags and pagination of posts worked. The hacked website was mostly limited to cosmetic changes on a per-page basis. The build process for me was also quite unbearable -- I had an issue in which my style files were not detected whenever I changed the html elements, which required me to have a script to `touch` all my css files while the local development server was running. I much prefer the ["Hot Module Replacement" (HMR) experience Vite](https://vitejs.dev/) has provided!
+4. Static site with Astro!
+   - So here we are! I'm still relatively new to responsive web development, and interactivity with javascript. Front end frameworks have always been quite intimidating to me since they would string together a lot of concepts I was only half familiar with, but I knew for highly interactive interfaces, or data bound animations, I'd eventually have to learn them. I'm partly inspired by great data visualizations I've seen online that are also interactive or animated. ([Seas of Plastic](https://app.dumpark.com/seas-of-plastic-2/#), [Visualizations of Hamilton](https://pudding.cool/2017/03/hamilton/index.html), [Hierarchical Models](http://mfviz.com/hierarchical-models/)) These are largely created with the frond-end framework react, and an svg manipulation library called [d3](https://d3js.org/).
+
+
+## First Impressions with Astro
+
+The development experience thus far has been great. I find that most of the project is intuitively organized, and the tutorials for integrations are more than enough to end up with a fully functional website. Astro introduces their own component that shares a lot of features with JSX, in which we are encouraged to mix javascript and html elements to generate our component. The fact that styling is scoped to the component is very useful.
+
+```astro
+---
+// A typical astro component
+// server-side typescript/javascript goes here
+---
+
+<!-- html goes here -->
+
+<!-- Components included can be written in Vue, React, Svelte, or Astro -->
+<MyComponent /> 
+
+<script>
+  // client-side javascript/typescript goes here
+</script>
+
+<style>
+  /* scoped css goes here */
+</style>
+```
+
+In this component, Astro will process the styles and script tag inside the component and bundle it for you during the building stage, which means you can [import local npm modules inside the script tags](https://docs.astro.build/en/guides/client-side-scripts/#script-bundling)! Furthermore, if you include a component multiple times in a webpage, Astro will bundle it for you so that you only deliver it once to the client. Hence, if your component written in Vue actually doesn't use any javascript, then Astro will compile that javascript component as a completely static! This is what they promise in their tagline ["zero client-side JS, by default"](https://docs.astro.build/en/concepts/islands/#how-do-islands-work-in-astro). you'd like astro to skip processing and have the script be sent directly to the client as is, passing a `<script is:inline>` directive will signify to keep the script as is. The way scoping works by default is that class names that you use in the component will have an extra hash added to it. In this case `astro-5GRSW2HI` is added to the class list.
+
+```html
+<h1 class="title astro-5GRSW2HI">
+   Remaking my Website with Astro
+</h1>
+```
+
+Though this is convenient for not having to worry about about styling from one component to the next, styling children elements of the component is a little more complicated. For example, I use the same `<Navigation />` component to standardize the appearance of the navigation on the side, however tracking the "active" state across the website requires me to pass a prop to the component. This is because the component is not aware of the current page it is on, and thus cannot apply the active class to the correct link. This is a little more complicated than I would like, but I think it's a fair tradeoff for the convenience of scoped styling.
+
+<figure style="border: 2px solid #D8DEE9;display:flex;justify-content:center;width:50%;margin: 0px auto;">
+
+![Side Navigation Picture](../../assets/sidenav.webp)
+
+</figure>
+
+Here are the main components of the design to get this effect with astro components:
+
+```astro
+---
+// Navigation.astro
+const { activeNav } = Astro.props;
+---
+
+<!-- the html for the navigation -->
+<div class="nav-section">
+   <span class="nav-divider"/>
+   <span class="nav-divider"/>
+   <ul>
+      <a href="/"><li>About</li></a>
+      <a href="/blog"><li>Blog</li></a>
+      <a href="/resources"><li>Resources</li></a>
+      <a href="/tags"><li>Archive</li></a>
+
+      <div class="active"></div> <!-- styled as a blue bar -->
+   </ul>
+   <span class="nav-divider" />
+   <span class="nav-divider" />
+</div>
+
+
+<!-- the define:vars directive allows definition of css variables -->
+<style lang="scss" define:vars={{ activeNav }}>
+.active {
+   // the top positioning of the blue bar is based on the activeNav prop,
+   // indicating to the user which page is currently active.
+   top: calc(var(--activeNav) * 25% + 4.5%);
+}
+
+// other styling omitted for brevity
+</style>
+```
+
+A property of the navigation bar called `activeNav` is defined through `Astro.props`. The style directive `define:vars` allows you to pass these properties as css variables to use in the Sass code. Hence, we can now move the active indicator in the menu from parts of the website lower in the hierarchy. For example, in the "About Me" page, we can define the constant in the header section of the astro component.
+
+```astro
+---
+// src/pages/about.astro
+import Navigation from '../components/Navigation.astro';
+const activeNav = 0;
+---
+
+<Navigation activeNav={activeNav} />
+
+<!-- The rest of the about content -->
+```
+
+## Astro, to the moon! 🚀
+
+Overall, the Astro framework has been a joy to work with. I'll slowly be migrating all my older website content over. As a markdown based site generator, the theming across the entire website will be easier to maintain, while continuing to learn more about modern web development. I'm excited to see where the development goes and I hope you'll join me on this journey!
+
+<style lang="scss">
+
+.ssr-csr-figure {
+   display: grid;
+   justify-content: start;
+   align-items: start;
+   justify-items: start;
+   grid-template-columns: 1fr 1fr;
+   grid-template-rows: 1fr 1fr;
+   padding-top: 20px;
+   margin: 0px;
+
+}
+.ssr-csr-figure .csr-video {
+   grid-row: 1/3;
+   grid-column: 1;
+}
+.ssr-csr-figure .ssr-video {
+   grid-row: 1;
+   grid-column: 2;
+}
+.ssr-csr-figure figcaption {
+   grid-row: 2;
+   grid-column:2;
+   padding:10px 32px;
+   color: #9f9f9f;
+   align-self: center;
+   /* font-decoration: italic; */
+}
+
+
+@media screen and (max-width: 750px) {
+   .ssr-csr-figure {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr .5fr .4fr;
+      justify-items: center;
+   }
+   .ssr-csr-figure .csr-video {
+      grid-row: 1;
+      grid-column: 1;
+      width: 153.33px;
+      height: 333.33px;
+   }
+   .ssr-csr-figure .ssr-video {
+      grid-row: 2;
+      grid-column: 1;
+      padding-top: 10px;
+      width: 375px;
+      height: 187.5px;
+ }
+   .ssr-csr-figure figcaption {
+      grid-row: 3;
+      grid-column:1;
+      color: #9f9f9f;
+      padding-right: 0;
+   }
+
+}
+   
+</style>
+
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+<script>
+   window.addEventListener("load", () => {
+      const fn1_content = document.querySelector('#user-content-fn-1>p')
+      tippy("#user-content-fnref-1", {
+         content: fn1_content.innerHTML.replace(/<a href="#.*">.*<\/a>/g, ""),
+         allowHTML: true,
+         interactive: true,
+         placement: 'right-end',
+         theme: 'nord'
+      });
+      // console.log(fn1_content.innerHTML)
+   })
+   const fn1 = document.querySelector('#user-content-fnref-1');
+   // console.log(fnt1)
+   // const fn1_content = window.onload.querySelector('#user-content-fn-1')
+   // console.log(fn1_content)
+   console.log("run before window loaded")
+</script>

@@ -25,6 +25,14 @@ const { pageTitle, activeNav } = Astro.props;
   <script>
     // import '../scripts/menu.js'
     import '@fontsource-variable/space-grotesk';
+    import '@fontsource-variable/lora';
+    import '@fontsource/sarabun';
+    import '@fontsource/bonbon';
+    // Supports weights 200-900
+    import '@fontsource-variable/crimson-pro'; // this one i think looks the best
+        import '@fontsource/space-mono';
+
+
 
     // blurry implementation
     // https://thenewcode.com/990/Scroll-Behind-Blurred-Site-Navigation-Bar
@@ -56,13 +64,20 @@ const { pageTitle, activeNav } = Astro.props;
     }
     body {
         // display: flex;
-        font-family: 'Space Grotesk Variable', sans-serif;
-        // font-weight: 500;
+        // font-family: 'Space Grotesk Variable', sans-serif;
+        // font-family: 'Lora Variable', sans-serif;
+        // font-family: 'Sarabun', sans-serif;
+        // font-family: 'Bonbon', sans-serif;
+        font-family: 'Crimson Pro Variable', sans-serif;
+        // font-family: "Space Mono", monospace;
+        font-size: 1.1rem;
+        // font-weight: 400;
         font-variation-settings: "wdth" 90, "wght" 200;
         min-height: 100vh; // seems necessary when toggetling
     }
 
     main {
+    line-height: 1.5; // don't space menu
     padding-left: 250px;
     padding-top: 45px;
 		// padding: 7% 10%;
