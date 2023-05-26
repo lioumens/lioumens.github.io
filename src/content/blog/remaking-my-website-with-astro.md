@@ -23,11 +23,11 @@ tags: ["astro", "web", "devlog"]
  The "island architecture" is a relatively modern way of mixing both SSR elements and CSR elements on the same webpage, while loading javascript only for components that need it. Often times on content focused websites, there are only certain parts of a webpage that need to be interactive, and we should be able to decide as a developer which parts of the webpage should be SSR and which parts should be CSR, and also when the javascript is delivered to the client for interactivity through a concept called [*partial hydration*](https://ajcwebdev.com/2021/11/22/what-is-partial-hydration-and-why-is-everyone-talking-about-it/#frameworks-built-for-partial-hydration). This is the promise of Astro, by providing a simple `client:load` directive. There are other client directives like `client:idle` that also allow the rendering of the component to happen in the background while the user is idle. These are normally for lower priority components that are interactive, but not the first thing the user will interact with on a web page.
 
 <figure class='ssr-csr-figure'>
- <video class="csr-video" width="230" height="450" autoplay loop muted > 
+ <video class="csr-video" width="230" height="450" autoplay loop muted playsinline >
  <source src="/astro-website/app_store_csr_240_30fps_no_audio.mp4" type="video/mp4">
  Sorry your browser does not support this video.
  </video>
- <video class="ssr-video" width="500" height="250" autoplay loop muted>
+ <video class="ssr-video" width="500" height="250" autoplay loop muted playsinline>
  <source src="/astro-website/amazon_ssr_322.mp4" type="video/mp4">
  </video>
  <figcaption > 
@@ -75,7 +75,7 @@ The development experience thus far has been great. I find that most of the proj
 </style>
 ```
 
-In this component, Astro will process the styles and script tag inside the component and bundle it for you during the building stage, which means you can [import local npm modules inside the script tags](https://docs.astro.build/en/guides/client-side-scripts/#script-bundling)! Furthermore, if you include a component multiple times in a webpage, Astro will bundle it for you so that you only deliver it once to the client. Hence, if your component written in Vue actually doesn't use any javascript, then Astro will compile that javascript component as a completely static! This is what they promise in their tagline ["zero client-side JS, by default"](https://docs.astro.build/en/concepts/islands/#how-do-islands-work-in-astro). you'd like astro to skip processing and have the script be sent directly to the client as is, passing a `<script is:inline>` directive will signify to keep the script as is. The way scoping works by default is that class names that you use in the component will have an extra hash added to it. In this case `astro-5GRSW2HI` is added to the class list.
+In this component, Astro will process the styles and script tag inside the component and bundle it for you during the building stage, which means you can [import local npm modules inside the script tags](https://docs.astro.build/en/guides/client-side-scripts/#script-bundling)! Furthermore, if you include a component multiple times in a webpage, Astro will bundle it for you so that you only deliver it once to the client. Hence, if your component written in Vue actually doesn't use any javascript, then Astro will compile that javascript component as a completely static! This is what they promise in their tagline ["zero client-side JS, by default"](https://docs.astro.build/en/concepts/islands/#how-do-islands-work-in-astro). If you'd like astro to skip processing and have the script be sent directly to the client as is, passing a `<script is:inline>` directive will signify to keep the script as is. The way scoping works by default is that class names that you use in the component will have an extra hash added to it. In this case `astro-5GRSW2HI` is added to the class list.
 
 ```html
 <h1 class="title astro-5GRSW2HI">
@@ -85,7 +85,7 @@ In this component, Astro will process the styles and script tag inside the compo
 
 Though this is convenient for not having to worry about about styling from one component to the next, styling children elements of the component is a little more complicated. For example, I use the same `<Navigation />` component to standardize the appearance of the navigation on the side, however tracking the "active" state across the website requires me to pass a prop to the component. This is because the component is not aware of the current page it is on, and thus cannot apply the active class to the correct link. This is a little more complicated than I would like, but I think it's a fair tradeoff for the convenience of scoped styling.
 
-<figure style="border: 2px solid #D8DEE9;display:flex;justify-content:center;width:50%;margin: 0px auto;">
+<figure class="sidenav-figure" >
 
 ![Side Navigation Picture](../../assets/sidenav.webp)
 
@@ -175,6 +175,16 @@ Overall, the Astro framework has been a joy to work with. I'll slowly be migrati
    align-self: center;
    /* font-decoration: italic; */
 }
+.sidenav-figure {
+   display:flex;
+   justify-content:center;
+   width:50%;
+   margin: 0px auto;
+}
+.sidenav-figure img {
+   border: 2px solid #D8DEE9;
+}
+
 
 
 @media screen and (max-width: 750px) {
@@ -200,8 +210,7 @@ Overall, the Astro framework has been a joy to work with. I'll slowly be migrati
       grid-row: 3;
       grid-column:1;
       color: #9f9f9f;
-      padding-right: 0;
-      padding--left: 0;
+      padding: 5px 16px;
    }
 
 }
