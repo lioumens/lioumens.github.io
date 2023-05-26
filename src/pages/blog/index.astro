@@ -29,8 +29,8 @@ const activeNav = 1 // sets side nav position
 			<h1>Recent Posts</h1>
 			<hr />
 			<ul>
-				{quartoPosts.map(post => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
-				{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
+				{quartoPosts.map(post => <BlogPost url={"/astro-website/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
+				{allPosts.map((post) => <BlogPost url={"/astro-website/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
 			</ul> 
 </BaseLayout>
 
