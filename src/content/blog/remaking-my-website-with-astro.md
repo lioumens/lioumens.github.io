@@ -1,12 +1,13 @@
 ---
 title: 'Remaking my Website with Astro'
-pubDate: 2023-05-25
+pubDate: 2023-08-25
 description: 'Exploring Astro as a platform for building my website'
 author: 'Astro Learner'
 image:
     url: './astro_island.svg'
     alt: 'The full Astro logo.'
 tags: ["astro", "web", "devlog"]
+draft: false
 ---
 
 <img src="/astro-website/astro_island.svg" alt="Astro next to an island" width="90%" title="Astro islands..." />

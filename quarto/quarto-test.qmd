@@ -12,7 +12,7 @@ format:
     output-file: "quarto-test.md"
     toc: true
     df-print: kable
-prefer-html: true
+eprefer-html: true
 ---
 
 ## Quarto

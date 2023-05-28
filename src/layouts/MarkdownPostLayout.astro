@@ -15,6 +15,7 @@ import BaseLayout from './BaseLayout.astro';
 import Giscus from "../components/Giscus.astro";
 import TagList from "../components/TagList.astro"
 
+const dateFormatter = new Intl.DateTimeFormat("en-GB", { year: 'numeric', month: 'long', day: 'numeric', timeZone: "UTC"})
 
 // properties
 const { frontmatter } = Astro.props;
@@ -28,7 +29,7 @@ const tagSize = 1; // scales rem
 
 <BaseLayout pageTitle={frontmatter.title} activeNav={1}>
     <div class="blog-meta">
-<span class="date" style="color: lightgrey; font-size: .8rem;">{frontmatter.pubDate.toDateString()}</span>
+<span class="date" style="color: lightgrey; font-size: .8rem;">{dateFormatter.format(frontmatter.pubDate)}</span>
 <div class="tags">
 <TagList tags={tags} />
 </div>

@@ -5,15 +5,18 @@ import { getCollection } from "astro:content";
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import BlogPost from '../../components/BlogPost.astro'
 
+// display date in a format, but 
+const dateFormatter = new Intl.DateTimeFormat("en-GB", { year: 'numeric', month: 'long', day: 'numeric', timeZone: "UTC"})
+
 // if you want to filter the posts and display something 
 const allPosts = await getCollection("blog", ({ data }) => {
+	console.log(data.title, data.pubDate, dateFormatter.format(data.pubDate))
 	return data.draft !== true
 })
 const quartoPosts = await getCollection("quarto", ({ data }) => {
 	return data.draft !== true
 })
 
-const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month: 'long', day: 'numeric' })
 // console.log(allPosts[0].tags)
 
 // astro directive to return array of objects, all of them
@@ -29,8 +32,8 @@ const activeNav = 1 // sets side nav position
 			<h1>Recent Posts</h1>
 			<hr />
 			<ul>
-				{quartoPosts.map(post => <BlogPost url={"/astro-website/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
-				{allPosts.map((post) => <BlogPost url={"/astro-website/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
+				<!-- {quartoPosts.map(post => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)} -->
+				{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
 			</ul> 
 </BaseLayout>
 

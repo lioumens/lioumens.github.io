@@ -1,12 +1,11 @@
 ---
-import Hamburger from "./Hamburger.astro"
-const { activeNav, topBlurClass } = Astro.props;
+const { activeNav } = Astro.props;
 ---
 
 <nav class="side">
 	<div class="card"> 
 		<!-- <img src="/logo_distribution.svg" height=200 width=250 alt="icon"> -->
-		<h2>Michael Liou</h2>
+		<a href="/"><h2>Michael Liou</h2></a>
 		<h3>Statistical Sorcery</h3>
 		<!-- statistical sorcery, numbers with personality, beyond the average, mildly chaotic, anything but normal -->
 	</div>
@@ -14,10 +13,10 @@ const { activeNav, topBlurClass } = Astro.props;
 		<span class="nav-divider"/>
 		<span class="nav-divider"/>
 		<ul>
-			<a href="/astro-website"><li>About</li></a>
-			<a href="/astro-website/blog"><li>Blog</li></a>
-			<a href="/astro-website/resources"><li>Resources</li></a>
-			<a href="/astro-website/tags"><li>Archive</li></a>
+			<a href="/"><li>About</li></a>
+			<a href="/blog"><li>Blog</li></a>
+			<a href="/resources"><li>Resources</li></a>
+			<a href="/tags"><li>Archive</li></a>
 			<div class="active"></div>
 		</ul>
 		<span class="nav-divider" />
@@ -29,7 +28,7 @@ const { activeNav, topBlurClass } = Astro.props;
 <div class="top-strip">
     <div class="top-card">
 		<!-- <img src="https://secure.gravatar.com/avatar/cff471ff7d771f85f7c842ee87eb095c?s=150" alt="icon"> -->
-        <h2>Michael Liou</h2>
+        <a href="/"><h2>Michael Liou</h2></a>
         <!-- <span>Michael Liou</span> -->
     </div>
     <!-- <Hamburger />  -->
@@ -41,10 +40,10 @@ const { activeNav, topBlurClass } = Astro.props;
 </div>
 <div class="top-drawer">
     <ul>
-        <a href="/astro-website"><li>About</li></a>
-        <a href="/astro-website/blog"><li>Blog</li></a>
-        <a href="/astro-website/resources"><li>Resources</li></a>
-        <a href="/astro-website/tags"><li>Archive</li></a>
+        <a href="/"><li>About</li></a>
+        <a href="/blog"><li>Blog</li></a>
+        <a href="/resources"><li>Resources</li></a>
+        <a href="/tags"><li>Archive</li></a>
     </ul>
 
 </div>
@@ -72,6 +71,9 @@ const { activeNav, topBlurClass } = Astro.props;
 
 <style lang="scss" define:vars={{ activeNav }}>
 	@import "../../node_modules/nord/src/sass/nord.scss";
+    a {
+        text-decoration: none;   
+    }
     .card {
 		display: flex;
 		flex-direction: column;
