@@ -10,7 +10,7 @@ tags: ["astro", "web", "devlog"]
 draft: false
 ---
 
-<img src="/astro-website/astro_island.svg" alt="Astro next to an island" width="90%" title="Astro islands..." />
+<img src="/astro_island.svg" alt="Astro next to an island" width="90%" title="Astro islands..." />
 
 ## Why Astro
 
@@ -25,11 +25,11 @@ draft: false
 
 <figure class='ssr-csr-figure'>
  <video class="csr-video" width="230" height="450" autoplay loop muted playsinline >
- <source src="/astro-website/app_store_csr_240_30fps_no_audio.mp4" type="video/mp4">
+ <source src="/app_store_csr_240_30fps_no_audio.mp4" type="video/mp4">
  Sorry your browser does not support this video.
  </video>
  <video class="ssr-video" width="500" height="250" autoplay loop muted playsinline>
- <source src="/astro-website/amazon_ssr_322.mp4" type="video/mp4">
+ <source src="/amazon_ssr_322.mp4" type="video/mp4">
  </video>
  <figcaption > 
  Compare the "client"-focused application (app store on iphone) with smoother transitions and animations for opening different web pages, with the "server"-focused application (amazon) that does a full page reload (flashes white) when navigating to a different page.
