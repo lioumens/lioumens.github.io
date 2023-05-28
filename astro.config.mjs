@@ -13,6 +13,7 @@ export default defineConfig({
     assets: true
   },
   markdown: {
+    drafts: false,
     shikiConfig: {
       theme: "nord",
       langs: ["python", "r", "html", "css", "javascript"]
@@ -21,7 +22,7 @@ export default defineConfig({
     rehypePlugins: [["rehype-katex", {
       // katex plugin options
       trust: true,
-      strict: false
+      strict: false // for html styling in math blocks
     }]]
   },
   image: {

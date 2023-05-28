@@ -5,9 +5,11 @@ import TagList from '../../components/TagList.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-    // replace with getCollection("blog") when using content collections
+
 //   const allPosts = await Astro.glob('../posts/*.md');
-const allPosts = await getCollection("blog");
+  const allPosts = await getCollection("blog", ({ data }) => {
+    return data.draft !== true
+  })
 
   // retrieve all tags from all posts
   const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
@@ -20,15 +22,6 @@ const allPosts = await getCollection("blog");
       props: { posts: filteredPosts }, // the return of filtered posts here is mapped to posts (which is the prop below)
     };
   });
-// example of returning every route manually
-//   return [
-//     {params: {tag: "astro"}, props: {posts: allPosts}},
-//     {params: {tag: "successes"}, props: {posts: allPosts}},
-//     {params: {tag: "community"}, props: {posts: allPosts}},
-//     {params: {tag: "blogging"}, props: {posts: allPosts}},
-//     {params: {tag: "setbacks"}, props: {posts: allPosts}},
-//     {params: {tag: "learning in public"}, props: {posts: allPosts}}
-//   ]
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en-gb", { year: 'numeric', month: 'long', day: 'numeric' })
@@ -41,7 +34,7 @@ const activeNav = 3;
 // console.log(posts)
 ---
 <BaseLayout pageTitle={tag} activeNav={activeNav}>
-    <h2> Posts with the tag</h2> <TagList tags={[tag]} tagSize=2 tagDisplay="inline"/>
+    <h2>Posts with the tag &nbsp;</h2> <TagList tags={[tag]} tagSize=2 tagDisplay="inline"/>
     <hr />
   <ul>
     {posts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags} />)}
