@@ -42,7 +42,7 @@
       <p>The unit the whole-plot treatment is applied to. A block is broken into whole-plot experimental units. In the standard split-plot design, the whole plots are arranged in an RCBD, with 1 whole-plot experimental unit for each whole-plot treatment factor.</p>
       <input type="radio" id="sp-def" name="terms">
       <label for="sp-def">Split-plot Experimental Unit</label> <br> <p>A smaller size experimental unit that the split-plot factor B is applied to. In a split-plot design, this experimental unit is wholly contained within the whole-plot experimental unit. </p>
-<svg width="700" height="500">
+<svg width="100%" viewBox="20 20 550 400" preserveAspectRatio="XMidYMid">
   <g class="factor-text">
     <text class="A-text" x="20" y="50">WP Factor A</text>
     <text class="B-text" x="280" y="50">SP Factor B</text>
@@ -114,7 +114,7 @@
       <rect id="test-highlight" class="x2 y3" width="75" height="90" x="20" stroke="red" fill="red" stroke-width="10"/>
       </g> -->
   </svg>
-  <figcaption>Click headings above to highlight examples.</figcaption>
+  <p class="figcaption">Click headings above to highlight examples.</p>
 </div> 
 
 </template>
@@ -521,9 +521,11 @@ $y-pos-sp: (
 /* change font/cursor to clickable */
 .drawing label {
   cursor: pointer;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   font-family: "Gloria Hallelujah", cursive;
   z-index: 2;
+  white-space: nowrap;
+  
 }
 // .drawing label:hover:after {
 //   background-color: black;
@@ -709,8 +711,8 @@ p {
   // color: rebeccapurple;
 }
 
-figcaption {
-  transform: translate(20px, -70px);
+.figcaption {
+  transform: translate(20px, -20px);
   color: #9f9f9f;
 }
 
