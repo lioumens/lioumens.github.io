@@ -1,22 +1,38 @@
 <template>
-    <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1">
       <defs>
-      <pattern id="triangle-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.24)"><path id="a" data-color="fill" fill="none" stroke="#0000ff" stroke-width="4" d="M-25 20h50L0-20z"></path><use xlink:href="#a" x="100"></use><use xlink:href="#a" y="100"></use><use xlink:href="#a" x="100" y="100"></use><use xlink:href="#a" x="50" y="50"></use><use xlink:href="#a" x="50" y="150"></use></pattern>
-      <pattern id="circle-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.25)"><circle id="circ-pattern" data-color="outline" fill="none" stroke="#0000FF" stroke-width="3.84" cx="0" cy="0" r="60"></circle><use xlink:href="#circ-pattern" x="100"></use><use xlink:href="#circ-pattern" x="100" y="100"></use><use xlink:href="#circ-pattern" y="100"></use></pattern>
- <pattern id="dot-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(22) scale(0.2)"><circle data-color="outline" fill="none" stroke="#0000ff" stroke-width="22.17" cx="50" cy="50" r=".5"></circle></pattern>
+      <pattern id="triangle-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(20) scale(0.16)">
+        <!-- <path id="a" data-color="fill" fill="none" stroke="#00ff00" stroke-width="4" d="M-25 20h50L0-20z"></path> -->
+        <path id="triag-pattern" data-color="fill" fill="none" stroke="#00ff00" stroke-width="6" d="M5,10h50l-25,43.3z"></path>
+          <!-- <use xlink:href="#a" x="100"></use> -->
+          <!-- <use xlink:href="#a" y="100"></use> -->
+          <!-- <use xlink:href="#a" x="100" y="100"></use> -->
+          <!-- <use xlink:href="#triag-pattern" x="50" y="50"></use>
+          <use xlink:href="#triag-pattern" x="50" y="150"></use> -->
+      </pattern>
+      <pattern id="circle-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.17)">
+        <circle id="circ-pattern" data-color="outline" fill="none" stroke="#0000FF" stroke-width="5" cx="0" cy="0" r="60"></circle>
+        <!-- <use xlink:href="#circ-pattern" x="100"></use>
+        <use xlink:href="#circ-pattern" x="100" y="100"></use>
+        <use xlink:href="#circ-pattern" y="100"></use> -->
+      </pattern>
+ <pattern id="dot-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(22) scale(.2)">
+  <circle fill="#0000ff" stroke="none" stroke-width="none" cx="50" cy="50" r="30"></circle>
+</pattern>
   <filter id="marker-shape">
       <feTurbulence type="fractalNoise" baseFrequency="0 0.15" numOctaves="1" result="warp" />
       <feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="30" in="SourceGraphic" in2="warp" />
-    </filter>
-      <filter xmlns="http://www.w3.org/2000/svg" id="torn-filter">
+  </filter>
+  <filter xmlns="http://www.w3.org/2000/svg" id="torn-filter">
       <feTurbulence result="TURBULENCE" baseFrequency="0.03" numOctaves="1" seed="1"/>
-       
       <feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale="9"/>
       <feOffset in="displacementMap" dx="-4" dy="-2"/>
-      </filter>
-      </defs> </svg>
+  </filter>
+</defs>
+</svg>
 
-   
+
+
 <div class="drawing">
       <h2>Main components of a split-plot design:</h2>
       <input type="radio" id="rep-def" name="terms" checked>
@@ -42,54 +58,61 @@
   </g>
   
   <g class="wp">
-    <rect class="x1 y1 a1"/><text class="x1 y1 a1">A1</text>
-    <rect class="x2 y1 a2"/><text class="x2 y1 a2">A2</text>
-    <rect class="x3 y1 a3"/><text class="x3 y1 a3">A3</text>
+    <rect class="x1 y1 a1"/><g class="x1 y1 a1"><text class="x1 y1 a1">A1</text></g>
+    <rect class="x2 y1 a2"/><g class="x2 y1 a2"><text class="x2 y1 a2">A2</text></g>
+    <rect class="x3 y1 a3"/><g class="x3 y1 a3"><text class="x3 y1 a3">A3</text></g>
     
-    <rect class="x1 y2 a2"/><text class="x1 y2 a2">A2</text>
-    <rect class="x2 y2 a3"/><text class="x2 y2 a3">A3</text>
-    <rect class="x3 y2 a1"/><text class="x3 y2 a1">A1</text>
+    <rect class="x1 y2 a2"/><g class="x1 y2 a2"><text class="x1 y2 a2">A2</text></g>
+    <rect class="x2 y2 a3"/><g class="x2 y2 a3"><text class="x2 y2 a3">A3</text></g>
+    <rect class="x3 y2 a1"/><g class="x3 y2 a1"><text class="x3 y2 a1">A1</text></g>
     
-    <rect class="x1 y3 a2"/><text class="x1 y3 a2">A2</text>
-    <rect class="x2 y3 a1"/><text class="x2 y3 a1">A1</text>
-    <rect class="x3 y3 a3"/><text class="x3 y3 a3">A3</text>
+    <rect class="x1 y3 a2"/><g class="x1 y3 a2"><text class="x1 y3 a2">A2</text></g>
+    <rect class="x2 y3 a1"/><g class="x2 y3 a1"><text class="x2 y3 a1">A1</text></g>
+    <rect class="x3 y3 a3"/><g class="x3 y3 a3"><text class="x3 y3 a3">A3</text></g>
   </g>
   
 <g class="sp">
   <g class="sp-left">
-    <rect class="x1 y1 b1"/><text class="x1 y1 b1">B1</text>
-    <rect class="x2 y1 b2"/><text class="x2 y1 b2">B2</text>
-    <rect class="x3 y1 b2"/><text class="x3 y1 b2">B2</text>
+    <rect class="x1 y1 b1"/><g class="x1 y1 b1"><text class="x1 y1 b1">B1</text></g>
+    <rect class="x2 y1 b2"/><g class="x2 y1 b2"><text class="x2 y1 b2">B2</text></g>
+    <rect class="x3 y1 b2"/><g class="x3 y1 b2"><text class="x3 y1 b2">B2</text></g>
       
-    <rect class="x1 y2 b2"/><text class="x1 y2 b2">B2</text>
-    <rect class="x2 y2 b1"/><text class="x2 y2 b1">B1</text>
-    <rect class="x3 y2 b2"/><text class="x3 y2 b2">B2</text>
+    <rect class="x1 y2 b2"/><g class="x1 y2 b2"><text class="x1 y2 b2">B2</text></g>
+    <rect class="x2 y2 b1"/><g class="x2 y2 b1"><text class="x2 y2 b1">B1</text></g>
+    <rect class="x3 y2 b2"/><g class="x3 y2 b2"><text class="x3 y2 b2">B2</text></g>
       
-    <rect class="x1 y3 b2"/><text class="x1 y3 b2">B2</text>
-    <rect class="x2 y3 b1"/><text class="x2 y3 b1">B1</text>
-    <rect class="x3 y3 b2"/><text class="x3 y3 b2">B2</text>
+    <rect class="x1 y3 b2"/><g class="x1 y3 b2"><text class="x1 y3 b2">B2</text></g>
+    <rect class="x2 y3 b1"/><g class="x2 y3 b1"><text class="x2 y3 b1">B1</text></g>
+    <rect class="x3 y3 b2"/><g class="x3 y3 b2"><text class="x3 y3 b2">B2</text></g>
   </g>
   <g class="sp-right">
-    <rect class="x1 y1 b2"/><text class="x1 y1 b2">B2</text>
-    <rect class="x2 y1 b1"/><text class="x2 y1 b1">B1</text>
-    <rect class="x3 y1 b1"/><text class="x3 y1 b1">B1</text>
-      
-    <rect class="x1 y2 b1"/><text class="x1 y2 b1">B1</text>
-    <rect class="x2 y2 b2"/><text class="x2 y2 b2">B2</text>
-    <rect class="x3 y2 b1"/><text class="x3 y2 b1">B1</text>
-      
-    <rect class="x1 y3 b1"/><text class="x1 y3 b1">B1</text>
-    <rect class="x2 y3 b2"/><text class="x2 y3 b2">B2</text>
-    <rect class="x3 y3 b1"/><text class="x3 y3 b1">B1</text>
-    
-      </g>
-          
-  
+    <rect class="x1 y1 b2"/><g class="x1 y1 b2"><text class="x1 y1 b2">B2</text></g>
+    <rect class="x2 y1 b1"/><g class="x2 y1 b1"><text class="x2 y1 b1">B1</text></g>
+    <rect class="x3 y1 b1"/><g class="x3 y1 b1"><text class="x3 y1 b1">B1</text></g>
+
+    <rect class="x1 y2 b1"/><g class="x1 y2 b1"><text class="x1 y2 b1">B1</text></g>
+    <rect class="x2 y2 b2"/><g class="x2 y2 b2"><text class="x2 y2 b2">B2</text></g>
+    <rect class="x3 y2 b1"/><g class="x3 y2 b1"><text class="x3 y2 b1">B1</text></g>
+
+    <rect class="x1 y3 b1"/><g class="x1 y3 b1"><text class="x1 y3 b1">B1</text></g>
+    <rect class="x2 y3 b2"/><g class="x2 y3 b2"><text class="x2 y3 b2">B2</text></g>
+    <rect class="x3 y3 b1"/><g class="x3 y3 b1"><text class="x3 y3 b1">B1</text></g>
+  </g>
 </g>
-      <rect id="rep-highlight" width="450" height="100" x="20" y="190" opacity="0">
-      </rect>
+      <rect id="rep-highlight" width="450" height="100" x="20" y="190" opacity="0"/>
       <rect id="wp-highlight" class="x3 y1 a3"/>
-      <rect id="sp-highlight" class="x2 y3"/>
+      <g id="sp-highlight">
+        <rect class="x2 y3"/>
+      </g>
+      <!-- <g style="-webkit-filter: url('#torn-filter')"> -->
+  <!-- <filter xmlns="http://www.w3.org/2000/svg" id="torn-inline" color-interpolation-filters="sRGB">
+      <feTurbulence result="TURBULENCE" baseFrequency="0.03" numOctaves="1" seed="1"/>
+      <feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale="9"/>
+      <feOffset in="displacementMap" dx="-4" dy="-2"/>
+  </filter>
+      <g filter="url(#torn-inline)">
+      <rect id="test-highlight" class="x2 y3" width="75" height="90" x="20" stroke="red" fill="red" stroke-width="10"/>
+      </g> -->
   </svg>
   <figcaption>Click headings above to highlight examples.</figcaption>
 </div> 
@@ -98,6 +121,20 @@
 
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@1,100&family=Gloria+Hallelujah&family=KoHo:wght@300&display=swap');
+
+.tritest{
+  height: 300px;
+  width: 300px;
+  background: red;
+}
+
+.tritest .tritest_svg {
+  background: black;
+}
+
+.arect {
+  fill: url(#dot-fill) #ff0;
+}
 
 $svg-height: 500px;
 $svg-width: 700px;
@@ -144,11 +181,13 @@ $highlight-color: lighten(#A3BE8C, 0); /* nord aurora */
 $hover-color: #81A1C1;
 
 #dot-fill circle {
-  stroke: $dot-fill-color;
+  fill: $dot-fill-color;
 }
 
 #triangle-fill path {
   stroke: $triangle-fill-color;
+  // fill: $triangle-fill-color;
+  // stroke: purple;
 }
 
 .x3 {
@@ -183,7 +222,7 @@ text.a3 {
 }
 .rep rect {
   width: $rep-width;
-  height:$rep-height;
+  height: $rep-height;
   stroke: $rep-stroke-color;
   stroke-width: 5;
   fill: #ECEFF4; /* nord6 */
@@ -202,7 +241,9 @@ text.a3 {
   stroke-opacity: 70%;
   stroke: $sp-stroke-color;
   stroke-dasharray: 5, 5;
-  /* // opacity: 0%; // hide layer temporariliy */
+  // opacity: 0%; // hide layer temporariliy */
+  fill-opacity: 0%;
+  stroke-opacity: 70%;
 }
 .sp-left rect {
   transform: translate(
@@ -219,9 +260,9 @@ text.a3 {
 }
 
 .b1 {
-  fill: url(#diagonal-stripe-2) #ff0;
+  // fill: url(#diagonal-stripe-2) #ff0;
   /* // fill-opacity: 0%; */
-  fill: url(#circle-fill) #ff0;
+  // fill: url(#circle-fill) #ff0;
   fill: url(#dot-fill) #ff0;
 }
 .b2 {
@@ -312,11 +353,17 @@ $y-pos-wp: (y1 $y1 15% 20%, y2 $y2 22.5% 27.5%, y3 $y3 30% 35%);
     @keyframes randomize-wp-#{$row}-#{$col} {
       0%,
       #{$keyin} {
+        // -webkit-transform: translate3d(20px, 50px, 0px);
         transform: translate(20px, 50px);
         opacity: 0%;
       }
       #{$keyout},
       100% {
+        // -webkit-transform: translate3d(
+        //   $col-value + $wp-width * 0.3,
+        //   $row-value + $wp-height * 0.65,
+        //   0px
+        // );
         transform: translate(
           $col-value + $wp-width * 0.3,
           $row-value + $wp-height * 0.65
@@ -343,9 +390,12 @@ $y-pos-wp: (y1 $y1 15% 20%, y2 $y2 22.5% 27.5%, y3 $y3 30% 35%);
       }
     }
 
-    .wp text.#{$row}.#{$col} {
+    .wp g.#{$row}.#{$col} {
       animation: randomize-wp-#{$row}-#{$col} 10s ease-in infinite;
     }
+    // .wp text.#{$row}.#{$col} {
+    //   animation: randomize-wp-#{$row}-#{$col} 10s ease-in infinite;
+    // }
     .wp > rect.#{$row} {
       animation: colorize-wp-#{$row} 10s ease infinite;
     }
@@ -425,32 +475,39 @@ $y-pos-sp: (
     @keyframes show-sp-#{$row} {
       0%,
       45% {
-        opacity: 0%;
+        // opacity: 0%;
         fill-opacity: 0%;
+        stroke-opacity: 0%;
       }
       50% {
-        opacity: 100%;
         fill-opacity: 0%;
+        stroke-opacity: 100%
       }
       #{$basekey + 15%} {
+        opacity: 100%;
+        stroke-opacity: 100%;
         fill-opacity: 0%;
       }
       #{$basekey + 20%} {
+        opacity: 100%;
         fill-opacity: 100%;
       }
       100% {
         opacity: 100%;
         fill-opacity: 100%;
+        stroke-opacity: 100%;
       }
     }
     .sp rect.#{$row} {
       animation: show-sp-#{$row} 10s ease infinite;
+      animation-delay: 0ms;
     }
-    .sp-right text.#{$row}.#{$col} {
+    .sp-right g.#{$row}.#{$col} {
       animation: randomize-sp-right-#{$row}-#{$col} 10s ease infinite;
     }
-    .sp-left text.#{$row}.#{$col} {
+    .sp-left g.#{$row}.#{$col} {
       animation: randomize-sp-left-#{$row}-#{$col} 10s ease infinite;
+      animation-delay: 0ms;
     }
   }
 }
@@ -589,7 +646,7 @@ $y-pos-sp: (
   fill: none;
   stroke: $highlight-color !important;
   stroke-width: 10px;
-  filter: url(#torn-filter);
+  // filter: url(#torn-filter);
   stroke-dasharray: 1200;
   stroke-dashoffset: 1200;
   animation: draw-rect 1s ease-out forwards;
@@ -601,7 +658,7 @@ $y-pos-sp: (
   fill: none;
   stroke: $highlight-color !important;
   stroke-width: 10px;
-  filter: url(#torn-filter);
+  // filter: url(#torn-filter);
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: draw-rect 1.5s ease-out forwards;
@@ -612,19 +669,37 @@ $y-pos-sp: (
   }
 }
 
-#sp-def:checked ~ svg > #sp-highlight {
+#sp-def:checked ~ svg > #sp-highlight > rect {
   height: $sp-height;
   width: $sp-width;
   opacity: 100%;
-  fill: none;
+  fill: transparent;
   stroke: $highlight-color !important;
+  // stroke: red;
   stroke-width: 10px;
   transform: translate(0px, $wp-stroke * 0.5);
-  filter: url(#torn-filter);
+  // filter: url(#torn-filter); // couldn't get this to work on safari browsers
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: draw-rect 1.5s ease-out forwards;
 }
+
+// #test-highlight {
+//   transform: translate(0, $wp-stroke);
+//   // stroke: $highlight-color;
+//   // -webkit-filter: url(#torn-filter);
+//   // filter: url(#torn-filter);
+//   // display: block;
+//   // fill: transparent;
+//   // filter: url('data:image/svg+xml,\
+//   //   <svg xmlns="http://www.w3.org/2000/svg">\
+//   // <filter xmlns="http://www.w3.org/2000/svg" id="torn-filter">\
+//   //     <feTurbulence result="TURBULENCE" baseFrequency="0.03" numOctaves="1" seed="1"/>\
+//   //     <feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale="9"/>\
+//   //     <feOffset in="displacementMap" dx="-4" dy="-2"/>\
+//   //     </filter>\
+//   //   </svg>#torn-filter');
+// }
 
 h2,
 p {
