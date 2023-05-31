@@ -1,0 +1,28 @@
+// colors
+// @import "nord/src/sass/nord.scss";
+@import "./nord.css";
+
+// shadows
+:root {
+    --shadow-color: 222deg 23% 13%;
+    --shadow-elevation-low:
+      0.6px 0.5px 0.9px hsl(var(--shadow-color) / 0.4),
+      1px 0.8px 1.4px -1.3px hsl(var(--shadow-color) / 0.38),
+      2.6px 2px 3.6px -2.7px hsl(var(--shadow-color) / 0.36);
+    --shadow-elevation-medium:
+      0.6px 0.5px 0.9px hsl(var(--shadow-color) / 0.42),
+      2px 1.6px 2.8px -0.9px hsl(var(--shadow-color) / 0.41),
+      5.3px 4px 7.3px -1.8px hsl(var(--shadow-color) / 0.39),
+      13px 10px 18px -2.7px hsl(var(--shadow-color) / 0.38);
+    --shadow-elevation-high:
+      0.6px 0.5px 0.9px hsl(var(--shadow-color) / 0.39),
+      3.7px 2.8px 5.1px -0.4px hsl(var(--shadow-color) / 0.38),
+      6.9px 5.3px 9.5px -0.8px hsl(var(--shadow-color) / 0.38),
+      11.6px 8.8px 15.9px -1.2px hsl(var(--shadow-color) / 0.37),
+      18.8px 14.4px 25.9px -1.5px hsl(var(--shadow-color) / 0.36),
+      29.8px 22.7px 41px -1.9px hsl(var(--shadow-color) / 0.36),
+      45.7px 34.9px 63px -2.3px hsl(var(--shadow-color) / 0.35),
+      67.7px 51.7px 93.3px -2.7px hsl(var(--shadow-color) / 0.34);
+  }
+
+// fonts

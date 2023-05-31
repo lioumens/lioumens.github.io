@@ -1,0 +1,283 @@
+---
+title: 'Animating a Split-Plot Design with CSS'
+pubDate: 2023-05-28
+description: 'Animation of Split-Plot Design'
+author: 'Michael Liou'
+image:
+    url: './astro_island.svg'
+    alt: 'The full Astro logo.'
+tags:
+  - statistics
+  - web
+  - devlog
+draft: false
+---
+
+import SplitPlot from "../../components/SplitPlot.vue";
+import BlockQuote from "../../components/BlockQuote.astro";
+export const components = { blockquote: BlockQuote};
+
+This post won't dive too deeply into the details of their analysis, rather I'll
+talk more about building better visual tools to understand and teach them. I
+wish there were better animations and interactive web resources to help
+visualize the process of the design. In fact, this is generally one of my gripes
+about statistical education, is that too much of the material is presented as
+formulas and tables, with rather somewhat archaic looking summation formulas for
+sums of squares. The presentation needs more pictures. Furthermore, since
+designs of experiments are random processes, we should be able to see the
+randomization for each of the units, along with the main components of the
+design. We'll build a small prototype in this post, and hope that we can reuse
+some of the components to build more visual guides to experimental design.
+
+<SplitPlot />
+
+
+It's hard to overstate the importance and ubiquity of split-plot designs, yet
+they are still tricky to analyze and appreciate the full complexity of all that
+the design implies. Very briefly, split-plot designs in statistical terminology
+means that are multiple sizes of experimental units, one of which is nested
+inside the other. Experimental units are the smallest unit to which a treatment
+is applied. Because there are different sizes of experimental units, the error
+variance associated with the larger of the units,(the whole plots) will differ
+from that of the smaller units (the subplots). This is the source of the
+complexity in the analysis, and the feature that makes them so commonly
+misunderstood. It's important to note that there is a classical split-plot
+design that is presented in most textbooks and classes, but there are many, many
+different ways in which we can have two different sizes of experimental units,
+and different ways those units can be arranged. Thus a split-plot design is more
+of a general class of designs, rather than a specific design. In fact, entire
+books can be written about just the split-plot design. See [Federer, Variations
+on the Split-Plot
+Design](https://www.wiley.com/en-us/Variations+on+Split+Plot+and+Split+Block+Experiment+Designs-p-9780470108574).
+
+<BlockQuote quote="All industrial experiments are split-plot experiments." source="Cuthbert Daniel" />
+
+
+
+## Under the Hood
+
+There are a number of ways to animate SVG elements, [GSAP](https://greensock.com/) seems to be the most robust and advanced out of them all, while [d3.js](https://d3js.org/) seems to be focused on tweening and transitions. There is also the [Web Animation API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API), which reflects many of the structures seen in CSS animation. There are not a lot of complicated requirements this animation has other than moving around basic shapes, so I decided to push CSS animations to its limits and not use any javascript for this little project.
+
+## Positioning SVG
+
+The main components of the animation are setup in a grid utility system, and the main styling variables are defined as variables in Sass.
+
+```html
+<g class="rep">
+  <rect class="x1 y1"/>
+    <text x="185" y="135"> Rep 1</text>
+  <rect class="x1 y2"/>
+    <text x ="185" y="255">Rep 2</text>
+  <rect class="x1 y3"/>
+    <text x="185" y="375">Rep 3</text>
+</g>
+  
+<g class="wp">
+  <rect class="x1 y1 a1"/><text class="x1 y1 a1">A1</text>
+  <rect class="x2 y1 a2"/><text class="x2 y1 a2">A2</text>
+  <rect class="x3 y1 a3"/><text class="x3 y1 a3">A3</text>
+  
+  <rect class="x1 y2 a2"/><text class="x1 y2 a2">A2</text>
+  <rect class="x2 y2 a3"/><text class="x2 y2 a3">A3</text>
+  <rect class="x3 y2 a1"/><text class="x3 y2 a1">A1</text>
+  
+  <rect class="x1 y3 a2"/><text class="x1 y3 a2">A2</text>
+  <rect class="x2 y3 a1"/><text class="x2 y3 a1">A1</text>
+  <rect class="x3 y3 a3"/><text class="x3 y3 a3">A3</text>
+</g>
+```
+
+
+```scss
+/* svg vars */
+$svg-height: 500px;
+$svg-width: 700px;
+
+/* rep vars */
+$rep-width: 450px;
+$rep-height: 100px;
+$rep-gap: 20px;
+
+/* wp vars */
+$wp-width: $rep-width * 0.33;
+$wp-height: $rep-height;
+$wp-stroke: 5px;
+
+/* sp vars */
+$sp-width: $wp-width * 0.5 - $wp-stroke * 0.5;
+$sp-height: $rep-height - $wp-stroke;
+
+/* grid vars */
+$x1: 20px;
+$x2: $x1 + $wp-width + $wp-stroke * 0.5;
+$x3: $x2 + $wp-width + $wp-stroke * 0.5;
+$y1: 70px;
+$y2: $y1 + $rep-height + $rep-gap;
+$y3: $y2 + $rep-height + $rep-gap;
+```
+
+## Animating SVG
+
+Once the elements are positioned, we can coordinate the CSS animations by defining the keyframes as percentages along a main timeline. The strategy is to have all the animations run in a 10 second loop, and then fill forward/backward the CSS properties for the periods that the animation is not active. For example, the animation of one of the whole-plot factors is active from keyframes 15%–20%, the CSS for that animation would be:
+
+```scss
+/* animation only active from 15% to 20% */
+@keyframes randomize-wp-x1-y1 {
+  0%, 15% {
+    transform: translate($fromX, $fromY);
+    opacity: 0%;
+  }
+  20%, 100% {
+    transform: translate($toX, $toY);
+    opacity: 100%;
+  }
+}
+```
+
+Since we're animating several similar elements, we can use one of Sass's best features and iterate through each column and row with `@each`.
+
+```scss
+/* each row will animate together */
+$x-pos-wp: (
+  x1: $x1,
+  x2: $x2,
+  x3: $x3
+);
+
+/* For whole plots, set the keyframes by rep (rows) */
+$y-pos-wp: (y1 $y1 15% 20%,
+            y2 $y2 22.5% 27.5%,
+            y3 $y3 30% 35%);
+
+@each $col, $col-value in $x-pos-wp {
+  /* Uses sass deconstruction */ 
+  @each $row, $row-value, $keyin, $keyout in $y-pos-wp {
+    @keyframes randomize-wp-#{$row}-#{$col} {
+      0%,
+      #{$keyin} {
+        transform: translate(20px, 50px);
+        opacity: 0%;
+      }
+      #{$keyout},
+      100% {
+        transform: translate(
+          $col-value + $wp-width * 0.3,
+          $row-value + $wp-height * 0.65
+        );
+        opacity: 100%;
+      }
+    }
+    .wp text.#{$row}.#{$col} {
+      animation: randomize-wp-#{$row}-#{$col} 10s ease-in infinite;
+    }
+  }
+}
+```
+
+The other elements are animated with similar keyframe loops, for `fill-opacity` or `stroke-opacity`. The hardest part about this strategy is that you'll need to plan a head for what percentage of time the animation will take up. If you find that you need more time for your animation, you'll find yourself adjusting the percentages of previous animations to make room for the new animation. This is a bit of a pain, but it's not too bad if you're just doing a few animations.
+
+## Interactivity of Highlighting
+
+The click interactivity is quite limited as it is much easier to do with javascript, but there's a well known hack using [invisible radio button](https://stackoverflow.com/a/32721572) to trigger conditional styling with CSS. The structure of the html is a series of input radio buttons, linked together by `name="terms"`.
+
+
+```html
+<input type="radio" id="rep-def" name="terms" checked>
+<label for="rep-def">Replicate</label>
+<!-- description for Replicate -->
+
+<input type="radio" id="wp-def" name="terms">
+<label for="wp-def">Whole-plot Experimental Unit</label>
+<!-- description for whole-plot experimental unit  -->
+
+<input type="radio" id="sp-def" name="terms">
+<label for="sp-def">Split-plot Experimental Unit</label>
+<!-- description for split-plot experimental unit  -->
+```
+
+Now once all the radio buttons are linked together, we can use the `:checked` pseudo-class to trigger conditional styling. For example, in the code above "Replicate" is set to checked, but clicking on the "Whole-plot Experimental Unit" will deselect "Replicate" and select "Whole-plot", which triggers the `:checked` pseudo-class in CSS. Then we can activate styling based on the element the user clicks. 
+
+I am using the pseudoelement `::before` to create the highlighting effect, so we can take advantage of the `+` selector in CSS to select the label after the radio button. Finally, we can add a hover effect to the label when the radio button is not checked, and style the `::after` pseudoelement, which is used to create the underlining effect.
+
+```css
+/* Make radio buttons invisible */
+[type="radio"] {
+  opacity: 0;
+  position: absolute;
+}
+
+/* Change cursor to indicate clickable */
+label {
+  cursor: pointer;
+}
+
+/* style label when radio button is checked */
+#rep-def:checked + label::before {
+  /* styling for highlighting */
+}
+
+#rep-def:not(:checked) + label:hover:after {
+  /* styling for underline on hover */
+}
+
+/* similar styling for other radio buttons */
+```
+
+Coordinating the highlighting of the text and svg highlight is a bit of a hack, that takes advantage of another useful css selector `~` which indicates a sister element. Again, we are checking the status of the pseudo-class `:checked` to trigger the highlighting. The drawing motion of the square highlight is also a bit of a hack, since we're using the `stroke-dashoffset` property. We let the offset be very large first, such that the offset is longer than the perimeter of the rectangle, and as the animation progresses, the offset is reduced to zero, which draws the rectangle.
+
+
+```scss
+#rep-def:checked ~ svg > #rep-highlight {
+  opacity: 100%;
+  fill: none;
+  stroke: $highlight-color !important;
+  stroke-width: 10px;
+  filter: url(#torn-filter);
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: draw-rect 1s ease-out forwards;
+}
+
+@keyframes draw-rect {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+```
+
+Here we run into a limitation of CSS animations -- we are limited by the *relative* selection operators to be able to coordinate action states between the radio button and other elements. For example, moving up to a parent with CSS is [difficult](https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector) and we would need to introduce javascript to have more precision on which elements are bound together for animation. Finally, there is another quirk in trying to reuse the code for highlighting and click interactivity -- the animations needs to extend to a different width for each of the section headers. Thus, the animations keyframes need to take an "argument" for the width, otherwise we would need to define keyframes for every width. We can get around this by using a `@mixin` with the Sass preprocessing, but we can also [use css-variables in the keyframes](https://css-tricks.com/using-custom-properties-to-wrangle-variations-in-keyframe-animations/), and set *local* values depending on which class/element is being animated. This is the skeleton of that strategy:
+
+```css
+/* define the keyframe with css variable */
+@keyframes highlight {
+  0% {
+    width: 0em;
+  }
+  100% {
+    width: var(--highlight-width);
+  }
+}
+
+/* animate "replicate" highlight element */
+#rep-def:checked + label::before {
+  --highlight-width: 5em; /* define css variable for animation */
+  animation: highlight 0.5s ease-out forwards;
+}
+
+/* animate "whole plot" highlight element */
+#wp-def:checked + label::before {
+  --highlight-width: 14em; /* define css variable for animation */
+  animation: highlight 0.5s ease-out forwards;
+}
+```
+
+The locally defined css variable `--highlight-width` will propogate through to the keyframes for different animations with the same keyframe code. We can also set a fallthrough default value for the css variable by defining it in the `:root` selector.
+
+
+## Conclusion
+
+This was a fun little project with animations with CSS. I was quite impressed with how expressive the animation can be with only CSS, though in the future it's probably much easier to use some javascript for click interactivity. Eventually, with enough tools for more interactivity, we can create some great resources for learning experimental design!
+
+
+
+

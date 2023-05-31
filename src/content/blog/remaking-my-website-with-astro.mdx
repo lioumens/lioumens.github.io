@@ -1,6 +1,6 @@
 ---
 title: 'Remaking my Website with Astro'
-pubDate: 2023-08-25
+pubDate: 2023-05-25
 description: 'Exploring Astro as a platform for building my website'
 author: 'Astro Learner'
 image:
@@ -9,6 +9,10 @@ image:
 tags: ["astro", "web", "devlog"]
 draft: false
 ---
+
+import SsrCsr from '../../components/SsrCsr.astro'
+import {Image} from 'astro:assets'
+import sideNavPic from "../../assets/sidenav.webp"
 
 <img src="/astro_island.svg" alt="Astro next to an island" width="90%" title="Astro islands..." />
 
@@ -23,20 +27,8 @@ draft: false
  
  The "island architecture" is a relatively modern way of mixing both SSR elements and CSR elements on the same webpage, while loading javascript only for components that need it. Often times on content focused websites, there are only certain parts of a webpage that need to be interactive, and we should be able to decide as a developer which parts of the webpage should be SSR and which parts should be CSR, and also when the javascript is delivered to the client for interactivity through a concept called [*partial hydration*](https://ajcwebdev.com/2021/11/22/what-is-partial-hydration-and-why-is-everyone-talking-about-it/#frameworks-built-for-partial-hydration). This is the promise of Astro, by providing a simple `client:load` directive. There are other client directives like `client:idle` that also allow the rendering of the component to happen in the background while the user is idle. These are normally for lower priority components that are interactive, but not the first thing the user will interact with on a web page.
 
-<figure class='ssr-csr-figure'>
- <video class="csr-video" width="230" height="450" autoplay loop muted playsinline >
- <source src="/app_store_csr_240_30fps_no_audio.mp4" type="video/mp4">
- Sorry your browser does not support this video.
- </video>
- <video class="ssr-video" width="500" height="250" autoplay loop muted playsinline>
- <source src="/amazon_ssr_322.mp4" type="video/mp4">
- </video>
- <figcaption > 
- Compare the "client"-focused application (app store on iphone) with smoother transitions and animations for opening different web pages, with the "server"-focused application (amazon) that does a full page reload (flashes white) when navigating to a different page.
- </figcaption>
-</figure>
  
-
+<SsrCsr />
 
 ## Web Development is a Journey
 
@@ -86,10 +78,8 @@ In this component, Astro will process the styles and script tag inside the compo
 
 Though this is convenient for not having to worry about about styling from one component to the next, styling children elements of the component is a little more complicated. For example, I use the same `<Navigation />` component to standardize the appearance of the navigation on the side, however tracking the "active" state across the website requires me to pass a prop to the component. This is because the component is not aware of the current page it is on, and thus cannot apply the active class to the correct link. This is a little more complicated than I would like, but I think it's a fair tradeoff for the convenience of scoped styling.
 
-<figure class="sidenav-figure" >
-
-![Side Navigation Picture](../../assets/sidenav.webp)
-
+<figure class="sidenav-figure" style={{display: "flex", 'justify-content':'center', margin: "0px auto"}}>
+<Image src={sideNavPic} alt="Side Navigation Picture" style={{border:"2px solid #D8DEE9"}} />
 </figure>
 
 Here are the main components of the design to get this effect with astro components:
@@ -146,95 +136,3 @@ const activeNav = 0;
 ## Astro, to the moon! 🚀
 
 Overall, the Astro framework has been a joy to work with. I'll slowly be migrating all my older website content over. As a markdown based site generator, the theming across the entire website will be easier to maintain, while continuing to learn more about modern web development. I'm excited to see where the development goes and I hope you'll join me on this journey!
-
-<style lang="scss">
-
-.ssr-csr-figure {
-   display: grid;
-   justify-content: start;
-   align-items: start;
-   justify-items: start;
-   grid-template-columns: 1fr 1fr;
-   grid-template-rows: 1fr 1fr;
-   padding-top: 20px;
-   margin: 0px;
-
-}
-.ssr-csr-figure .csr-video {
-   grid-row: 1/3;
-   grid-column: 1;
-}
-.ssr-csr-figure .ssr-video {
-   grid-row: 1;
-   grid-column: 2;
-}
-.ssr-csr-figure figcaption {
-   grid-row: 2;
-   grid-column:2;
-   padding:10px 32px;
-   color: #9f9f9f;
-   align-self: center;
-   /* font-decoration: italic; */
-}
-.sidenav-figure {
-   display:flex;
-   justify-content:center;
-   width:50%;
-   margin: 0px auto;
-}
-.sidenav-figure img {
-   border: 2px solid #D8DEE9;
-}
-
-
-
-@media screen and (max-width: 750px) {
-   .ssr-csr-figure {
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr .5fr .4fr;
-      justify-items: center;
-   }
-   .ssr-csr-figure .csr-video {
-      grid-row: 1;
-      grid-column: 1;
-      width: 153.33px;
-      height: 333.33px;
-   }
-   .ssr-csr-figure .ssr-video {
-      grid-row: 2;
-      grid-column: 1;
-      padding-top: 10px;
-      width: 375px;
-      height: 187.5px;
- }
-   .ssr-csr-figure figcaption {
-      grid-row: 3;
-      grid-column:1;
-      color: #9f9f9f;
-      padding: 5px 16px;
-   }
-
-}
-   
-</style>
-
-<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
-<script>
-   window.addEventListener("load", () => {
-      const fn1_content = document.querySelector('#user-content-fn-1>p')
-      tippy("#user-content-fnref-1", {
-         content: fn1_content.innerHTML.replace(/<a href="#.*">.*<\/a>/g, ""),
-         allowHTML: true,
-         interactive: true,
-         placement: 'right-end',
-         theme: 'nord'
-      });
-      // console.log(fn1_content.innerHTML)
-   })
-   const fn1 = document.querySelector('#user-content-fnref-1');
-   // console.log(fnt1)
-   // const fn1_content = window.onload.querySelector('#user-content-fn-1')
-   // console.log(fn1_content)
-   console.log("run before window loaded")
-</script>

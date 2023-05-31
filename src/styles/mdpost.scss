@@ -1,27 +1,42 @@
-@import "nord/src/sass/nord.scss";
-
 a {
-    color: $nord9;
+    color: var(--nord9)
+}
+.date {
+    color: var(--nord6);
+    font-size: .8rem;
+}
+.title {
+    margin-top: 5px;
+}
+.blog-meta {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
+
+// style the inline code, but reset code blocks
 code {
-    background-color: $nord3;
+    background-color: var(--nord3);
     padding: 1px 3px;
     margin: 0px 2px;
     border-radius: 5%;
-    color: $nord6;
+    color: var(--nord6);
 }
 
 pre code {
     // right now the display code blocks are also <code>
-    background-color: $nord0;
+    background-color: var(--nord0);
     padding: 0px;
     margin: 0px;
 }
 
+// style tippyfootnote  with theme "nord"
 .tippy-box[data-theme~='nord'] {
-   background-color: $nord0;
-   color: $nord4;
-   border: 1px solid #3b4252;
-   box-shadow: 0 0 3px 2px rgba(255, 255, 255, .2)
+   background-color: var(--nord0);
+   color: var(--nord4);
+   box-shadow: var(--shadow-elevation-medium);
+}
+.tippy-content {
+    // inside content
 }

@@ -70,7 +70,7 @@ $$
 \LaTeX
 $$
 
-<style lang="scss">
+<style lang="sass">
     /* .katex-display { font-size: 3em; } */
 
   .astro-code {

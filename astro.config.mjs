@@ -1,13 +1,32 @@
-import { defineConfig, sharpImageService } from 'astro/config';
-import vue from '@astrojs/vue';
-import preact from "@astrojs/preact";
+import { defineConfig, sharpImageService } from 'astro/config'
 
-import mdx from "@astrojs/mdx";
+// integrations
+import vue from '@astrojs/vue'
+import mdx from "@astrojs/mdx"
+// import preact from "@astrojs/preact"; // not using preact
+
+// markdown plugins
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+// import remarkMermaid from 'remark-mermaid'
+
+// astro-mdx-code-blocks
+import AutoImport from 'astro-auto-import';
+import MDXCodeBlocks, { mdxCodeBlockAutoImport } from 'astro-mdx-code-blocks';
+
 
 // https://astro.build/config
 export default defineConfig({
   // Enable Vue to support Vue components.
-  integrations: [vue(), preact(), mdx()],
+  integrations: [
+    AutoImport({
+      imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')],
+  }),
+  //   AutoImport({
+  //     imports: ['./src/components/MyCodeBlock/MyCodeBlock.astro'],
+  // }),
+    MDXCodeBlocks(),
+    vue(), mdx()],
   // base: "/astro-website" // base routing also given here....since deployed at subpath
   experimental: {
     assets: true
@@ -16,14 +35,20 @@ export default defineConfig({
     drafts: false,
     shikiConfig: {
       theme: "nord",
-      langs: ["python", "r", "html", "css", "javascript"]
+      langs: ["python", "r", "html", "css", "javascript", "sass"]
     },
-    remarkPlugins: ['remark-math', 'remark-mermaid'],
-    rehypePlugins: [["rehype-katex", {
-      // katex plugin options
-      trust: true,
-      strict: false // for html styling in math blocks
-    }]]
+    remarkPlugins: [
+      remarkMath,
+      // remarkMermaid,
+    ],
+    rehypePlugins: [
+      [rehypeKatex, {
+          // katex plugin options
+          trust: true,
+          strict: false // for html styling in math blocks
+        }
+      ]
+    ]
   },
   image: {
     service: sharpImageService(),

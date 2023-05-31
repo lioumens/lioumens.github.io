@@ -1,0 +1,132 @@
+---
+import { Prism } from '@astrojs/prism';
+import { Code } from 'astro/components'
+
+const {
+    code,
+    lang,
+    filename,
+    title
+} = Astro.props;
+
+const hasLang = !!lang;
+const hasFileName = !!filename;
+
+const showHeader = hasLang || hasFileName;
+---
+
+<figure class="code-block">
+
+    {hasFileName ? (
+        <figcaption class="header">
+            {hasFileName && (
+                <span class="filename">
+                    {filename}
+                </span>
+            )}
+            {hasLang && (
+                <span class="lang">
+                    {lang}
+                </span>
+            )}
+        </figcaption>
+    <Code lang={lang} code={code} theme='nord'/>
+    ):
+    (
+        <figcaption class="lang-header">
+            <span class="lang">
+                {lang}
+            </span>
+        </figcaption>
+    <Code class:list={["pad1"]} lang={lang} code={code} theme='nord'/>
+    )}
+</figure>
+
+<style lang="scss">
+    @import "nord/src/sass/nord.scss";
+
+    :root {
+  --shadow-color: 222deg 23% 14%;
+  --shadow-elevation-low:
+    0.5px 0.5px 0.8px hsl(var(--shadow-color) / 0.39),
+    0.8px 0.9px 1.3px -1.3px hsl(var(--shadow-color) / 0.37),
+    2px 2.2px 3.3px -2.7px hsl(var(--shadow-color) / 0.35);
+  --shadow-elevation-medium:
+    0.5px 0.5px 0.8px hsl(var(--shadow-color) / 0.41),
+    1.6px 1.7px 2.6px -0.9px hsl(var(--shadow-color) / 0.39),
+    4px 4.4px 6.5px -1.8px hsl(var(--shadow-color) / 0.38),
+    10px 11px 16.3px -2.7px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-high:
+    0.5px 0.5px 0.8px hsl(var(--shadow-color) / 0.38),
+    2.8px 3px 4.5px -0.4px hsl(var(--shadow-color) / 0.37),
+    5.2px 5.7px 8.4px -0.8px hsl(var(--shadow-color) / 0.36),
+    8.7px 9.6px 14.2px -1.2px hsl(var(--shadow-color) / 0.36),
+    14.2px 15.5px 23px -1.5px hsl(var(--shadow-color) / 0.35),
+    22.4px 24.6px 36.4px -1.9px hsl(var(--shadow-color) / 0.34),
+    34.4px 37.7px 55.9px -2.3px hsl(var(--shadow-color) / 0.34),
+    51px 55.9px 82.9px -2.7px hsl(var(--shadow-color) / 0.33);
+}
+
+    .code-block {
+        position: relative;
+        width: 90%;
+        margin: 0;
+        // margin: 0 auto;
+    }
+    .lang {
+        margin-left: auto;
+    }
+
+    .lang-header {
+        position: absolute;
+        // width: 30%;
+        width: 100%;
+        background: $nord0; // match astrocode background
+        font-family: monospace;
+        padding: 0rem 1rem;
+        // margin: 0rem 1rem;
+    }
+
+    .lang-header .lang {
+        position: absolute;
+        right: 0rem; // shift right to boundary
+        background: $nord2;
+        padding: .3rem 1rem;
+        font-size: .9rem;
+        border-top-right-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+        color: $nord13;
+        box-shadow: var(--shadow-elevation-low);
+        background-opacity: 30%;
+    }
+
+    .header {
+      position: absolute;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      padding: .3rem 1rem;
+      font-family: monospace;
+      font-size: .9rem;
+      background: $nord2;
+      color: $nord13;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+      border-bottom: 2px solid $nord3;
+      box-shadow: var(--shadow-elevation-low);
+    }
+
+    // better is to replace the code component myself
+    :global(.astro-code) {
+        width: 100%;
+        padding: 2rem 1rem 1rem 1rem;
+        // padding: 2rem 1rem;
+        font-size: 1rem;
+        line-height: 1.2rem;
+        border-radius: .5rem;
+        box-shadow: var(--shadow-elevation-medium);
+    }
+    :global(.lang-header+.astro-code) {
+        padding: 1rem; // remove header padding for code blocks with only lang.
+    }
+</style>

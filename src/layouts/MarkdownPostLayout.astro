@@ -1,12 +1,7 @@
 ---
 
-// modules
-// tippy js, for hover tooltips
-import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css'; // optional for styling
-
 // style sheets
-// import "../../node_modules/katex/dist/katex.min.css"
+import "../styles/global.scss"
 import "katex/dist/katex.min.css" // include katex support explicitly
 import "../styles/mdpost.scss"
 
@@ -14,13 +9,14 @@ import "../styles/mdpost.scss"
 import BaseLayout from './BaseLayout.astro';
 import Giscus from "../components/Giscus.astro";
 import TagList from "../components/TagList.astro"
+import { Image } from "astro:assets";
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", { year: 'numeric', month: 'long', day: 'numeric', timeZone: "UTC"})
 
 // properties
 const { frontmatter } = Astro.props;
-import { Image } from "astro:assets";
 const tags = frontmatter.tags;
+
 
 // constants
 const activeNav = 1;
@@ -29,7 +25,7 @@ const tagSize = 1; // scales rem
 
 <BaseLayout pageTitle={frontmatter.title} activeNav={1}>
     <div class="blog-meta">
-<span class="date" style="color: lightgrey; font-size: .8rem;">{dateFormatter.format(frontmatter.pubDate)}</span>
+<span class="date">{dateFormatter.format(frontmatter.pubDate)}</span>
 <div class="tags">
 <TagList tags={tags} />
 </div>
@@ -48,52 +44,10 @@ const tagSize = 1; // scales rem
 <Giscus />
 </BaseLayout>
 
-<style lang="scss">
+<script src="../scripts/tippyfootnotes.js"></script>
+
+<style lang="scss" is:global>
     @import "../../node_modules/nord/src/sass/nord.scss";
-    .blog-meta {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-
-    a {
-      color: #00539F;
-    }
-  
-    /* .tags {
-      display: flex; 
-      flex-wrap: wrap; 
-      margin: 0 auto;  
-    } */
-
-    .date {
-        margin-bottom: 0px;
-        padding-bottom: 0px;
-    }
-    .title {
-        margin-top: 5px;
-    }
-
-  
-    .tag {
-      margin: 0.25em;
-      border: dotted 1px #a1a1a1;
-      border-radius: .5em;
-      padding: .5em 1em;
-      font-size: 1.15em;
-      background-color: #F8FCFD;
-    }
-
-  </style>
-
-  <style lang="scss" is:global>
-    @import "../../node_modules/nord/src/sass/nord.scss";
-    .astro-code {
-        padding: 10px 15px;
-        font-size: 1rem;
-        line-height: 1.1rem;
-        border-radius: 10px;
-    }
 
     .nord_table {
         width: 90%;
@@ -136,4 +90,4 @@ const tagSize = 1; // scales rem
 
     }
 
-  </style>
+</style>

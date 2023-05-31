@@ -1,0 +1,97 @@
+---
+const { quote, source } = Astro.props;
+---
+
+<div class="quote">
+    <span class="quote-symbol">&ldquo;</span>
+    <!-- <img class="quote__decoration" src="/quote_under2.svg" width="50%" height=20px/> -->
+    <div class="quote__content">
+        {quote}
+    </div>
+    <div class="quote__source">
+        &mdash; {source}
+    </div>
+</div>
+
+
+<style lang="scss">
+    @import "nord/src/sass/nord.scss";
+    .quote {
+        /* z-index: -2; */
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        margin: 30px 25px;
+        padding-right: 60px;
+        padding-top: 20px;
+        /* border-style:  */
+        /* border-image: linear-gradient(
+            to right bottom,
+            blue, red
+        ) 1 100%; */
+        /* border: 10px solid; */
+        /* border-width: 5px; */
+        border-image-slice: 1;
+        border-image-source: linear-gradient(to left, $nord9, $nord10);
+        /* border-image-source: linear-gradient(to left, #743ad5, #d53a9d); */
+    }
+    .quote::before {
+        position: absolute;
+        left: 0px;
+        top: 10px;
+        width: 20%;
+        height: 10%;
+        content: "";
+        border-top: 1px solid;
+        border-left: 1px solid;
+        border-image-slice: 1;
+        // border-image-source: linear-gradient(to right, $nord7, $nord10);
+        border-image-source: linear-gradient(to right, #9f9f9f, $nord9 100%);
+        /* border-top: 1px solid #9f9f9f; */
+        /* border-left: 1px solid #9f9f9f; */
+    }
+    .quote::after {
+        position:absolute;
+        width: 25%;
+        height: 10%;
+        content: "";
+        right: 50px;
+        bottom: 0;
+
+        border-right: 1px solid;
+        border-bottom: 1px solid;
+        border-image-slice: 1;
+        border-image-source: linear-gradient(to right, #9f9f9f, $nord9);
+        /* border-bottom: 1px solid #9f9f9f; */
+        /* border-right: 1px solid #9f9f9f; */
+    }
+    .quote-symbol {
+        /* position: relative; */
+        position: absolute;
+        top: -15%;
+        font-size: 9rem;
+        /* z-index: -1; */
+        opacity: 7%;
+    }
+    .quote__source {
+        margin: 0;
+        padding: 0;
+       text-align:right; 
+       color: #9f9f9f;
+    }
+    .quote__content {
+        /* position: absolute;  */
+        text-align: left;
+        color: #9f9f9f;
+        font-size: 1.7rem;
+        z-index: 3;
+        padding-left: 60px;
+        padding-bottom: 0;
+        font-style: italic;
+
+    }
+    .quote__decoration {
+        align-self: center;
+    }
+    
+</style>

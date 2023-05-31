@@ -1,0 +1,32 @@
+---
+draft: true
+---
+
+# GFM
+
+```astro title="itsthetitle" filename="index.js"
+---
+import { Prism } from '@astrojs/prism';
+
+import '../styles/prism-dark.css';
+
+const {
+    code,
+    lang,
+    filename,
+} = Astro.props;
+
+const hasLang = !!lang;
+const hasFileName = !!filename;
+
+const showHeader = hasLang || hasFileName;
+---
+
+<figure class="code-block">
+```
+
+
+```javascript
+const a = 1;
+console.log(a);
+```
