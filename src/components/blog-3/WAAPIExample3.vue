@@ -1,8 +1,6 @@
 <script>
 
-const translateYKey = {transform:["translate(0px, 0px)", "translate(0px, 200px)"]};
-
-const translateKey = {transform:["translate(0px, 0px)", "translate(200px, 0px)"]};
+const translateKey = {transform:["translateX(0px)", "translateX(200px)"]};
 
 const translateOptions =  {
   id : "translate",
@@ -10,7 +8,7 @@ const translateOptions =  {
   iterations: Infinity,
   direction: "alternate",
   easing: "ease-in-out",
-  composite: "add"
+  composite: "accumulate"
 };
 
 const colorKey = {background: ["rgb(0, 0, 0)", "rgb(255,255,0)", "rgb(0,0,0)"]}
@@ -22,15 +20,25 @@ const colorOptions = {
   composite: "accumulate"
 };
 
-const scaleKey = {transform: ["translate(0px 0px) scale(1, 1)", "translate(0px, 0px) scale(1, 1.8)", "translate(0px, 0px) scale(1, 1)"]}
+const scaleKey = {transform: ["scale(1,1)", "scale(1,2)", "scale(1,1)"]}
+// trying different scale appraoches
+// const translate3dKey = {transform:["translate3d(0px, 0px, 0px", "translate3d(0px, 200px, 0px)", "translate3d(0px, 0px, 0px)"]};
+// const translateYKey = {transform:["translateY(0px)" , "translateY(200px)", "translateY(0px)"]};
+// const scaleYKey = [
+//   {transform:"scaleY(1)"},
+//   {transform:"scaleY(2)"},
+//   {transform:"scaleY(1)"}];
+
 const scaleOptions = {
   id: "scale",
   duration: 1400,
   iterations: 1,
   direction: "alternate",
   easing: "ease-out",
-  composite: "add"
+  composite: "accumulate"
 }
+
+const heightKey = {height: ["0px", "20px", "0px"]}
 
 const rotateKey = {
   transform: "rotate(0deg)", transform: "rotate(360deg)"
@@ -115,12 +123,20 @@ export default {
     <button class="basic-button" @click="color">Color</button>
     <button class="basic-button" @click="scale">Scale</button>
     <button class="basic-button" @click="rotate">Rotate</button>
-    <figcaption style="margin: 0px; color:#9f9f9f;font-size:.9rem;">Animation composition behaves oddly in safari 16, still hacking a work around.</figcaption>
+    <figcaption style="margin: 0px; color:#9f9f9f;font-size:.9rem;">Animation composition behaves oddly in safari 16 (and iPhone), still hacking a work around.</figcaption>
   </div>
-  <figure ref="waapiParent" style="height: 80px;margin: 0px;">
-    <div ref="waapiBox" class="waapi-box" style="margin-top: 60px"> 
+  <figure ref="waapiParent" style="height: 70px;margin: 0px;">
+    <!-- targeting outer box causes the compositions to perform differently -->
+    <!-- <div ref="waapiOut" class="waapi-out" style="margin:0px"> -->
+      <div ref="waapiBox" class="waapi-box" style="margin-top: 60px"> 
+      <!-- </div> -->
     </div>
+    <!-- svg implementation was just as weird with second animation trying to take over -->
+    <!-- <svg viewBox="0 0 500 50" style="height: 120px">
+      <rect ref="waapiBox" class="waapi-box" x="10" y="10" width="5" height="5" fill="red" stroke="none" style="transform-origin: 20px 20px;" animation-composition="add" />
+    </svg> -->
   </figure>
+
   <p>Animations: {{ boxAnimations.join(", ") }}</p>
 </template>
 
@@ -130,8 +146,21 @@ export default {
   width: 20px;
   height: 20px;
   background: red;
-  margin: 10px 0px;
-  animation-composition: accumulate;
+  // margin: 10px 0px;
+  animation-composition: add;
+  // animation: shift 2s ease-in-out infinite;
+}
+// also trying through css transforms
+@keyframes shift {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(200px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }
 
 .basic-button {

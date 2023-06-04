@@ -35,7 +35,8 @@
     "sharp": "^0.32.1",
     "tinacms": "^1.5.6",
     "tippy.js": "^6.3.7",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "web-animations-js": "^2.3.2"
   },
   "devDependencies": {
     "astro-auto-import": "^0.3.0",
