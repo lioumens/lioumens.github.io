@@ -1,0 +1,48 @@
+---
+const {figure} = Astro.props;
+---
+
+{(figure === "simple") && 
+(
+    <div id="waapi-example-box" style="height:20px;
+                                       width:20px;
+                                       background-color: red;">
+    </div> 
+
+<script>
+window.onload = function()  {
+    const waapiBox = document.querySelector("#waapi-example-box");
+
+    const keyframes =  [
+        {transform: "translate(0px, 0px)"},
+        {transform: "translate(200px, 0px)"}];
+
+    const animOptions = {
+        duration: 1000,
+        iterations: Infinity,
+        direction: "alternate",
+        easing: "ease-in-out"};
+    waapiBox.animate(keyframes, animOptions)
+}
+</script>)}
+
+{(figure === "simple2") && 
+(<figure>
+    <div id="waapi-example-box2" style="height:20px; width:20px; background-color: red;">
+    </div> 
+    </figure>
+    <script>
+    window.onload = function()  {
+        const waapiBox2 = document.querySelector("#waapi-example-box2");
+        waapiBox2.animate([
+    {transform: "translate(0px, 0px)", background: "red"},
+    {transform: "translate(200px, 0px) rotate(360deg) scale(2, 1)", background: "yellow"}
+    ], {
+    duration: 1000,
+    iterations: Infinity,
+    direction: "alternate",
+    easing: "ease-in-out"
+    })
+    }
+</script>)}
+

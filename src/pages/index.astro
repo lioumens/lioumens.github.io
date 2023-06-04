@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Greeting from "../components/Greeting.jsx";
+import Greeting from '../components/tutorial/Greeting.jsx';
 import {Image} from "astro:assets"
 import profpic from "../assets/cals_profile_shot.jpg"
 
@@ -10,6 +10,7 @@ import "../styles/mdpost.scss"
 const pageTitle = "Home Page";
 const activeNav = 0;
 ---
+
 <BaseLayout pageTitle={pageTitle} activeNav={activeNav}>
 <h1>Hello, welcome to my <span class="home-text">digital home</span>!</h1>
 <figure class="home-container">
@@ -30,7 +31,7 @@ Feel free to contact me directly, anywhere you can find me!
 </p>
 
 
-<Image class="profpic" src={profpic} width="300px" aspectRatio="9:16" alt="Profile Picture"/>
+<Image class="profpic" src={profpic} width="300px" height="445px" alt="Profile Picture"/>
 
 </BaseLayout>
 

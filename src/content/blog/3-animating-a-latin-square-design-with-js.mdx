@@ -1,0 +1,415 @@
+---
+title: 'Animating a Latin Square Design with Javascript'
+pubDate: 2023-06-02
+description: 'Lessons from animating a Latin Square Statistical Design with Web Animations API in Javascript. We aim to make the animation have cross-browser support. We discuss modifying SVG elements with CSS styles, and some of the best features of the Web Animations API.'
+author: 'Michael Liou'
+image: 
+   url: '../../assets/blog-3/latin_square_cover.svg'
+   alt: "Latin Square Design with Javascript Logo"
+slug: animating-latin-square
+tags:
+  - statistics
+  - web
+  - devlog
+toc: false
+draft: false
+---
+
+import BlockQuote from "../../components/BlockQuote.astro"
+import LatinSquare from "../../components/blog-3/LatinSquare.vue"
+import WAAPIExample from "../../components/blog-3/WAAPIExample.astro"
+import WAAPIExample2 from "../../components/blog-3/WAAPIExample2.vue"
+import WAAPIExample3 from "../../components/blog-3/WAAPIExample3.vue"
+
+Similar to the previous post, we won't dive too much into the statistical nature of the Latin Square design, but this devlog will focus on the animation elements of the graphic and their creation. Since CSS animations has a few limitations that we ran into in the last animation for interactivity and synchronization, we'll be using the Web Animations API this time around. Further, CSS stylesheets are static at compilation time so we're unable to introduce "randomness" into the animation. For statistical designs, it's nice to be able to see different randomizations. We could use a random function in Sass, but we'd still have to compile the stylesheets and it will only be random for the first time it's presented to the reader. I added some interactivity with javascript this time, in which the user can click "rerandomize" to see a different, but appropriately randomized design. Play/pause functionality is also added by clicking on the animation, along with highlighting the main components of the design.
+
+## The Latin Square "Sudoku" Design!
+
+The Latin Square design is special because it adjusts for two blocking variables at the same time, and is highly efficient for the number of experimental units it uses. If we're working with a treatment that has $t$ levels, then our blocking variables will also have $t$ levels. Just like in a randomized complete block design, each treatment appears in each row and column exactly once. For 9 levels, this makes it similar to a standard Sudoku puzzle!
+
+<LatinSquare client:only="vue"/>
+
+## Safari, you're an absolute pain for SVG animations 🥲
+
+There are a number of browsers specific quirks that I've encountered working with animation of SVG elements, and it seems [the frustration is somewhat common](https://github.com/emilbjorklund/svg-weirdness). My primary browser is [Arc](https://arc.net/), which is based in Chromium, so most of the animations should work for chrome and the other chromium based browsers. For cross-browser support, the website [caniuse.com](https://caniuse.com/) has been indispensable for various CSS3 features. 
+
+Here are some tips for animating svg elements for cross-browser support, and responsiveness:
+ 
+* Wrap your SVG `<text>` elements with a `<g>` group tag.
+
+   - I find animating the parent of text elements [less likely to fail](https://stackoverflow.com/questions/2193916/positioning-svg-elements-using-css) in most browsers. In particular, Safari animations failed when applied directly to the text element. Targeting the parent element is normally the first thing I try if other animation properties fail as well.
+
+* Use SVG *inline attributes* rather than CSS styling (wherever you can).
+
+   - The `<text>` element again is picky. Although altering the `x`and `y` position attributes through styling worked for `<rect>`, and `<circle>`, it seems to fail for `<text>` elements and I'm not sure why. It's useful to keep in mind that these are different specifications, and although it's nice when CSS styling works to modify the SVG, it shouldn't be *expected*.
+
+* Avoid `filter:`.
+
+   - Although it's supported on [most browsers other than IE](https://caniuse.com/?search=filter), I would still have trouble rendering certain elements, and the element sometimes disappeared entirely. Googling other people's experiences, some people suggested [`will-change: transform`](https://github.com/emilbjorklund/svg-weirdness/issues/27), or using `transform3d` instead of `transform`, or [filters on parent elements](https://github.com/emilbjorklund/svg-weirdness/issues/22), but you can save yourself from headache if you just avoid it altogether.
+
+* Always use `viewBox` combined with `preseveAspectRatio`.
+
+   - It is much easier to scale the SVG to take advantage of the vector properties, and for responsive design of viewing the animation on different screens. For the case above, since it's a Latin *Square* design, it's important that the animation actually looks like a square, so the `preserveAspectRatio` is critical.
+
+* Always specify units if styling SVG through stylesheets.
+
+   - In my testing, safari and chromium seemed to not need the units in stylesheets when modifying svg elements, but firefox did need them in order for the properties to be honored. Specifying units when you can is a good habit.
+
+## SVG Attributes vs CSS Styles
+
+Let's look at 3 svg text elements:
+
+1. One with no styling.
+2. Styled with the `style=` attribute
+3. Setting attributes directly, but styled the same as 2.
+
+```html
+<svg viewBox="-10 -15 130 40">
+  <!-- Background and origin code omitted -->
+
+  <text>No Styling Text</text>
+
+  <text x="10" y="12.5"
+       fill="red" 
+       font-size="5"
+       textLength="80"
+       dominant-baseline="hanging"
+       rotate="5 10 15 20 30 40 0">
+    Inline Attribute Text
+  </text>
+
+  <text style="x:10; y:12.5;
+               fill: red;
+               font-size:5px;
+               textLength:80px;
+               dominant-baseline:hanging;
+               rotate:5 10 15 20 25 30 35 40;">
+    CSS Style Text
+  </text>
+</svg>
+```
+
+<figure style="margin:0px; width:95%;">
+<svg viewBox="-10 -15 130 40">
+ <rect x="-10" y="-15" width="140" height="55" fill="var(--nord6)" /> 
+ <path d="M-3 0 h6 M0 -3 v6" fill="#00ff00" stroke-width=".3" stroke="blue" />
+ <circle cx="0" cy="0" r="1" fill="blue"/>
+
+ <text x="-9" y="-2" font-size="3" fill="blue">Origin</text>
+ <text>No Styling Text</text>
+ <text x="10" y="12.5" textLength="80" font-size="5" dominant-baseline="hanging" fill="red" rotate="5 10 15 20 30 40 0">Inline Attribute Text</text>
+ <text style="x: 10px;
+ y=60px;font-size:5px;textLength:60px;
+ fill: red;
+ dominant-baseline:hanging;
+ rotate:5 10 15 20 25 30 35 40;">CSS Style Text</text>
+</svg>
+</figure>
+
+Let's start by discussing the "No Styling Text". The default `text-anchor: start` and `dominant-baseline: auto` places our text as if we're writing on the line $y=0$, starting at the origin. The origin is marked in blue for clarity. (We would barely be able to see this text if we hadn't adjusted the `viewBox` to include negative values. Thus, when using a standard "0 0 200 100" value, if you can't see your text element, it might be outside your svg window!). Our default text size is ~19px, which takes up most of our 50 pixel window, and the text is the standard black. 
+
+So we've tried to style the text the same way through CSS styles and SVG attributes, but we notice that only *some* of the styling attributes through CSS were applied. What's happening here? `font-size`, `dominant-baseline`, `fill` all worked, but the rest did not. Looking at the text modified by attributes, every modification worked, which is why I prefer this method. The attributes that can be modified through CSS are known as [SVG Presentation Attributes](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation). For the detailed specification of these special attributes, see the [W3C Specification](https://www.w3.org/TR/SVG/styling.html#PresentationAttributes).
+
+<figure style="margin:0px auto;width:100%;max-width:670px;">
+<svg viewBox="0 0 100 50">
+<text fill="var(--nord6)" x="0" y="6" font-size="7">Text SVG</text>
+<ellipse fill="none" cx="40" cy="25" rx="35" ry="20" stroke="var(--nord6)" stroke-width=".2"/>
+
+<text fill="var(--nord6)" x="78" y="6" font-size="7">CSS</text>
+<ellipse fill="none" cx="60" cy="25" rx="35" ry="20" stroke="var(--nord6)" stroke-width=".2" />
+<text fill="var(--nord6)" x="50" y="12"  font-size="4" dominant-baseline="center" text-anchor="middle">fill</text>
+<text fill="var(--nord6)" x="52" y="16" transform="rotate(2)" font-size="4" dominant-baseline="center" text-anchor="middle">dominant-baseline</text>
+<text fill="var(--nord6)" x="65" y="20" font-size="4" transform="rotate(3)" dominant-baseline="center" text-anchor="middle">stroke</text>
+<text fill="var(--nord6)" x="35" y="26" transform="rotate(-4)" font-size="4" dominant-baseline="center" text-anchor="middle">opacity</text>
+<text fill="var(--nord6)" x="50" y="28" font-size="4" transform="rotate(1)" dominant-baseline="center" text-anchor="middle">stroke-width</text>
+<text fill="var(--nord6)" x="41" y="37" transform="rotate(-3)"font-size="4" dominant-baseline="center" text-anchor="middle">transform</text>
+<text fill="var(--nord6)" x="52" y="40" font-size="4" dominant-baseline="center" text-anchor="middle">font-size</text>
+
+{/* text only */}
+<text fill="var(--nord6)" x="20" y="15" font-size="4" dominant-baseline="center" text-anchor="middle">y</text>
+<text fill="var(--nord6)" x="12" y="22" font-size="4" dominant-baseline="center" text-anchor="middle">x</text>
+<text fill="var(--nord6)" x="20" y="30" transform="rotate(7)" font-size="4" dominant-baseline="center" text-anchor="middle">rotate</text>
+
+{/* css only */}
+<text fill="var(--nord6)" x="77" y="25" transform="rotate(-7)" font-size="4" dominant-baseline="center" text-anchor="middle">rotate</text>
+<text fill="var(--nord6)" x="70" y="55" transform="rotate(-16)" font-size="3.5" dominant-baseline="center" text-anchor="middle">pseudo-classes</text>
+</svg>
+<figcaption style="color:#9f9f9f;">Venn diagram shows attributes of `<text>` that are modifiable through CSS styles, and exclusive properties of each as well. The list is (very) incomplete, but shows common styles and attributes for the elements. For a full list, see the [W3C specification](https://www.w3.org/TR/SVG/styling.html#PresentationAttributes) or [MDN Docs](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text). Pseudo-classes are mentioned specifically because `:hover` effects and `:active` classes can't be set inline.</figcaption>
+</figure>
+
+It's worth noting that `fill` and `dominant-baseline` are not really CSS properties that are used outside the context of SVG, but `font-size` clearly is. In fact, they only make sense if the target of the styles are SVG elements. Further, the attribute `rotate` exist in both SVG and CSS, but they mean different things. In CSS, [`rotate`](https://css-tricks.com/almanac/properties/r/rotate/) is roughly shorthand for `transform: rotate()`, but in SVG, the [`rotate` attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/text#attributes) for text will take a list of numbers and rotate each letter in the order of the list provided -- so it doesn't make sense to try and modify the SVG attribute through CSS styles. (There's also another [rotate attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/rotate) for `animateMotion` which describes rotation of an element as it moves along a path.)
+
+The partial overlap between CSS property and SVG attribute names is confusing enough, but even more frustrating, is that the attributes modifiable through styles differ by element. For example, styles for `x` and `y` do *not* work for text, but it *does* work for `rect`, and for `circle` (with `cx` and `cy`). Check out how these two rectangles differ when styled by SVG attribute or CSS.
+
+```html
+<svg viewBox="0 0 100 30">
+<!-- text, background and origin code omitted  -->
+
+ <!-- elements modified by attribute -->
+ <rect x="20" y="5"
+       width="70" height="10"
+       fill="red" rotate="10deg"/>
+ <!-- rotate="10deg" doesn't work here,
+      but transform="rotate(10)" will -->
+
+ <!-- element modified by style -->
+ <rect style="x:20px; y:5px;
+              width:70px; height:10px;
+              fill:red; rotate:10deg;"/>
+</svg>
+```
+
+<figure style="margin:0px; width:95%;">
+<svg viewBox="0 0 100 30">
+ <rect width="100" height="30" fill="white" /> 
+ <circle cx="0" cy="0" r="1" fill="blue"/>
+ <text x="1" y="1" font-size="2.5" fill="blue" text-anchor="right" dominant-baseline="hanging">Origin</text>
+
+ <rect x="20" y="5" width="70" height="10" fill="red" rotate="10deg" pathLength="5" stroke="black" stroke-dasharray="5" />
+ <text x="35" y="12" textLength="50" font-size="5" fill="white">By attribute</text>
+
+ {/* <rect style="x:20;y:5;width:70;height:10;fill:red;rotate:10deg;pathLength:5;stroke:black; stroke-dasharray: 5;"/> */}
+ <rect style="x:20px;y:5px;width:70px;height:10px;fill:red;rotate:10deg;pathLength:5;stroke:black; stroke-dasharray: 5;"/>
+ {/* <rect x="20" y="5" width="70" height="20" style="height:50px"/> */}
+ <text x="35" y="11" textLength="50" font-size="5" fill="white" style="transform: rotate(10deg);">By style</text>
+</svg>
+</figure>
+
+Notice we did not need to specify units for the SVG attributes. Above, when we were working with text, it seems to also work consistently using the styles without units because they matched up with SVG attributes. However, specifically with rectangles and Firefox, the styling without units will fail. This is just one of the quirks of  SVG and browsers. Hence, it's normally a good habit to use the `px` unit when working with SVG elements through styles.
+
+Here, the css styling works for all attributes except for `pathLength`, and the only one that didn't work for the svg attributes is `rotate=`. Again, we emphasize that styling `x` and `y` works for rect but not for text. Recall that `pathLength=5` [sets the length of the perimeter around the rectangle](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/pathLength). When we call `stroke-dasharray=5`, the same length as `pathLength`, this declares that a single dash should take up 5 units of length, and thus go around the entire perimeter of the rectangle. We end up with a solid border. The "natural" length of the perimeter is $2 \times \text{width} + 2 \times \text{height} = 2(70) + 2(10) = 160$, which is why the rectangle styled with CSS shows a dashed stroke. The rotation didn't work by attribute since there [is no attribute named "rotate" for `<rect>`](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect). The rotation for svg is also around the default origin, not the center of the element. You will need to move the origin to the center of the rectangle to get the more intuitive rotation effect.  This gives us a slightly different venn diagram of attributes that can be modified through styles: 
+
+<figure style="margin:0px auto;width:100%;max-width:670px">
+<svg viewBox="0 0 100 47">
+<text fill="var(--nord6)" x="0" y="6" font-size="7">Rect SVG</text>
+<ellipse fill="none" cx="38" cy="25" rx="35" ry="20" stroke="var(--nord6)" stroke-width=".2"/>
+
+<text fill="var(--nord6)" x="78" y="6" font-size="7">CSS</text>
+<ellipse fill="none" cx="55" cy="25" rx="38" ry="20" stroke="var(--nord6)" stroke-width=".2" />
+
+
+<text fill="var(--nord6)" x="50" y="12"  font-size="4" dominant-baseline="center" text-anchor="middle">fill</text>
+<text fill="var(--nord14)" x="52" y="16" transform="rotate(2)" font-size="4" dominant-baseline="center" text-anchor="middle">height</text>
+<text fill="var(--nord6)" x="65" y="20" font-size="4" transform="rotate(3)" dominant-baseline="center" text-anchor="middle">stroke</text>
+<text fill="var(--nord6)" x="35" y="26" transform="rotate(-4)" font-size="4" dominant-baseline="center" text-anchor="middle">opacity</text>
+<text fill="var(--nord6)" x="50" y="28" font-size="4" transform="rotate(1)" dominant-baseline="center" text-anchor="middle">stroke-width</text>
+<text fill="var(--nord6)" x="41" y="37" transform="rotate(-3)"font-size="4" dominant-baseline="center" text-anchor="middle">transform</text>
+<text fill="var(--nord14)" x="52" y="40" font-size="4" dominant-baseline="center" text-anchor="middle">width</text>
+
+{/* text only */}
+<text fill="var(--nord13)" x="35" y="15" font-size="4" dominant-baseline="center" text-anchor="middle">y</text>
+<text fill="var(--nord13)" x="24" y="22" font-size="4" dominant-baseline="center" text-anchor="middle">x</text>
+
+<text fill="var(--nord14)" x="29" y="16" transform="rotate(40)" font-size="4" dominant-baseline="center" text-anchor="middle">pathLength</text>
+
+{/* css only */}
+<text fill="var(--nord6)" x="75" y="25" transform="rotate(-7)" font-size="4" dominant-baseline="center" text-anchor="middle">rotate</text>
+<text fill="var(--nord6)" x="67" y="55" transform="rotate(-16)" font-size="3.5" dominant-baseline="center" text-anchor="middle">pseudo-classes</text>
+</svg>
+<figcaption style="color:#9f9f9f">Coloring emphasizes differences with SVG Text venn diagram above. <span style="color:var(--nord14)">Green attributes</span> are ones SVG `<rect>` has that SVG `<text>` does not. <span style="color:var(--nord13)">Yellow attributes</span> show ones`<rect>` and `<text>` both have, but are shifted to a different part of the venn diagram.</figcaption>
+</figure>
+
+It is obviously more convenient to work with stylesheets and classes for managing the look of svg elements, so it's useful to know which svg attributes can be modified through styles. If we use attributes, we'd be retyping several attributes for similarly styled elements, breaking the DRY principle. For the attributes that don't work in styles, there are normally work-arounds. For positioning, the workaround is to use `transform: translate(dx, dy)`. This is also useful for animations since `transform` is an animatable property. However, working with the `transform` property has it's own [pitfalls to beware of](https://css-tricks.com/transforms-on-svg-elements/) for cross-browser support. For example, using the transform *svg attribute* works in all browsers, but using the transform *css property style*, does not work in IE. The reference point for rotations and scaling can also [vary by browser](https://css-tricks.com/svg-animation-on-css-transforms/).
+
+The inconsistency of animation properties of SVG point to using more established animation libraries like [GSAP](https://greensock.com/3) that are based in javascript, so that the animation just "works", and we don't need to manually fill in different queries or code browser specific support depending on where we are viewing the animation. That'll be the next step up in complexity for future animations. 
+
+## Web Animations API, better synchronization
+
+True synchronization in CSS animations simply doesn't exist. The model for having animations sync is to try and coordinate the start time of the animations and have them run for the same amount of time. If you want to "hook into" an already running animation, you need to be able to query the state of the running animation. Most of the animation tools prior to the development of Web Animation Tools, like `setInterval` and `requestAnimationFrame` rely on parallel timing of animations, and on the browser's refresh rate, which is normally 60Hz. 60Hz equates to 16 milliseconds of time for your logic to execute and have the browser recalculate layout and repainting. However, if the browser is busy, or the animation is complex, the refresh rate can drop. This is why we see animations stuttering or lagging of frames. The Web Animations API (WAAPI) synchronizes each animation to `Document.timeline`, so that we can set the timeline of each animation in relation to a single timeline. This means we can set the starting time of a new animation to the same start time as a previously running animation, and get them to sync. In my opinion, the syncing capabilities and performance enhancements are the most compelling additions of this new web standard.
+
+{/* https://birtles.wordpress.com/2013/06/26/introducing-web-animations/ */}
+<BlockQuote source="Brian Birtles" quote="Web Animations is essentially a common model for animation that underlies CSS and SVG. It covers the common features of both plus a few only found in one or the other."/>
+
+
+Here are some resources and links to get started with using and understanding WAAPI:
+
+* [Brian Birtles](https://birtles.wordpress.com/), editor for the WAAPI working draft, has a [great blog post introducing the API](https://birtles.wordpress.com/2013/06/26/introducing-web-animations/), along with the story of how it was put together, as well as the motivations for doing so. If you're interested in the details of why WAAPI is more performant with webpage compositing, [Brian also explains the implementation](https://hacks.mozilla.org/2016/08/animating-like-you-just-dont-care-with-element-animate/) of the core `Element.animate()`.
+* [Rachel Nabors](http://rachelnabors.com/) is a cartoonist and web animations expert who also wrote the fantastic, pratical [introduction to WAAPI on the MDN web docs](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
+* [Dan Wilson](https://danielcwilson.com/) has also written a [series of helpful articles](https://danielcwilson.com/blog/2015/07/animations-intro/) explaining each feature of WAAPI in more detail, as well as compiled a [helpful list of other resources](https://danielcwilson.com/r/animations/) found around the web related to WAAPI.
+* Google has some [web animation demos](https://web-animations.github.io/web-animations-demos/#waves/) along with the code using WAAPI.
+
+First let's look at a minimal example of a moving red square: 
+
+<WAAPIExample figure="simple"/>
+
+```html
+<div id="waapi-example-box"
+     style="height:20px;
+            width:20px;
+            background-color: red;">
+</div> 
+```
+
+```js
+window.onload = function() {
+    const waapiBox = document.querySelector("#waapi-example-box");
+
+    const keyframes =  [
+        {transform: "translate(0px, 0px)"},    // from
+        {transform: "translate(200px, 0px)"}]; // to 
+
+    const animOptions = {
+        duration: 1000,         // 1 second
+        iterations: Infinity,   // loop infinitely
+        direction: "alternate", // bounce back and forth
+        easing: "ease-in-out"};
+
+    waapiBox.animate(keyframes, animOptions)
+}
+```
+
+`Element.animate` takes two main arguments, a keyframe array with a information about the properties and values the object should have. The "keyframes" element is very similar to the `@keyframes` usage in CSS, in that the programming is "declarative" and the program will interpolate what needs to happen in between to ensure we get from point A to point B. The second argument is an options object, which is similar to the `animation` property in CSS. The options object is where we can specify the duration, timing function, and other properties of the animation. The names for the animation options are slightly different, but they encapsulate mostly the same options. `duration` in this case must be specified in milliseconds.
+
+
+The code used in the Latin Square design animation is not all that different. There is some additional javascript code to figure out positioning depending on which label is being animatetd, and we also use the `offset` key to specify the timing of the keyframes. Finally, we use a `forEach` call to start the animation for each row label.
+
+```javascript
+/* positioning dictionary */
+const rowLabels = {
+      "row-label1" : {xPos: x1, yPos: y0},
+      "row-label2" : {xPos: x1, yPos: y1},
+      "row-label3" : {xPos: x1, yPos: y2}
+    }
+
+// the animation options
+const rowExplodeOptions = {
+   duration: 6000, // 6 second animation loop
+   delay: 0, // start immediately
+   iterations: Infinity, // loop infinitely
+   fill: "forwards", // maintain the styling of the last keyframe
+   direction: "normal" // play in the order of keyframes
+}
+
+let rowAnim;
+Object.entries(rowLabels).forEach(([label, pos], i) => {
+   let xlabel = pos.xPos + blockShort * .5;
+   let ylabel = pos.yPos + blockShort * .5;
+
+// the keyframing of the animation
+   let labelPosition = [
+      // start from exploded position
+      // `transform-origin: center` is in stylesheet so scale is relative to middle
+      {transform: `scale(1.1, 1.1)
+                   translate(${xlabel}px,
+                             ${ylabel - (i - 1) * -5}px)`,
+       opacity: "100%"},
+
+      // hold frame for .6 seconds
+      {transform: `scale(1.1, 1.1)
+                   translate(${xlabel}px,
+                             ${ylabel - (i - 1) * -5}px)`,
+       opacity: "100%",
+       offset: .1},
+
+       // scale down the row blocks into position
+      {transform: `translate(${xlabel}px, ${ylabel}px)`,
+       opacity: "100%",
+       offset: .15},
+
+      // fade out by transition opacity
+      {transform: `translate(${xlabel}px, ${ylabel}px)`,
+       opacity: "0%",
+       offset: .2},
+
+      // hold the frame for the rest of the loop
+      {transform: `translate(${xlabel}px, ${ylabel}px)`,
+       opacity: "0%",
+       offset: 1},
+   ]
+
+   // start the animation
+   rowAnim = document.querySelector(`g.${label}`)
+                     .animate(labelPosition, rowExplodeOptions)
+})
+```
+
+As you can see, the transform feature is very powerful for transitions as it allos for multiple transformations applied, scaling and translating. The `offset` key is crucial to the timing of the animation, since we've set the entire animation option to be a loop of 6 seconds, we can use the offset as a value between 0-1 to specify what portion of time the animation should be. Conversely, we can also use the `delay` option to specify when the animation should start. But the delay does not get repeated if you want the animation to loop.
+
+As I mentioned, synchronization is one of the main benefits of using WAAPI. If there are already running animations, and you want to start another animation with synchronization without interrupting the existing animations, the solution with WAAPI is quite straightforward.
+
+Let's add some more moving boxes and see how we can synchronize them.
+
+<WAAPIExample2 client:only="vue" />
+
+```js
+/* Vue Boilerplate removed */
+fuction add() {
+
+   // create and append the box
+   const waapiParent = document.querySelector("#parent")
+   let box = document.createElement("div")
+   box.classList.add("waapi-box")
+   waapiParent.appendChild(box)
+
+   // create animation, with same keyframes/animOptions as before
+   let boxAnim = box.animate(keyframes, animOptions);
+
+   // The synchronization step, set same starting time
+   const firstBox = waapiParent.firstChild.getAnimations()[0]
+   boxAnim.startTime = firstBox.startTime
+}
+```
+
+The core logic is to append object to the DOM, call the `Element.animate()`, and query the animation already running to set properties of the new animation. In this case, we're setting the `startTime` of the new animation to the `startTime` of the first animation running. Hence, we're saying "animate this new object as if it had started at the same time as the first one". Since the animation objects are operating on the same document timeline, the browser will be able to calculate the positioning of the new object and display it in sync with the first.
+
+Some other neat features of WAAPI, is that we can call `getAnimations()` on either the `Document` we get an array of all the currently running animations on the page. We can also call `getAnimations()` on individual elements as we did above, as we can have multiple animation objects attached to the same element with different timings. This function is useful for pausing or starting all animations on the the page. For the Latin Square Design, that's the functionality implemented when clicking on the design.
+
+```js
+/* Vue boilerplate removed */
+
+function toggleAnimations() {
+   document.getAnimations().forEach((animation) => {
+      animation.playState == "paused" ? 
+         animation.play() : 
+         animation.pause()
+   })
+   this.animPaused = !this.animPaused
+}
+```
+
+Finally, it's neat that you can attach multiple animation triggers onto the same element, and specify how they can be interact with one another. Here we can attach many instances of `Animation` depending on which button you press, including the same one! The effect will accumulate on top of previous animations. For example, hitting the rotate button multiple times will cause the rotation to speed up, or multiple scaling transformations will cause the element to grow larger and larger.
+
+<WAAPIExample3 client:only="vue"/>
+
+
+```js
+/* Vue boilerplate removed, js modified.*/
+
+const rotateKey = {
+  transform: "rotate(0deg)", transform: "rotate(360deg)"
+}
+
+const rotateOptions = {
+  id: "rotate",
+  duration: 2800,
+  iterations: 1,
+  easing: "ease-in-out",
+  composite: "add"       // stack animation effects
+}
+
+let waapiBox = document.querySelector("#waapiBox")
+let boxAnimations = []
+
+function rotate() {
+   let rotateAnim = waapiBox.animate(rotateKey, rotateOptions);
+
+   boxAnimations.push(rotateAnim.id)
+   // event handler after animation is finished
+   rotateAnim.onfinish = () => {
+      let index = boxAnimations.indexOf(rotateAnim.id)
+      if (index > -1 ) {
+         boxAnimations.splice(index, 1)
+      }
+   }
+},
+```
+
+The program is modified slightly from the Vue component so that the javascript logic is more clear. We call `Element.animate` with our keyframe options, which includes `composite: "add"`. This allows us to animate the same `transform` property, and specifies how they should composite with one another. The details of other compositing effects can be found on the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/composite). For compositing of color, you might have noticed that when the box is yellow, the color does not change when adding more color animations. That's because we're adding green to the red, which is why we see yellow at a saturation. Since the range is from 0-255, despite adding "more green" with more button presses, the yellow is already saturated with `rgb(255, 255, 0)`. 
+
+Here the animation will also emit an event `finish`, and we can specify an event handler of what to do when the animation finishes. In this case, we're simply removing the name of the animation from the list that's shown.
+
+## Conclusion
+
+There are plenty of cautions to take when creating animations, especially when working with SVG elements. I've learned that the intersection of SVG and CSS is not as crisp, but still remarkable how much overlap there is. There are a few tricks that I routinely try to get consistent results, and perhaps as the browser implementations change, I'll need to update my approach.
+
+The Web Animations API provides a powerful, native way of controlling animations with a similar philosophy as CSS animations. I think the API shines when coordinating many animations, and hooking into already running animations. For our Latin Square design animation, we can provide just a few more interactive elements for the user, but there are many more possibilities for future animations.

@@ -12,6 +12,13 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", { year: 'numeric', month:
 const allPosts = await getCollection("blog", ({ data }) => {
 	return data.draft !== true
 })
+
+
+// sorts in place, do i need to change const?
+allPosts.sort((a, b) => {
+	return b.data.pubDate - a.data.pubDate
+})
+
 const quartoPosts = await getCollection("quarto", ({ data }) => {
 	return data.draft !== true
 })

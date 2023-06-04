@@ -81,7 +81,7 @@ export default {
           this.isRowHighlighted = false;
           this.isColHighlighted = !this.isColHighlighted
           this.isEuHighlighted = false;
-          console.log(this.isColHighlighted);
+          // console.log(this.isColHighlighted);
           break;
         case "eu":
           this.isRowHighlighted = false;
@@ -89,7 +89,7 @@ export default {
           this.isEuHighlighted = !this.isEuHighlighted
           break;
         default:
-          console.log("default")
+          // console.log("default")
           break;
       }
     },
@@ -100,10 +100,10 @@ export default {
       this.animPaused = !this.animPaused
     }
   }, 
-  watch: {
-    animPaused()
-    {console.log("pause state toggled")}
-  },
+  // watch: {
+    // animPaused()
+    // {console.log("pause state toggled")}
+  // },
   mounted() {
     // create keyframe for each of the texts
     const rightSpot = [
@@ -137,7 +137,7 @@ export default {
     const y2 = y1 + blockShort
 
     // console.log(x0) // NAN
-    console.log(style.getPropertyValue(""))
+    // console.log(style.getPropertyValue(""))
     
     // animation timing array
     const animTiming = [2000, 4000, 5000, 7000]
@@ -187,7 +187,7 @@ export default {
         {transform: `translate(${xlabel}px, ${ylabel}px)`, opacity: "0%", offset: .2},
         {transform: `translate(${xlabel}px, ${ylabel}px)`, opacity: "0%", offset: 1},
       ]
-      console.log(label)
+      // console.log(label)
 
       rowAnim = document.querySelector(`g.${label}`).animate(labelPosition, rowExplodeOptions)
     })
@@ -307,7 +307,7 @@ export default {
 </script>
 <template>
   <!-- svg object definitions -->
-  <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none">
     <defs>
       <pattern id="triangle-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.24)"><path id="a" data-color="fill" fill="none" stroke="#0000ff" stroke-width="4" d="M-25 20h50L0-20z"></path><use xlink:href="#a" x="100"></use><use xlink:href="#a" y="100"></use><use xlink:href="#a" x="100" y="100"></use><use xlink:href="#a" x="50" y="50"></use><use xlink:href="#a" x="50" y="150"></use></pattern>
       <pattern id="circle-fill" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.25)"><circle id="circ-pattern" data-color="outline" fill="none" stroke="#0000FF" stroke-width="3.84" cx="0" cy="0" r="60"></circle><use xlink:href="#circ-pattern" x="100"></use><use xlink:href="#circ-pattern" x="100" y="100"></use><use xlink:href="#circ-pattern" y="100"></use></pattern>
@@ -343,7 +343,7 @@ export default {
   <div class="latinSquareDrawing">
   <!-- <h2 class="header">Latin Square Design</h2> -->
     <div class="explanation row-block__section">
-      <h2><a @click="highlightStuff('row')" :class="[{'row-block__explanation--highlighted' : isRowHighlighted }, 'row-block__explanation']"> Row Block</a></h2>
+      <h2 style="margin-top: 0px;"><a @click="highlightStuff('row')" :class="[{'row-block__explanation--highlighted' : isRowHighlighted }, 'row-block__explanation']">Row Block</a></h2>
       <p>Row blocks are chosen as a source of variation before the randomization of treatments to experimental units. In this 3x3 example, there are 3 row blocks in which every treatment will appear in every row.</p>
     </div>
     <div class="explanation col-block__section">
@@ -664,7 +664,7 @@ export default {
   .explanation {
   // grid-area: description;
   // margin-left: 3em;
-  padding: 10px;
+  padding-right: 5%;
   color: $nord6;
 
   & p {
@@ -676,6 +676,7 @@ export default {
     // font-size: 2em;
     font-family: "Gloria Hallelujah", cursive;
     user-select: none; // disable highlighting
+    margin-top: 0px;
   }
   & h2>a:hover {
     // color: $nord4;

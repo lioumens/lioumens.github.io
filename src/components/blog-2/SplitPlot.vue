@@ -42,7 +42,7 @@
       <p>The unit the whole-plot treatment is applied to. A block is broken into whole-plot experimental units. In the standard split-plot design, the whole plots are arranged in an RCBD, with 1 whole-plot experimental unit for each whole-plot treatment factor.</p>
       <input type="radio" id="sp-def" name="terms">
       <label for="sp-def">Split-plot Experimental Unit</label> <br> <p>A smaller size experimental unit that the split-plot factor B is applied to. In a split-plot design, this experimental unit is wholly contained within the whole-plot experimental unit. </p>
-<svg width="100%" viewBox="20 20 550 400" preserveAspectRatio="XMidYMid">
+<svg width="100%" viewBox="20 20 550 400" preserveAspectRatio="xMidYMid">
   <g class="factor-text">
     <text class="A-text" x="20" y="50">WP Factor A</text>
     <text class="B-text" x="280" y="50">SP Factor B</text>
@@ -120,22 +120,6 @@
 </template>
 
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@1,100&family=Gloria+Hallelujah&family=KoHo:wght@300&display=swap');
-
-.tritest{
-  height: 300px;
-  width: 300px;
-  background: red;
-}
-
-.tritest .tritest_svg {
-  background: black;
-}
-
-.arect {
-  fill: url(#dot-fill) #ff0;
-}
-
 $svg-height: 500px;
 $svg-width: 700px;
 $rep-width: 450px;

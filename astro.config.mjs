@@ -14,9 +14,9 @@ import rehypeKatex from 'rehype-katex'
 import AutoImport from 'astro-auto-import';
 import MDXCodeBlocks, { mdxCodeBlockAutoImport } from 'astro-mdx-code-blocks';
 
-
 // https://astro.build/config
 export default defineConfig({
+  site: "https://michaelliou.io",
   // Enable Vue to support Vue components.
   integrations: [
     AutoImport({

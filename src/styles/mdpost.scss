@@ -1,3 +1,6 @@
+// possibly appropriate for global, but subject to change
+@import url('https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@1,100&family=Gloria+Hallelujah&family=KoHo:wght@300&display=swap');
+
 a {
     color: var(--nord9)
 }
@@ -14,14 +17,21 @@ a {
     justify-content: space-between;
 }
 
+.blog-cover {
+    display: block;
+    max-height: 300px;
+    margin: 0px auto;
+}
 
 // style the inline code, but reset code blocks
 code {
     background-color: var(--nord3);
-    padding: 1px 3px;
-    margin: 0px 2px;
+    padding: 1px 1px;
+    margin: 0px 1px;
     border-radius: 5%;
     color: var(--nord6);
+    font-weight:300;
+    font-size: 1rem;
 }
 
 pre code {

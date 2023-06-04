@@ -13,5 +13,3 @@ draft: true
 
 The magic will be handled by [tippy.js](https://atomiks.github.io/tippyjs/). I'm going to use the CDN version, but you can also install it via npm. The interface is incredibly simple to use, and the overall design of the script will simply search a document for all elements with a footnote id, and link the tool tip to the footnote.
 
-
-
