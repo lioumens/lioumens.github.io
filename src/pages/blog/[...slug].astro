@@ -27,7 +27,7 @@ const { Content, headings} = await entry.render();
 
 ---
 
-<MarkdownPostLayout frontmatter={entry.data}>
+<MarkdownPostLayout frontmatter={entry.data} headings={headings}>
     <!-- <ul>
         {headings.map((heading) => (
             <li>
@@ -35,5 +35,6 @@ const { Content, headings} = await entry.render();
             </li>
         ))}
     </ul> -->
+    <!-- Seems I can code headings here or in markdown posts -->
     <Content />
 </MarkdownPostLayout> 

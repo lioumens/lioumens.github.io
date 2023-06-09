@@ -11,6 +11,6 @@ export default async function mdxToHhtml(mdx) {
     await compile(await fs.readFile('../../../content/posts/example.mdx'), {remarkPlugins: [remarkGfm]})
     )
 const output = await run(code, runtime)
-console.log(output)
+// console.log(output)
 return "0";
 }
