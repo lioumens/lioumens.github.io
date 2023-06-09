@@ -82,6 +82,11 @@ main {
   padding-right: 15px;
   color: var(--nord6);
 }
+
+a {
+    color: var(--nord9)
+}
+
 @media screen and (min-width: 1200px) {
         main {
             // margin-top: 40px; // shift the size of fixed navigation

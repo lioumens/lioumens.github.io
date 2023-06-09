@@ -1,7 +1,6 @@
 ---
 
 // style sheets
-import "../styles/global.scss"
 import "katex/dist/katex.min.css" // include katex support explicitly
 import "../styles/mdpost.scss"
 
@@ -90,52 +89,9 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   <script src="../scripts/tippyfootnotes.js"></script>
   <script src="../scripts/toc.js"></script>
   
-  <style lang="scss" is:global>
+  <style lang="scss">
     @import "../../node_modules/nord/src/sass/nord.scss";
     
-    main {
-      display: grid;
-      // grid-template-columns: fit-content(100%);
-      // grid-template-rows: auto;
-      grid-template-areas: "content";
-      width: 100%;
-      height: fit-content; // solves container height issue for toc
-    }
-    article {
-      grid-area: content;
-      padding: 0 1rem;
-      max-width: 700px;
-      min-width: 0px; // solved the problem of overflowing content
-      width: 100%;
-      // justify-self:normal;
-      // width: auto;
-      // height: 100%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .toc-nav {
-      display: none;
-    }
-    // media query for table of contents
-    @media screen and (min-width: 1050px) {
-      main {
-        grid-template-columns: minmax(0px, 1fr) fit-content(250px);
-        grid-template-areas: "content toc";
-        max-width: 1500px;
-        & .toc-nav {
-          grid-area: toc;
-          position: sticky;
-          align-self: start;
-          margin-right: 2rem;
-          margin-left: 0rem;
-          top: 3.5rem;
-        }
-      }
-    .toc-nav {
-      display: block;
-    }
-    }
     
     .nord_table {
       width: 90%;
