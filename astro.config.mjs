@@ -7,6 +7,7 @@ import mdx from "@astrojs/mdx"
 
 // markdown plugins
 import remarkMath from 'remark-math'
+import remarkSectionize from 'remark-sectionize'
 import rehypeKatex from 'rehype-katex'
 // import remarkMermaid from 'remark-mermaid'
 
@@ -38,7 +39,7 @@ export default defineConfig({
       langs: ["python", "r", "html", "css", "javascript", "sass"]
     },
     remarkPlugins: [
-      remarkMath,
+      remarkMath, remarkSectionize
       // remarkMermaid,
     ],
     rehypePlugins: [

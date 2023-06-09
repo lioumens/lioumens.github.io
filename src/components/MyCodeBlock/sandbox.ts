@@ -1,5 +1,5 @@
 let message: string = 'Hello something';
-console.log(message);
+// console.log(message);
 
 
 const user : User  = {
