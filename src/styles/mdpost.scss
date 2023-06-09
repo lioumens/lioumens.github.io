@@ -64,6 +64,7 @@ main {
     grid-template-areas: "content";
     width: 100%;
     height: fit-content; // solves container height issue for toc
+    padding: 0px 0px;
 }
 article {
     grid-area: content;
@@ -82,7 +83,7 @@ article {
     display: none;
 }
 // media query for table of contents
-@media screen and (min-width: 1050px) {
+@media screen and (min-width: 900px) {
     main {
     grid-template-columns: minmax(0px, 1fr) fit-content(250px);
     grid-template-areas: "content toc";
