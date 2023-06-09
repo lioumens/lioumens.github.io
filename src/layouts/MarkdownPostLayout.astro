@@ -1,15 +1,14 @@
 ---
-
-// style sheets
-import "katex/dist/katex.min.css" // include katex support explicitly
-import "../styles/mdpost.scss"
-
 // components
 import BaseLayout from './BaseLayout.astro';
 import TableOfContents from "../components/TableOfContents.astro";
 import Giscus from "../components/Giscus.astro";
 import TagList from "../components/TagList.astro"
 import { Image } from "astro:assets";
+
+// style sheets
+import "katex/dist/katex.min.css" // include katex support explicitly
+import "../styles/mdpost.scss" // mdpost styles need to go after components
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   year: 'numeric',
