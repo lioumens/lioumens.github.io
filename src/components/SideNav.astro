@@ -1,5 +1,5 @@
 ---
-const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
+const { activeNav } = Astro.props;
 ---
 
 <nav class="side">
@@ -69,17 +69,12 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 
 </script>
 
-<style lang="scss" define:vars={{ activeNav, widthTrigger }}>
+<style lang="scss" define:vars={{ activeNav }}>
 	@import "../../node_modules/nord/src/sass/nord.scss";
-
-    h2 {
-        margin: 30px 0px 10px 0px;
-    }
     a {
         text-decoration: none;   
     }
     .card {
-        background-color: var(--widthTrigger);
 		display: flex;
 		flex-direction: column;
 		width: 100%;
@@ -113,8 +108,6 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 		margin-right: 20px;
 	}
 	nav.side {
-        grid-area: sidenav;
-
 		position: fixed;
 		width: 250px;
         height: 100vh;
@@ -187,12 +180,8 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 
     nav.top {
         display: none;
-        grid-area: topnav;
     }
-@media screen and (max-width: 1300px) {
-    html {
-        scroll-padding-top: 50px;
-    }
+@media screen and (max-width: 1050px) {
     nav.top {
         display: flex;
         flex-direction: column;
@@ -204,7 +193,7 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
         position: fixed;
         top: 0;
         left: 0;
-        height: 50px; 
+        height: 25px; 
         padding: 20px; // total height of 45px;
         width: 100%;
 
@@ -241,8 +230,6 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
         }
         & h2 {
             margin-left: 15px;
-            margin-top: 0px;
-            margin-bottom: 0px;
             color: $nord4;
         //     margin-bottom: 20px;
         }
@@ -251,7 +238,7 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
         background-color: $nord1;
         height: 30px;
         width: 40px;
-        margin-right: 15px;
+        margin-right: 50px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -283,7 +270,7 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
         // transition: transform .2s ease-in;
     }
     .top-drawer.expanded {
-        top: 50px;
+        top: 65px;
         opacity: 100%;
         transition: top .2s ease-in;
 
@@ -291,7 +278,7 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
     .top-drawer {
         position: fixed;
         background-color: cyan;
-        top: -130px; // how large d
+        top: -100px; // how large d
         left:0px;
         width: 100%;
         z-index: 1;

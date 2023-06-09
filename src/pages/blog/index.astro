@@ -5,8 +5,6 @@ import { getCollection } from "astro:content";
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import BlogPost from '../../components/BlogPost.astro'
 
-// styles
-
 // display date in a format, but 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", { year: 'numeric', month: 'long', day: 'numeric', timeZone: "UTC"})
 
@@ -37,14 +35,12 @@ const activeNav = 1 // sets side nav position
 ---
 
 <BaseLayout pageTitle={pageTitle} activeNav={activeNav}>
-	<main>
-		<h1>Recent Posts</h1>
-		<hr />
-		<ul>
-			<!-- {quartoPosts.map(post => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)} -->
-			{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
-		</ul> 
-	</main>
+			<h1>Recent Posts</h1>
+			<hr />
+			<ul>
+				<!-- {quartoPosts.map(post => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)} -->
+				{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
+			</ul> 
 </BaseLayout>
 
 <style lang="scss">
@@ -54,9 +50,6 @@ const activeNav = 1 // sets side nav position
 	ul {
 		// margin: 0px;
 		padding: 0px;
-	}
-	main {
-		width: 90%; // seems to avoid the horizontal scroll bar from appearing when 100
 	}
 </style>
 

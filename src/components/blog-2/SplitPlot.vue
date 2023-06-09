@@ -34,6 +34,7 @@
 
 
 <div class="drawing">
+      <h2>Main components of a split-plot design:</h2>
       <input type="radio" id="rep-def" name="terms" checked>
       <label for="rep-def">Replicate</label> <br> <p>Replicates are also called statistical blocks. These are a set of similar whole plot experimental units. Sets of replicates are needed for a <em>valid</em> estimate of the experimental error.</p>
        <input type="radio" id="wp-def" name="terms">

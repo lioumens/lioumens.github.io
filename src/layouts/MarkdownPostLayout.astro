@@ -7,7 +7,6 @@ import "../styles/mdpost.scss"
 
 // components
 import BaseLayout from './BaseLayout.astro';
-import TableOfContents from "../components/TableOfContents.astro";
 import Giscus from "../components/Giscus.astro";
 import TagList from "../components/TagList.astro"
 import { Image } from "astro:assets";
@@ -17,125 +16,63 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   month: 'long',
   day: 'numeric',
   timeZone: "UTC"})
-  
-  // properties
-  interface Props {
-    frontmatter: {
-      title: string;
-      pubDate: Date;
-      tags: string[];
-      image: {
-        url: {
-          src: string;
-          height: number;
-          width: number;
-          format: string;
-        };
-        alt: string;
-      };
-    };
-    headings: {
-      depth: number;
-      text: string;
-      slug: string;
-    }[];
-  }
-  const { frontmatter, headings } = Astro.props;
-  const tags = frontmatter.tags;
-  
-  // conditional display of cover photo
-  const hasCover = frontmatter.image !== undefined;
-  // console.log(frontmatter.image.format)
-  // const isSVGorGIF = hasCover && ["svg", "gif", "GIF"].includes(frontmatter.image.url.split(".").slice(-1)[0])
-  const isSVGorGIF = hasCover && ["svg", "gif", "GIF"].includes(frontmatter.image.url.format)
-  // console.log(frontmatter.image)
-  // console.log(isSVGorGIF)
-  
-  // check if TOC
-  //TODO: implement todo content
-  
-  // console.log(frontmatter.image.url.split(".").slice(-1)[0])
-  
-  // console.log(headings)
-  // console.log(content.astro?.headings)
-  // console.log(Astro.props.getHeadings())
-  
-  // constants
-  const activeNav = 1;
-  const tagSize = 1; // scales rem
-  ---
-  
-  <BaseLayout pageTitle={frontmatter.title} activeNav={1} >
-    <main>
-      {frontmatter.toc && <TableOfContents headings={headings} class="toc-nav" />}
-      <article class="article-content">
-        <div class="blog-meta">
-          <span class="date">{dateFormatter.format(frontmatter.pubDate)}</span>
-          <div class="tags">
-            <TagList tags={tags} />
-          </div>
-        </div>
-        <h1 class="title">{frontmatter.title}</h1>
-        <!-- <Image src={frontmatter.image.url} alt={frontmatter.title} height="405" width="720"/> -->
-        <!-- display cover photo -->
-        {hasCover && (isSVGorGIF ? 
-                      <img class="blog-cover" src={frontmatter.image.url.src} alt={frontmatter.image.alt}/> :
-                      <Image src={frontmatter.image.url.src} alt={frontmatter.image.alt} height={frontmatter.image.url.height} width={frontmatter.image.url.width}/>)}
-        <slot />
-        <Giscus />
-      </article>
+
+// properties
+const { frontmatter } = Astro.props;
+const tags = frontmatter.tags;
+
+// conditional display of cover photo
+const hasCover = frontmatter.image !== undefined;
+// console.log(frontmatter.image.format)
+// const isSVGorGIF = hasCover && ["svg", "gif", "GIF"].includes(frontmatter.image.url.split(".").slice(-1)[0])
+const isSVGorGIF = hasCover && ["svg", "gif", "GIF"].includes(frontmatter.image.url.format)
+// console.log(frontmatter.image)
+// console.log(isSVGorGIF)
+
+// check if TOC
+//TODO: implement todo content
+
+// console.log(frontmatter.image.url.split(".").slice(-1)[0])
+
+// console.log(headings)
+// console.log(content.astro?.headings)
+// console.log(Astro.props.getHeadings())
+
+// constants
+const activeNav = 1;
+const tagSize = 1; // scales rem
+---
+
+<BaseLayout pageTitle={frontmatter.title} activeNav={1}>
+  <div class="blog-meta">
+    <span class="date">{dateFormatter.format(frontmatter.pubDate)}</span>
+    <div class="tags">
+      <TagList tags={tags} />
     </div>
+  </div>
+  <h1 class="title">{frontmatter.title}</h1>
+  <!-- <p>Written by {frontmatter.author}</p> -->
+  <!-- <p>Published on {frontmatter.pubDate.toDateString()}</p> -->
+  <!-- <div class="tags">
+    {tags.map((tag) => (
+      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+      ))}
+    </div> -->
+    
+    <!-- <Image src={frontmatter.image.url} alt={frontmatter.title} height="405" width="720"/> -->
+    
+    <!-- display cover photo -->
+    {hasCover && (isSVGorGIF ?  <img class="blog-cover" src={frontmatter.image.url.src} alt={frontmatter.image.alt}/> :
+    <Image src={frontmatter.image.url.src} alt={frontmatter.iamge.alt} height={frontmatter.image.url.height} width={frontmatter.image.url.width}/>)}
+    <slot />
+    <!-- <p> {}</p> -->
+    <Giscus />
   </BaseLayout>
   
   <script src="../scripts/tippyfootnotes.js"></script>
-  <script src="../scripts/toc.js"></script>
   
   <style lang="scss" is:global>
     @import "../../node_modules/nord/src/sass/nord.scss";
-    
-    main {
-      display: grid;
-      // grid-template-columns: fit-content(100%);
-      // grid-template-rows: auto;
-      grid-template-areas: "content";
-      width: 100%;
-      height: fit-content; // solves container height issue for toc
-    }
-    article {
-      grid-area: content;
-      padding: 0 1rem;
-      max-width: 700px;
-      min-width: 0px; // solved the problem of overflowing content
-      width: 100%;
-      // justify-self:normal;
-      // width: auto;
-      // height: 100%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .toc-nav {
-      display: none;
-    }
-    // media query for table of contents
-    @media screen and (min-width: 1050px) {
-      main {
-        grid-template-columns: minmax(0px, 1fr) fit-content(250px);
-        grid-template-areas: "content toc";
-        max-width: 1500px;
-        & .toc-nav {
-          grid-area: toc;
-          position: sticky;
-          align-self: start;
-          margin-right: 2rem;
-          margin-left: 0rem;
-          top: 3.5rem;
-        }
-      }
-    .toc-nav {
-      display: block;
-    }
-    }
     
     .nord_table {
       width: 90%;

@@ -20,22 +20,6 @@ const tagSize = 2;
     
 
 </style> -->
-
-<BaseLayout pageTitle={pageTitle} activeNav={activeNav}>
-  <main>
-  <h1>Tag Index</h1>
-  <hr / >
-<TagList tags={tags} tagSize={tagSize} />
-<!-- <iframe width="100%" height="635"
-  src="https://observablehq.com/embed/@d3/sortable-bar-chart?cell=viewof+order&cell=chart"></iframe> -->
-<!-- <div class="tags">
-    {tags.map((tag) => (
-      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
-    ))}
-</div> -->
-  </main>
-</BaseLayout>
-
 <style lang="scss">
     // a {
     //   color: #00539F;
@@ -56,3 +40,16 @@ const tagSize = 2;
     //   background-color: #F8FCFD;
     // }
   </style>
+
+<BaseLayout pageTitle={pageTitle} activeNav={activeNav}>
+  <h1>Tag Index</h1>
+<TagList tags={tags} tagSize={tagSize} />
+<!-- <iframe width="100%" height="635"
+  src="https://observablehq.com/embed/@d3/sortable-bar-chart?cell=viewof+order&cell=chart"></iframe> -->
+<!-- <div class="tags">
+    {tags.map((tag) => (
+      <p class="tag"><a href={`/tags/${tag}`}>{tag}</a></p>
+    ))}
+</div> -->
+
+</BaseLayout>

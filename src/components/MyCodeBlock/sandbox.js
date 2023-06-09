@@ -1,5 +1,5 @@
 var message = 'Hello something';
-// console.log(message);
+console.log(message);
 var user = {
     name: "Hayes",
     id: 0
