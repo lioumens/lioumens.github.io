@@ -1,0 +1,21 @@
+---
+---
+
+<svg class="example3" viewBox="0 0 400 100" preserveAspectRatio="xMinYMid meet">
+</svg>
+
+
+<script>
+import * as d3 from "d3"
+
+const xpos = [50, 150, 250, 350]
+
+const svg = d3.select(".example3")
+svg.selectAll("circle")
+   .data(xpos)
+   .join("circle")
+   .attr("cx", d => d)
+   .attr("cy", 50)
+   .attr("r", () => Math.random() * 38 + 2) // range 2-40
+   .style("fill", () => "#"+ Math.floor(Math.random() * 16777215).toString(16))
+</script>

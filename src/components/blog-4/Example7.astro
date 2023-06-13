@@ -1,0 +1,39 @@
+---
+
+---
+
+<svg class="example7" viewBox="0 0 400 200" preserveAspectRatio="xMinYMid meet">
+
+</svg>
+
+<script>
+import * as d3 from "d3"
+
+// define drag behavior in 3 parts: start, drag, end
+function dragStart(event) {
+    d3.select(this).attr("stroke", "black")
+}
+function dragging(event) {
+    d3.select(this).attr("cx", () =>  event.x)
+                   .attr("cy", () => event.y)
+}
+function dragEnd(event) {
+    d3.select(this).attr("stroke", "none")
+}
+
+
+const drag = d3.drag().on("start", dragStart)
+                      .on("drag", dragging)
+                      .on("end", dragEnd)
+
+const svg = d3.select(".example7")
+svg.append("circle")
+   .attr("cx", 200)
+   .attr("cy", 100)
+   .attr("r", 20)
+   .attr("fill", "red")
+   .attr("stroke-width", 2)
+   .style("cursor", "pointer")
+   .call(drag)
+</script>
+

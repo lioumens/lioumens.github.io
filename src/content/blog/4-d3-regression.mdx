@@ -1,5 +1,5 @@
 ---
-title: 'Interactive Linear Regression with d3'
+title: 'Interactive Linear Regression with Vue + d3'
 pubDate: 2023-06-09
 description: 'Another devlog'
 author: 'Michael Liou'
@@ -12,8 +12,491 @@ toc: true
 draft: true
 ---
 
-import Influence from "../../components/blog-4/Influence.vue"
+import Dragging from "../../components/blog-4/Dragging.vue"
+import Coordinate from "../../components/blog-4/Coordinate.vue"
+import SimpleLinearRegression from "../../components/blog-4/SimpleLinearRegression.vue"
+import TestMouse from "../../components/blog-4/TestMouse.vue"
+import Circles from "../../components/blog-4/Circles.vue"
+import Example1 from "../../components/blog-4/Example1.astro"
+import Example2 from "../../components/blog-4/Example2.astro"
+import Example3 from "../../components/blog-4/Example3.astro"
+import Example4 from "../../components/blog-4/Example4.astro"
+import Example5 from "../../components/blog-4/Example5.vue"
+import Example6 from "../../components/blog-4/Example6.vue"
+import Example7 from "../../components/blog-4/Example7.astro"
+import Example8 from "../../components/blog-4/Example8.vue"
+import Example9 from "../../components/blog-4/Example9.vue"
+import BlockQuote from "../../components/BlockQuote.astro"
 
-<Influence client:only="vue" />
+{/* <Influence client:only="vue" /> */}
 
-why isn't it working?
+<SimpleLinearRegression client:only="vue" />
+
+We can break down the functionality of the interactive graphic above into the coordinate display, the dragging interface and structural division of labor between d3 and Vue.
+
+## Vue + d3
+
+Both d3 and Vue are frameworks for manipulating the DOM, and are relatively opinionated about how code is rendered to be displayed in order to be reactive, though in effect, for the end user, the result is quite similar. The "wheelhouse" of both frameworks is very different though, I see Vue as more of a general purpose reactivity framework targeted toward UI elements, while d3 is more data motivated in its design. For basic designs like the graphic above, both are certainly viable options.
+
+I've played around with some d3 in the past, but the syntax and style of coding was messy and somewhat unintuitive. I got by mostly by piecing together bits and pieces of code from example online. Now I feel like I have a better handle on the underlying elements that d3 is manipulating, and some of the logic behind how the library is organized. Also the newest versions of d3 (v5+) greatly simplify the syntax with the function `.join`.
+
+Since both libraries are trying to work with the DOM, but in decidedly different ways, there become quite a few decisions to make about getting both to play well together. Let's start looking at some basic code manipulating circles in d3 and Vue.
+
+Folks have written about dividing the DOM between d3 and React, and this post isn't all that different conceptually, but you'll see more Vue related code here.
+
+## Binding data to circles
+
+We'll build this little demo in two different ways, the d3 way and the Vue way to understand some of the differences between the two.
+
+### The d3 way
+Starting with an empty svg element, we can add circles directly to the DOM using d3
+
+```html
+<svg class="svgBox"
+     viewBox="0 0 400 100">
+</svg>
+```
+
+```js
+import * as d3 from "d3"
+
+const svg = d3.select(".svgBox") // get svg element
+
+svg.append("circle") // add circle to svg
+   .attr("cx", 200) // set attributes of circle element
+   .attr("cy", 50)
+   .attr("r", 20)
+   .style("fill", "red") // also specify style
+```
+
+<Example1 />
+
+If we look at the resulting html, this is what we'd see: 
+
+```html
+<!-- after d3 -->
+<svg class="svgBox"
+     viewBox="0 0 400 100">
+   <circle cx="200" cy="50" r="40" style="fill:red">
+</svg>
+```
+
+Adding multiple circles from data will make use of the join statement,
+
+```js
+import * as d3 from "d3"
+
+const xpos = [50, 150, 250, 350]
+
+const svg = d3.select(".svgBox")
+svg.selectAll("circle")
+   .data(xpos)  // d
+   .join("circle")
+   .attr("cx", d => d) // d represents the datum for each selected element
+   .attr("cy", 50)
+   .attr("r", 20)
+   .attr("fill", "red")
+```
+
+<Example2 />
+
+If this is the first time you're seeing a data join statement in d3, it's a little magical, but roughly the pattern is:
+
+1. `selection.selectAll()` - Define the DOM elements you want to attach data to. Even if the node is empty, you need to specify where the data should be bound. [^1]
+
+2. `selection.data()` - Associate the data with the DOM elements. This is the function of the `data` statement. It might be weird that the data is chained to the selection command, but consider the 3 possibilities:
+
+   1.  number of data elements is *greater* than number of selected nodes, then new elements need to be created. For now the data is bound to empty nodes. In d3 terminology, these new nodes are called "enter" nodes.
+   2.  there are already existing nodes that were selected that should be associated with the data. In the case the order of the elements does not match the data, you can specify a key argument to specify how the data should be matched to the nodes. These are "update" nodes.
+   3.  number of data elements is *less than* the number of selected nodes, then the extra nodes need to be removed. These are "exit" nodes.
+
+   The result of the data statement is a selection object referencing the "update" nodes, but also containing references to the "enter" and "exit" nodes.
+
+3. `selection.join()` - Specify what to do with the three sets from the data statement. By default, the first argument specifies what to do with the newly created "enter" nodes. The join statement can also take callback functions for what to with the update and exit nodes though. The result of this statement is simply another selection statement, of the "update" and "enter" nodes, (since that's what's still visible on the dom) and you can chain other commands to it as you would any other selection.
+
+[^1]: `selectAll` is special, it creates a grouping structure for the data join. [Non-Grouping Operations](https://bost.ocks.org/mike/selection/#non-grouping)
+
+Now we can create a bunch of circles with random sizes and colors, by passing in functions into `attr()` and `style()`.
+
+```js
+import * as d3 from "d3"
+
+const xpos = [50, 150, 250, 350]
+
+const svg = d3.select(".example3")
+svg.selectAll("circle")
+   .data(xpos)
+   .join("circle")
+   .attr("cx", d => d)
+   .attr("cy", 50)
+   .attr("r", () => Math.random() * 38 + 2) // range 2-40
+   .style("fill", () => "#"+ Math.floor(Math.random() * 16777215).toString(16))
+```
+
+<Example3 />
+
+If we wrap the code up in a function and add a button,
+
+```html
+<svg class="svgBox"
+     viewBox="0 0 400 100">
+</svg>
+<button class="randomize-button">Randomize</button>
+```
+
+```js
+import * as d3 from "d3"
+
+const xpos = [50, 150, 250, 350]
+
+const svg = d3.select(".svgBox")
+
+function update() {
+   svg.selectAll("circle")
+      .data(xpos)
+      .join("circle")
+      .transition() 
+      .duration(1000) // add 1s transition between states
+      .attr("cx", d => d)
+      .attr("cy", 50)
+      .attr("r", () => Math.random() * 38 + 2) // range 2-40
+      .style("fill", () => "#"+ Math.floor(Math.random() * 16777215).toString(16))
+}
+update() // initialize the circles
+
+document.querySelector(".randomize-button")
+        .addEventListener("click", update)
+```
+
+<Example4 />
+
+Awesome, I think this is already quite mesmerizing. Now we'll implement the same demo with state variables in Vue.
+
+### The Vue way
+
+I'll be using the options API in Vue 3 as I think very well suited to creating one off components like these demos.  Let's first set up some state variables of what we want Vue to track, I think it makes sense to track the circles as a list of objects, each with their own attributes.
+
+```vue
+<script>
+export default {
+  data() {
+    return {
+        circles: [
+          {cx: 50,  cy: 50, r: 20, fill: "red"},
+          {cx: 150, cy: 50, r: 20, fill: "red"},
+          {cx: 250, cy: 50, r: 20, fill: "red"},
+          {cx: 350, cy: 50, r: 20, fill: "red"}
+       ],
+    }
+  },
+  methods : {
+    newCircles() {
+      this.circles.forEach((circle) => {
+        circle.r = Math.floor(Math.random() * 40 + 2)
+        circle.fill = "#"+ Math.floor(Math.random() * 16777215).toString(16)
+     })
+    },
+  }
+}
+</script>
+```
+
+```vue-html
+<template>
+  <svg viewBox="0 0 400 100">
+    <circle v-for="(circle, index) in circles"
+      :key="index"
+      :cx="circle.cx"
+      cy="50"
+      :r="circle.r"
+      :fill="circle.fill"
+      style="transition: all 1s ease-out;"/>
+  </svg>
+  <button @click="newCircles">New Circles</button>
+  <!-- Show the state variables dynamically -->
+  <p style="font-family: monospace;font-size:1rem"> Colors: {{ circles.map(d => d.fill) }}</p>
+  <p style="font-family: monospace;font-size:1rem"> Radii: {{  circles.map(d => Math.round(d.r)) }}</p>
+</template>
+```
+
+The `v-for` directive allows us to iterate through an object and create html elements on the fly. Furthermore, we can bind the attributes of each html element to the object properties. `:cx` is also a Vue directive that binds the value of the attribute to the reactive state variable. Similarly, we can define click functionality with the `@click` directive in vue, which allows us to specify a function defined in the methods section of the component. The logic is similar to the d3 example, but instead of modifying the DOM directly, we modify the state variables and let Vue handle the DOM updates.
+
+<Example5 client:only="vue" />
+
+It's quite easy to bind reactive states to various elements in Vue, whereas in d3, I believe you'd still have to manually manipulate the DOM with update functions. Personally I think Vue is more readable -- even if you are not familiar with Vue, but have some background in programming, I think you'll have an easier time understanding the Vue style compared to the d3 approach.
+
+### In conflict or harmony?
+
+These examples are illustrative of each respective style of approach, but let's start mixing the libraries together. In this demo, I'll make a d3 function that modifies the fill of the circles directly, *stealing* control away from Vue's state tracking. What will break? We'll make it so if you click on the bubbles, they'll change to orange. The d3 way of adding event listeners is to use `selection.on()` with a callback function dealing with the event (first argument) and the data (second argument). We'll set up the d3 style event listener in the `mounted()` lifecycle method of the Vue component to ensure that the selection is able to find the DOM elements.
+
+```vue
+<script>
+export default {
+   /* data and methods same as before */
+  mounted() {
+    d3.selectAll(".svgBox circle")
+      .on("click", function(e, d) {
+         // `e` - event is a "PointerEvent"
+         // `d` - datum is undefined (because we didn't bind any data to the circles via d3)
+         // `this` - refers to the clicked DOM element
+        d3.select(this).attr("fill", "orange")
+      })
+  }
+}
+</script>
+```
+
+<Example6 client:only="vue" />
+
+As you can test, clicking the circles will turn them orange now, but the state variables in the array do not update. Vue only triggers a rerender when you change the state variables through the *reference*, and will not know if we modify the DOM element directly through d3 as we have, which causes the momentary de-sync. Once we press the "New Circles" button again though, the visualization and array of state variables become back in sync because our function sets the variables through the Vue references. So to avoid this, we should generally decide if this state variable needs to be managed by Vue, and if so, do the courteous thing and let the Vue references know about the changes.
+
+My general opinion is that if the state variables are used by multiple subscribers, it's likely easier to let Vue manage the complexity. The approach Vue takes is more centralized, and thus it's easier to scale up, as well as keep track of what is going on. If there are only a few subscribers, then d3's update pattern is fine for reactivity, and you'll be working more closely with the DOM for updates. Watchers and lifecycle methods make reactivity so much easier than manually coodinating updates. d3 however has the advantage of a data join model, so we can precisely control transitions on entering the screen or exiting the screen in a manner that is more difficult to do in Vue. The even greater advantage of d3 though, is the visualization utilities that are built in to the library. For example, in the next section, we'll see that d3 has already defined a convenient utility for drag events, that can save us a lot of work if we tried implementing it ourselves through Vue.
+
+## The Dragging interface
+
+### Dragging in d3
+
+We'll start with the easier `d3.drag()` utility and then I'll show how to implement a basic version of it in Vue more manually, and another version in which we mix them. For the minimal example, we'll start with an empty svg again,
+
+```html
+<svg class="svgBox" viewBox="0 0 400 200">
+</svg>
+```
+
+```js
+import * as d3 from "d3"
+
+// define drag behavior
+function dragging(event) { // event is "DragEvent"
+    d3.select(this) // this refers to the DOM element in callback
+      .attr("cx", () => event.x) // .x coordinate is relative to SVG
+      .attr("cy", () => event.y) // .y coordinate is relative to SVG
+}
+const drag = d3.drag()
+               .on("drag", dragging)
+
+const svg = d3.select(".svgBox")
+
+svg.append("circle") // add circle
+   .attr("cx", 200) // styles
+   .attr("cy", 100)
+   .attr("r", 20)
+   .attr("fill", "red")
+   .call(drag) // use drag instance on circle
+```
+
+This may seem like an odd separation at first -- it seems like it would be easier to call `.drag()` directly on the selection chain, instead of defining it in pieces as shown. However, "dragging" behavior can be more complicated than it first appears. Furthermore, using a `.call()` statement allows modularity in the functionality we add to the selection, as well as promoting method chaining[^2] by passing along the selected object. 
+
+[^2]: https://stackoverflow.com/questions/12805309/javascript-library-d3-call-function
+
+Dragging an object has at least 3 events we can define, when the user starts dragging (pointer down), the actual movement (pointer move), and when the user stops (pointer up). The d3 interface allows us to hook into every single one of these. For example, to indicate to the user the selected circle, we can add a stroke border for the duration of the drag event. Here's the same dragging functionality with a step up in complexity:
+
+<figure>
+<Example7 />
+<figcaption style="color:var(--secondary-text)">Drag Implementation in d3</figcaption>
+</figure>
+
+```js
+import * as d3 from "d3"
+
+// define drag behavior in 3 parts: start, drag, end
+function dragStart(event) {
+    d3.select(this).attr("stroke", "black") // add the border to circle when dragging
+}
+function dragging(event) {
+    d3.select(this).attr("cx", () => event.x)
+                   .attr("cy", () => event.y)
+}
+function dragEnd(event) {
+    d3.select(this).attr("stroke", "none")
+}
+
+// define all 3 parts of the drag behavior
+const drag = d3.drag().on("start", dragStart)
+                      .on("drag", dragging)
+                      .on("end", dragEnd)
+
+const svg = d3.select(".example7")
+svg.append("circle")
+   .attr("cx", 200)
+   .attr("cy", 100)
+   .attr("r", 20)
+   .attr("fill", "red")
+   .attr("stroke-width", 2)
+   .style("cursor", "pointer")
+   .call(drag)
+```
+
+### Dragging in Vue
+
+In order to implement the dragging behavior in Vue, we first need to have an element that listens to the three main parts of the dragging event. Similar to the d3 example, we need to define a method for the start, during, and end of the dragging motion. In Vue, this takes the form of having multiple directives:
+
+```vue-html
+<template>
+    <svg viewBox="0 0 400 200" ref="dragBox" preserveAspectRatio="xMinYMin meet">
+      <circle ref="dragCircle"
+      :cx="circle.x" :cy="circle.y" :r="circle.r"
+      fill="red"
+      :stroke="circle.stroke" stroke-width="2"
+      @pointerdown="startDrag" @pointermove="dragging" @pointerup="stopDrag"
+      @touchstart.prevent="" @dragstart.prevent="" />
+    </svg>
+</template>
+```
+
+We're referencing the methods `startDrag`, `dragging`, and `stopDrag` for the three events. The other directives are to prevent the default behavior when dragging on a touchscreen and scrolling. The attribute binds to the reactive variables should look familiar. In this case, we are tracking the properties of the circle element in a single object, along with a boolean variable for whether or not we're currently dragging the circle.
+
+```vue
+<script>
+export default {
+  data() {
+    return {
+        circle : {
+          x: 200, 
+          y: 100,
+          r: 20,
+          stroke: "none"
+        },
+        isDragging: false
+    }
+  },
+  // `methods` split out below
+}
+</script>
+```
+
+The methods for dragging behavior are thus defined as follows:
+
+```vue
+<script>
+// utility functions
+function clamp(value, lo, hi) {
+  return value < lo ? lo : 
+         value > hi ? hi : 
+         value;
+}
+// constants for setting drag boundaries
+const 
+  svgXmin = 0,
+  svgXmax = 400,
+  svgYmin = 0,
+  svgYmax = 200;
+export default {
+  // `data` split out above
+  methods: {
+    startDrag(event) {
+      this.isDragging = true;
+      this.circle.stroke = "black"
+      // continue to drag circle even if cursor leaves svg
+      event.target.setPointerCapture(event.pointerId) 
+    },
+    dragging(event) {
+      if (this.isDragging) { 
+        const svg = this.$refs.dragBox;
+
+        // convert screen coordinates to svg coordinates
+        const pt = new DOMPoint(event.clientX, event.clientY) // gives the same coordinates as pt
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse())
+
+        // set boundaries of dragging
+        this.circle.x = clamp(svgP.x, svgXmin + this.circle.r, svgXmax - this.circle.r)
+        this.circle.y = clamp(svgP.y, svgYmin + this.circle.r, svgYmax - this.circle.r)
+      }
+    },
+    stopDrag() {
+      this.circle.stroke = "none"
+      this.isDragging = false
+    },
+  }
+}
+</script>
+```
+
+There may be some unfamiliar code in the `dragging` method that we didn't see in the d3 method of handling drag. 
+
+1. `.getScreenCTM()` - First we create a new point at the coordinates that `event.clientX` and `event.clientY` provide. These positions give the coordinate of the cursor *relative to the screen*. But when we're moving the circle svg around, we need to know what the coordinates for the center of the circle in our SVG coordinates. Luckily there is a method to translate between the two. From [the documentation](https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement), `.getScreenCTM()` returns the matrix that transforms the DOM coordinates into the SVG coordinates of the element specified. Thankfully [the transformation](https://www.w3.org/TR/SVG/types.html#__svg__SVGGraphicsElement__getScreenCTM) also takes into account any stretching or squishing the SVG element goes through with the `viewBox` and `preserveAspectRatio`.
+
+2. `.setPointerCapture()` - Without this line, if your cursor moves too quickly, the cursor will leave the circle and we will not detect the dragging behavior anymore. This sets the circle as the target for all future `PointerEvent`, until the next `pointerup` or `pointercancel` event. Finally, in the previous example, if you drag the circle outside of the SVG, the code would allow you to. Why didn't we need this code with d3? Well, it's because `d3.drag()` handled some of [those details](https://github.com/d3/d3-drag#drag_container) for us! 
+
+3. Here, we're setting the boundaries (with a utility function "clamp") of that with the constants of the SVG (inset by the radius of the circle).
+
+<figure>
+<Example8 client:only="vue" />
+<figcaption style="color:var(--secondary-text)">Drag Implementation in Vue</figcaption>
+</figure>
+
+The working demo is quite similar to the d3 version in functionality, but now we have a better understanding of the details that d3 had abstracted away from us. I think this gives us hints on how best to have these two powerful libraries complement one another, if we can leverage the utilities that d3 provides for calculations pass control back to Vue managing the state variables, we can get the best of both worlds.
+
+Here's our strategy now: 
+
+1. `d3.drag()` attaches the event listeners we need to the DOM element.
+2. In the call back functions for `d3.drag()` instead of directly updating the DOM element position, we modify the Vue state variable and trigger a rerender through Vue.
+
+Here's the code for the minimal functionality: 
+
+```vue
+<script>
+import * as d3 from "d3"
+export default {
+  data() {
+    return {
+        circle : {
+          x: 200, 
+          y: 100,
+          r: 20,
+        },
+    }
+  },
+  methods: {
+    createDrag() {
+        // capture vue component context `this`
+        const vm  = this
+        return d3.drag()
+                 .on("drag", function(e, d) {
+                   // `this` inside the call back is the circle element
+                   vm.circle.x = e.x;
+                   vm.circle.y = e.y;
+                 })
+    }
+  },
+  mounted() {
+    d3.select(this.$refs.dragCircle)
+      .call(this.createDrag())
+  }
+}
+</script>
+
+<template>
+    <svg viewBox="0 0 400 200" ref="dragBox" preserveAspectRatio="xMinYMin meet">
+      <circle ref="dragCircle"
+      :cx="circle.x" :cy="circle.y" :r="circle.r"
+      fill="red"
+      :stroke="circle.stroke" stroke-width="2" />
+    </svg>
+    <p style="font-family:monospace">x: {{ Math.round(circle.x) }}, y: {{ Math.round(circle.y) }}</p>
+</template>
+```
+
+<figure>
+<Example9 client:only="vue" />
+<figcaption style="color:var(--secondary-text)">Drag Implementation in Vue + d3</figcaption>
+</figure>
+
+If we reflect on these 3 implementations, the d3 implementation handles most of the work for us, and also works for canvas and html elements out of the box. If we had to extend our Vue implementation, we'd have to add more code to handle the `left` and `top` styles, calculate the bounding boxes of the draggable object and the like. d3 abstracts the details so we can focus on the behavior of the dragging. The benefits of Vue can be seen here by providing a cleaner interface for updating state variables, and organizing the positions in a single object in a more intuitive manner. Adding multiple subscribers for reactivity is also much easier. Just to show the ease of extending the use of the state variables, I'm also binding the display of the position above the box.
+
+There is certainly a lot of complexity to these drag events, and I'd highly recommend [Red Blob Games](https://www.redblobgames.com/making-of/draggable/), who has a post diving into some of the details of drag events. In short, since every device is different in interaction with a website, we have to account for touch events, pen movements, mouse movement. Chances are, a library that implements these events will be more robust than what we can come up with ourselves, and we'll save ourselves some headache by using these libraries. I'll also mention that Vue also has some reusable components for drag events, through the Composable API. The community has created [VueUse](https://vueuse.org/core/useDraggable/) for reusable reactive logic components if you'd like to stay in the Vue ecosystem.
+
+## The Coordinate System
+
+We've got one more consideration before putting everything together into our linear regression component, and that's the coordinates that our data points live. We've already seen how to convert between screen coordinates and the SVG coordinates, but if I display axes, I want the data point shown to be consistent with the calculations made at those coordinates. We need to make a mapping from the SVG coordinate to the axes shown. since we're using the d3-axis library for our axes, we'll use the d3-scales library to translate our SVG space to the axis space.
+
+<Coordinate client:only="vue" />
+
+
+## Simple Linear Regression
+
+<SimpleLinearRegression client:only="vue" />
+
+## Mouse Composable
+
+<TestMouse client:only="vue" />

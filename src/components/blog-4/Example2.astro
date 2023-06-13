@@ -1,0 +1,21 @@
+---
+---
+
+<svg class="example2" viewBox="0 0 400 100" preserveAspectRatio="xMinYMid meet">
+</svg>
+
+
+<script>
+import * as d3 from "d3"
+
+const xpos = [50, 150, 250, 350]
+
+const svg = d3.select(".example2")
+svg.selectAll("circle")
+   .data(xpos) 
+   .join("circle")
+   .attr("cx", d => d ) // data values passed to a callback function
+   .attr("cy", 50)
+   .attr("r", 20)
+   .attr("fill", "red")
+</script>

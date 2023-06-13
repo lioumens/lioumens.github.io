@@ -1,0 +1,30 @@
+---
+---
+
+
+<svg class="example4" viewBox="0 0 400 100" preserveAspectRatio="xMinYMid meet">
+</svg>
+<button class="example4-button"> New Circles</button>
+
+
+<script>
+import * as d3 from "d3"
+
+const xpos = [50, 150, 250, 350]
+
+const svg = d3.select(".example4")
+
+function update() {
+svg.selectAll("circle")
+   .data(xpos)
+   .join("circle")
+   .transition()
+   .duration(1000)
+   .attr("cx", d => d)
+   .attr("cy", 50)
+   .attr("r", () => Math.random() * 38 + 2) // range 2-40
+   .style("fill", () => "#"+ Math.floor(Math.random() * 16777215).toString(16))
+}
+update() // initialize the circles
+document.querySelector(".example4-button").addEventListener("click", update)
+</script>

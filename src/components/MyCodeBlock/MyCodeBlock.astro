@@ -4,18 +4,22 @@ import { Code } from 'astro/components'
 
 const {
     code,
-    lang,
-    filename,
+    lang, // language displayed in top right corner
+    filename, // filename to display
+    highlight,  // highlight lines
+    className, // class name to add to code block
     title
 } = Astro.props;
 
+const highlightLines = highlight ? highlight.split(',').map(Number) : [];
 const hasLang = !!lang;
 const hasFileName = !!filename;
+
 
 const showHeader = hasLang || hasFileName;
 ---
 
-<figure class="code-block">
+<figure class="code-block"}>
 
     {hasFileName ? (
         <figcaption class="header">
@@ -38,7 +42,7 @@ const showHeader = hasLang || hasFileName;
                 {lang}
             </span>
         </figcaption>
-    <Code class:list={["pad1"]} lang={lang} code={code} theme='nord'/>
+    <Code lang={lang} code={code} theme='nord'/>
     )}
 </figure>
 

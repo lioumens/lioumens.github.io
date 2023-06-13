@@ -8,7 +8,7 @@ import BlockQuote from '../../components/BlockQuote.astro'
 
 # GFM
 
-```astro title="itsthetitle" filename="index.js"
+```astro title="itsthetitle" filename="index.js" highlight="4"
 ---
 import { Prism } from '@astrojs/prism';
 
@@ -33,6 +33,13 @@ const showHeader = hasLang || hasFileName;
 ```javascript
 const a = 1;
 console.log(a);
+
+let b = 2
+
+Math.random() * 12
+console.log(b)
+
+
 ```
 
 ## heading 2

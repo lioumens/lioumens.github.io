@@ -1,7 +1,4 @@
 <script>
-import { node } from 'prop-types';
-
-
 
 const boxKey = [{transform: "translate(0px, 0px)"}, {transform: "translate(200px, 0px)"}];
 const boxOptions =  {duration: 1000, iterations: Infinity, direction: "alternate", easing: "ease-in-out"};
