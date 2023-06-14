@@ -41,16 +41,17 @@ Both d3 and Vue are frameworks for manipulating the DOM, and are relatively opin
 
 I've played around with some d3 in the past, but the syntax and style of coding was messy and somewhat unintuitive. I got by mostly by piecing together bits and pieces of code from example online. Now I feel like I have a better handle on the underlying elements that d3 is manipulating, and some of the logic behind how the library is organized. Also the newest versions of d3 (v5+) greatly simplify the syntax with the function `.join`.
 
+Folks have [written](http://shirleywu.studio/react-d3/#/intro) and [talked](https://www.youtube.com/watch?v=polu3EWCQCo) about dividing the DOM between d3 and React, and this post isn't all that different conceptually, but you'll see more Vue related code here.
+
 Since both libraries are trying to work with the DOM, but in decidedly different ways, there become quite a few decisions to make about getting both to play well together. Let's start looking at some basic code manipulating circles in d3 and Vue.
 
-Folks have written about dividing the DOM between d3 and React, and this post isn't all that different conceptually, but you'll see more Vue related code here.
 
 ## Binding data to circles
 
-We'll build this little demo in two different ways, the d3 way and the Vue way to understand some of the differences between the two.
+We'll build a little demo you see in nearly every intro to d3 tutorial, but with two different methods, the d3 way and the Vue way to understand some of the fundamental differences between the two libraries.
 
 ### The d3 way
-Starting with an empty svg element, we can add circles directly to the DOM using d3
+Starting with an empty svg element, we can add circles directly to the DOM using d3 select statements and the `selection.append()`
 
 ```html
 <svg class="svgBox"

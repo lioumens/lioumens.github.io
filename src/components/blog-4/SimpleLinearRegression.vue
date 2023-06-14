@@ -35,17 +35,27 @@ export default {
                 {x: 15, y: 15},
                 {x: 5, y: 4}],
             isDragging: false,
+            dragOffset: {x: 0, y: 0} // drag edge of circle
         }
     },
     mounted() {
-        d3.select(this.$refs.SLRBox)
+        const xAxisSVG = d3.select(this.$refs.SLRBox)
           .append("g")
           .call(xAxis)
           .attr("transform", `translate(0, ${height - marginL})`)
-        d3.select(this.$refs.SLRBox)
+
+        xAxisSVG.selectAll(".tick line, .domain")
+          .attr("stroke", "var(--nord6)")
+        xAxisSVG.selectAll(".tick text")
+          .attr("fill", "var(--nord6)")
+        const yAxisSVG = d3.select(this.$refs.SLRBox)
           .append("g")
           .call(yAxis)
           .attr("transform", `translate(${marginL}, 0)`)
+        yAxisSVG.selectAll(".tick line, .domain")
+          .attr("stroke", "var(--nord6)")
+        yAxisSVG.selectAll(".tick text")
+          .attr("fill", "var(--nord6)")
     },
     methods: {
         // d3 -> SVG coord
@@ -63,9 +73,19 @@ export default {
             const b0 = Ybar - b1 * Xbar
             return { b0, b1 }
         },
-        startDragging(event) {
+        startDragging(point, event) {
             this.isDragging = true;
             event.target.setPointerCapture(event.pointerId);
+                const svg = this.$refs.SLRBox;
+                const pt = new DOMPoint(event.clientX, event.clientY) // gives the same coordinates as pt
+                const svgP = pt.matrixTransform(svg.getScreenCTM().inverse()); // get svg coord
+                const d3P = {x: xScale.invert(svgP.x), y: yScale.invert(svgP.y)} // get d3 coord
+                // console.log(d3P ) // svg coord, need inverse for d3 value
+                // clamp on d3 value
+                this.dragOffset.x =  d3P.x - point.x
+                this.dragOffset.y =  d3P.y - point.y
+                // console.log(this.dragOffset)
+            
             //TODO: there's an offset to the pointer
         },
         doDrag(point, event) {
@@ -75,17 +95,11 @@ export default {
                 const svg = this.$refs.SLRBox;
                 const pt = new DOMPoint(event.clientX, event.clientY) // gives the same coordinates as pt
                 const svgP = pt.matrixTransform(svg.getScreenCTM().inverse()); // get svg coord
-
                 const d3P = {x: xScale.invert(svgP.x), y: yScale.invert(svgP.y)} // get d3 coord
-                // console.log(d3P ) // svg coord, need inverse for d3 value
+
                 // clamp on d3 value
-                point.x = clamp(d3P.x, 0, 30)
-                point.y = clamp(d3P.y, 0, 20)
-                // this.circle.x = clamp(svgP.x, svgXmin + this.circle.r, svgXmax - this.circle.r);
-                // this.circle.y = clamp(svgP.y, svgYmin + this.circle.r, svgYmax - this.circle.r);
-                
-                // this.circle.x = event.offsetX;
-                // this.circle.y = event.offsetY;
+                point.x = clamp(d3P.x - this.dragOffset.x, 0, 30)
+                point.y = clamp(d3P.y - this.dragOffset.y, 0, 20)
             }
         },
         stopDragging() {
@@ -144,7 +158,7 @@ export default {
             @pointermove="doDrag(point, $event)"
             @touchstart.prevent=""
             @dragstart.prevent=""
-            @pointerdown="startDragging"
+            @pointerdown="startDragging(point, $event)"
             @pointerup="stopDragging"
             @pointercancel="stopDragging"
         stroke-width="20"
