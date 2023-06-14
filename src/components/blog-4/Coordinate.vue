@@ -43,7 +43,6 @@ export default {
             this.coord.svgy = y;
             this.coord.d3x = xScale.invert(x); // allows coordinates smaller than sVG
             this.coord.d3y = yScale.invert(y);
-            
         }
     },
     mounted() {
@@ -58,7 +57,6 @@ export default {
           .call(yAxis)
           .attr("transform", "translate(30, 0)")
         // this.$refs.coordBox.append("g").call(xAxis)
-        console.log(yScale(0))
     },
     computed: {
         xScale() {

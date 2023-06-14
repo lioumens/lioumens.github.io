@@ -589,9 +589,90 @@ $$
 \end{aligned}
 $$
 
-These are implemented in the methods section of the Vue component, 
+These are implemented in the methods section of the Vue component by aggregating the data from the list of points we're tracking, and calculating the numerator and denominator of the slope first.
 
+```vue
+<script>
+export default {
+    data() {
+        return {
+            pointRadius: 7, // svg units
+            points : [ // d3 coords
+                {x: 10, y: 10}, 
+                {x: 3, y: 5},
+                {x: 22, y: 10},
+                {x: 15, y: 15},
+                {x: 5, y: 4}],
+            isDragging: false,
+        }
+    },
+    methods: {
+        // d3 -> SVG coord
+        getXY(point) {
+            return {cx: xScale(point.x), cy: yScale(point.y)}
+        },
+        calcSLR() {
+            const X = this.points.map(p => p.x)
+            const Y = this.points.map(p => p.y)
+            const Xbar = X.reduce((a,b) => a+b, 0) / X.length
+            const Ybar = Y.reduce((a,b) => a+b, 0) / Y.length
+            const SXY = X.map((x,i) => (x - Xbar) * (Y[i] - Ybar)).reduce((a,b) => a+b, 0)
+            const SXX = X.map((x,i) => (x - Xbar) * (x - Xbar)).reduce((a,b) => a+b, 0)
+            const b1 = SXY / SXX
+            const b0 = Ybar - b1 * Xbar
+            return { b0, b1 }
+        },
+        // methods related to dragging omitted, see above
+    },
+    // computed properties continued below
+}
+</script>
+```
 
+Calculating the slope and intercept is not enough if we want to display the fitted line on screen. The line SVG element takes endpoints as its attributes. I simply set one of the values to be the y-intercept since that value is already calculated, and simply set the other point to be longer than the size of of the SVG viewport. With this method, the line will run through the x-axis, which doesn't look great, so I also added a clipping mask to the line so that the line doesn't extend past the boundaries of our plot. An invisible stroke is also added to the outside of the circle to make the points easier to drag.
+
+```vue
+<script>
+export default {
+   // data and methods split out above
+    computed : {
+        getLine() {
+            const {b0, b1} = this.calcSLR()
+            return {
+                x1:xScale(0),
+                y1:yScale(b0),
+                x2:xScale(1000),  // currently runs through axes
+                y2:yScale(b0 + b1 * 1000)
+            }
+        }
+    }
+}
+</script>
+
+<template>
+    <svg ref="SLRBox" viewBox="0 0 600 400" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <clipPath id="cut-bottom">
+                <rect x="30" y="0" width="570" height="370" />
+            </clipPath>
+        </defs>
+        <line v-bind="getLine" stroke="red" stroke-width="3" clip-path="url(#cut-bottom)" />
+        <circle
+            v-for="point in points"
+            v-bind="getXY(point)"
+            :r="pointRadius"
+            fill="red"
+            @pointermove="doDrag(point, $event)"
+            @touchstart.prevent=""
+            @dragstart.prevent=""
+            @pointerdown="startDragging"
+            @pointerup="stopDragging"
+        stroke-width="20"
+        stroke="transparent">
+        </circle>
+    </svg>
+</template>
+```
 
 
 <SimpleLinearRegression client:only="vue" />
