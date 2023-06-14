@@ -17,6 +17,7 @@ import Coordinate from "../../components/blog-4/Coordinate.vue"
 import SimpleLinearRegression from "../../components/blog-4/SimpleLinearRegression.vue"
 import TestMouse from "../../components/blog-4/TestMouse.vue"
 import Circles from "../../components/blog-4/Circles.vue"
+import VuetifyTest from "../../components/blog-4/VuetifyTest.vue"
 import Example1 from "../../components/blog-4/Example1.astro"
 import Example2 from "../../components/blog-4/Example2.astro"
 import Example3 from "../../components/blog-4/Example3.astro"
@@ -246,7 +247,10 @@ export default {
 </script>
 ```
 
+<figure>
+<figcaption style="color:var(--secondary-text)">d3 steals from Vue!</figcaption>
 <Example6 client:only="vue" />
+</figure>
 
 As you can test, clicking the circles will turn them orange now, but the state variables in the array do not update. Vue only triggers a rerender when you change the state variables through the *reference*, and will not know if we modify the DOM element directly through d3 as we have, which causes the momentary de-sync. Once we press the "New Circles" button again though, the visualization and array of state variables become back in sync because our function sets the variables through the Vue references. So to avoid this, we should generally decide if this state variable needs to be managed by Vue, and if so, do the courteous thing and let the Vue references know about the changes.
 
@@ -365,7 +369,7 @@ export default {
 </script>
 ```
 
-The methods for dragging behavior are thus defined as follows:
+The methods for dragging behavior are thus defined in three parts as follows:
 
 ```vue
 <script>
@@ -380,7 +384,8 @@ const
   svgXmin = 0,
   svgXmax = 400,
   svgYmin = 0,
-  svgYmax = 200;
+  svgYmax = 200
+
 export default {
   // `data` split out above
   methods: {
@@ -488,12 +493,106 @@ There is certainly a lot of complexity to these drag events, and I'd highly reco
 
 ## The Coordinate System
 
+<Coordinate client:only="vue" />
+
 We've got one more consideration before putting everything together into our linear regression component, and that's the coordinates that our data points live. We've already seen how to convert between screen coordinates and the SVG coordinates, but if I display axes, I want the data point shown to be consistent with the calculations made at those coordinates. We need to make a mapping from the SVG coordinate to the axes shown. since we're using the d3-axis library for our axes, we'll use the d3-scales library to translate our SVG space to the axis space.
 
-<Coordinate client:only="vue" />
+Using the same empty svg as before, we can add the d3 axes by first creating the linear scale, then creating the axis. The axis can be attached to the SVG element, and positioned appropriately.
+
+```js
+import * as d3 from "d3"
+
+let xScale = d3.scaleLinear()
+    .domain([0, 60])
+    .range([30, 500])
+let yScale = d3.scaleLinear()
+    .domain([0, 20])
+    .range([370, 10])
+let xAxis = d3.axisBottom(xScale)
+let yAxis = d3.axisLeft(yScale)
+
+d3.select(".svgBox")
+   .append("g")
+   .call(xAxis)
+   .attr("transform", "translate(0, 370)")
+d3.select(".svgBox")
+   .append("g")
+   .call(yAxis)
+   .attr("transform", "translate(30, 0)")
+```
+
+d3 has a variety of [scales](https://github.com/d3/d3-scale) that are meant to map one coordinate system into another. They are organized to be data-centric, where you can choose between diverging, sequential, continuous, or discrete scales. There are also special utilities for time scales as well.
+
+`d3.scaleLinear()` is probably the most basic of them, and it takes a `.domain()` and `.range()`. In our application, the domain is the space our data lives, and the range is the space for our SVG elements. Thus, if we take the `yScale` as an example, our plot will show the values from `[0, 20]`, but we want 0 to be shown at SVG coordinate 370. They go in opposite directions because the origin is at the top left for the svg element, but at the bottom left for the data coordinate system.
+
+The scale that we've created may seem like just an ordinary object holding the information about the domain and range, but it's actually *a function*. We can call the scale with an argument and also get the mapped value in the range. Furthermore, the scales come with an `.invert()` method that gives the reverse mapping.
+
+```js
+xScale(30) // returns 265
+yScale(0) // returns 370
+
+yScale.invert(370) // returns 0
+```
+
+If we review all the coordinate transformations we've had to do... it's a lot to keep track of!
+
+$$
+\fbox{PointerEvent}\rightarrow \fbox{Client Coord} \rightarrow \fbox{SVG Coord} \rightarrow \fbox{Data Coord}
+$$
+
+Since these coordinate transformations are somewhat common, we'll wrap it up in a utility function for future use.
+
+```js
+export function convertClientToSVGCoord(svg, clientX, clientY) {
+    const pt = new DOMPoint(clientX, clientY) // gives the same coordinates as pt
+    const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return svgP
+}
+```
+
+Now our main vue logic for keeping the state variables consistent with our pointer location can be written as follows. We have all the locations of the point in each coordinate system transformed through this function starting from the client coordinates.
+
+```vue
+<script>
+export default {
+   /* data split out above */
+    methods: {
+        updateCoord(e) {
+            let {x, y} = convertClientToSVGCoord(this.$refs.coordBox, e.clientX, e.clientY);
+            this.coord.svgx = x;
+            this.coord.svgy = y;
+            this.coord.d3x = xScale.invert(x); // allows coordinates smaller than sVG
+            this.coord.d3y = yScale.invert(y);
+        }
+    },
+}
+</script>
+
+<template>            
+<svg class=".svgBox" ref="coordBox"
+        viewBox="0 0 600 400"
+        preserve-aspect-ratio="xMinYMin meet"
+        @pointermove="updateCoord">            
+</svg>
+</template>
+```
 
 
 ## Simple Linear Regression
+
+Finally we have all the little elements to create our interactive graphic, and we can put them all together into a single component. The last step is to make the calculations for the line, and it can be calculated with the formulas:
+
+$$
+\begin{aligned}
+\text{slope} &= \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} \\[2em]
+\text{intercept} &= \bar{y} - \text{slope} \cdot \bar{x}
+\end{aligned}
+$$
+
+These are implemented in the methods section of the Vue component, 
+
+
+
 
 <SimpleLinearRegression client:only="vue" />
 

@@ -3,7 +3,8 @@ import {compile, run} from '@mdx-js/mdx'
 import remarkGfm from 'remark-gfm'
 
 // react runtime
-import * as runtime from "react/jsx-runtime.js";
+// import * as runtime from "react/jsx-runtime.js";
+// took out dependency after the node dependency errors
 
 
 export default async function mdxToHhtml(mdx) {

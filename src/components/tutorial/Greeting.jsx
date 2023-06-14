@@ -1,5 +1,6 @@
-import { h } from 'preact';
-import { useState } from 'preact/hooks';
+// remove dependency after node dependency errors
+// import { h } from 'preact';
+// import { useState } from 'preact/hooks';
 
 export default function Greeting({messages}) {
 

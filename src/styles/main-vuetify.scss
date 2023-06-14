@@ -1,0 +1,5 @@
+@use 'vuetify' with (
+    $utilities: "true",
+    $color-pack: false,
+    $reset: false
+)

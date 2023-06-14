@@ -26,7 +26,9 @@ export default defineConfig({
   //   AutoImport({
   //     imports: ['./src/components/MyCodeBlock/MyCodeBlock.astro'],
   // }),
-  MDXCodeBlocks(), vue(), mdx()],
+    MDXCodeBlocks(),
+    vue({appEntrypoint: '/src/pages/_app'}), // for vuetify plugins
+    mdx()],
   // base: "/astro-website" // base routing also given here....since deployed at subpath
   experimental: {
     assets: true

@@ -1,10 +1,14 @@
 <script>
-import Vuetify from "vuetify"
+
+import {VSwitch} from 'vuetify/components/VSwitch'
 
 export default {
+    components: {
+        VSwitch
+    },
     data() {
         return {
-            toggleValue: false 
+            toggleValue: "SVG"
         }
     },
 }
@@ -12,6 +16,6 @@ export default {
 
 
 <template>
-    <v-switch v-model="toggleValue"> </v-switch>
-        
+    <v-switch v-model="toggleValue" false-value="SVG" true-value="d3" :label="`Showing ${toggleValue.toString()} coordinates`" value="d3"> </v-switch>
+    <p>{{ toggleValue }}</p>
 </template>

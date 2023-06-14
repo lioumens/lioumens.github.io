@@ -58,8 +58,8 @@ pre code {
 // TOC styling
 
 main {
-    display: grid;
-    // grid-template-columns: fit-content(100%);
+    display: grid !important; // override vuetify styles, being placed after
+    // grid-template-columns: fit-content(100%); 
     // grid-template-rows: auto;
     grid-template-areas: "content";
     width: 100%;
