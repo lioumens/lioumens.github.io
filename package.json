@@ -30,6 +30,7 @@
   "devDependencies": {
     "@astrojs/mdx": "^0.19.7",
     "astro-auto-import": "^0.3.0",
-    "astro-mdx-code-blocks": "^0.0.4"
+    "astro-mdx-code-blocks": "^0.0.4",
+    "vitest": "^0.32.0"
   }
 }

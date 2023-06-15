@@ -1,23 +1,19 @@
 ---
 title: 'Interactive Linear Regression with Vue + d3'
-pubDate: 2023-06-09
+pubDate: 2023-06-15
 description: 'Another devlog'
 author: 'Michael Liou'
-slug: 'interactive-linear-regression-with-d3'
+slug: 'interactive-linear-regression-with-d3-vue'
 tags:
   - statistics
   - web
   - devlog
 toc: true
-draft: true
+draft: false
 ---
 
-import Dragging from "../../components/blog-4/Dragging.vue"
 import Coordinate from "../../components/blog-4/Coordinate.vue"
 import SimpleLinearRegression from "../../components/blog-4/SimpleLinearRegression.vue"
-import TestMouse from "../../components/blog-4/TestMouse.vue"
-import Circles from "../../components/blog-4/Circles.vue"
-import VuetifyTest from "../../components/blog-4/VuetifyTest.vue"
 import Example1 from "../../components/blog-4/Example1.astro"
 import Example2 from "../../components/blog-4/Example2.astro"
 import Example3 from "../../components/blog-4/Example3.astro"
@@ -29,7 +25,6 @@ import Example8 from "../../components/blog-4/Example8.vue"
 import Example9 from "../../components/blog-4/Example9.vue"
 import BlockQuote from "../../components/BlockQuote.astro"
 
-{/* <Influence client:only="vue" /> */}
 
 <SimpleLinearRegression client:only="vue" />
 
@@ -170,7 +165,10 @@ document.querySelector(".randomize-button")
         .addEventListener("click", update)
 ```
 
+<figure>
+<figcaption style="color: #9f9f9f">Circles with d3</figcaption>
 <Example4 />
+</figure>
 
 Awesome, I think this is already quite mesmerizing. Now we'll implement the same demo with state variables in Vue.
 
@@ -223,7 +221,10 @@ export default {
 
 The `v-for` directive allows us to iterate through an object and create html elements on the fly. Furthermore, we can bind the attributes of each html element to the object properties. `:cx` is also a Vue directive that binds the value of the attribute to the reactive state variable. Similarly, we can define click functionality with the `@click` directive in vue, which allows us to specify a function defined in the methods section of the component. The logic is similar to the d3 example, but instead of modifying the DOM directly, we modify the state variables and let Vue handle the DOM updates.
 
+<figure>
+<figcaption style="color: #9f9f9f">Circles with Vue</figcaption>
 <Example5 client:only="vue" />
+</figure>
 
 It's quite easy to bind reactive states to various elements in Vue, whereas in d3, I believe you'd still have to manually manipulate the DOM with update functions. Personally I think Vue is more readable -- even if you are not familiar with Vue, but have some background in programming, I think you'll have an easier time understanding the Vue style compared to the d3 approach.
 
@@ -334,7 +335,7 @@ svg.append("circle")
 
 ### Dragging in Vue
 
-In order to implement the dragging behavior in Vue, we first need to have an element that listens to the three main parts of the dragging event. Similar to the d3 example, we need to define a method for the start, during, and end of the dragging motion. In Vue, this takes the form of having multiple directives:
+In order to implement the dragging behavior in Vue, we first need to have an element that listens to the three main parts of the dragging event. Similar to the d3 example, we need to define a method for the start, during, and end of the dragging motion. In Vue, this takes the form of having multiple directives, `@pointerdown`, `@pointermove`, `@pointerup`: 
 
 ```vue-html
 <template>
@@ -422,7 +423,7 @@ There may be some unfamiliar code in the `dragging` method that we didn't see in
 
 1. `.getScreenCTM()` - First we create a new point at the coordinates that `event.clientX` and `event.clientY` provide. These positions give the coordinate of the cursor *relative to the screen*. But when we're moving the circle svg around, we need to know what the coordinates for the center of the circle in our SVG coordinates. Luckily there is a method to translate between the two. From [the documentation](https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement), `.getScreenCTM()` returns the matrix that transforms the DOM coordinates into the SVG coordinates of the element specified. Thankfully [the transformation](https://www.w3.org/TR/SVG/types.html#__svg__SVGGraphicsElement__getScreenCTM) also takes into account any stretching or squishing the SVG element goes through with the `viewBox` and `preserveAspectRatio`.
 
-2. `.setPointerCapture()` - Without this line, if your cursor moves too quickly, the cursor will leave the circle and we will not detect the dragging behavior anymore. This sets the circle as the target for all future `PointerEvent`, until the next `pointerup` or `pointercancel` event. Finally, in the previous example, if you drag the circle outside of the SVG, the code would allow you to. Why didn't we need this code with d3? Well, it's because `d3.drag()` handled some of [those details](https://github.com/d3/d3-drag#drag_container) for us! 
+2. `.setPointerCapture()` - Without this line, if your cursor moves too quickly, the cursor will leave the circle and we will not detect the dragging behavior anymore. This sets the circle as the target for all future `PointerEvent`, until the next `pointerup` or `pointercancel` event. Why didn't we need this code with d3? Well, it's because `d3.drag()` handled some of [those details](https://github.com/d3/d3-drag#drag_container) for us! 
 
 3. Here, we're setting the boundaries (with a utility function "clamp") of that with the constants of the SVG (inset by the radius of the circle).
 
@@ -492,7 +493,7 @@ If we reflect on these 3 implementations, the d3 implementation handles most of 
 
 There is certainly a lot of complexity to these drag events, and I'd highly recommend [Red Blob Games](https://www.redblobgames.com/making-of/draggable/), who has a post diving into some of the details of drag events. In short, since every device is different in interaction with a website, we have to account for touch events, pen movements, mouse movement. Chances are, a library that implements these events will be more robust than what we can come up with ourselves, and we'll save ourselves some headache by using these libraries. I'll also mention that Vue also has some reusable components for drag events, through the Composable API. The community has created [VueUse](https://vueuse.org/core/useDraggable/) for reusable reactive logic components if you'd like to stay in the Vue ecosystem.
 
-## The Coordinate System
+## Data Coordinates
 
 <Coordinate client:only="vue" />
 
@@ -579,7 +580,7 @@ export default {
 ```
 
 
-## Simple Linear Regression
+## Putting it all together
 
 Finally we have all the little elements to create our interactive graphic, and we can put them all together into a single component. The last step is to make the calculations for the line, and it can be calculated with the formulas:
 
@@ -678,6 +679,4 @@ export default {
 
 <SimpleLinearRegression client:only="vue" />
 
-## Mouse Composable
-
-<TestMouse client:only="vue" />
+In order to let the user know the circles are interactive, a little bubble pop animation is set through css, and the intercept and slope are displayed in the top right of the plot. We can also change the cursor when the user hovers over the circles to indicate that they are draggable. And that's it! Now we have a basic interactive linear regression component that uses the best of d3 and Vue!

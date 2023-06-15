@@ -111,7 +111,7 @@ export default {
         </g>
 
         <text :x="xText" :y="yText"
-        :text-anchor="avoidEdge" :dominant-baseline="avoidTop" :stroke="colorCoord.color">
+        :text-anchor="avoidEdge" :dominant-baseline="avoidTop" :fill="colorCoord.color">
             ({{ switchValue  === "SVG" ?
                 Math.round(coord.svgx) :
                 Math.round(coord.d3x)

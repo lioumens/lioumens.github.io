@@ -101,3 +101,27 @@ a {
           grid-template-areas: "sidenav main";
         }
     }
+
+  /* ===== Scrollbar CSS ===== */
+  /* Generated with https://codepen.io/stephenpaton-tech/full/JjRvGmY */
+  /* Firefox */
+  * {
+      scrollbar-width: auto;
+      scrollbar-color: var(--nord3) var(--nord0);
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+      width: 15px;
+      height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+      background: var(--nord0);
+  }
+
+  *::-webkit-scrollbar-thumb {
+      background-color: var(--nord3);
+      border-radius: 12px;
+      border: 3px solid var(--nord0);
+  }

@@ -127,7 +127,7 @@ export default {
 </script>
 
 <template>
-    <svg ref="SLRBox" viewBox="0 0 600 400" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg ref="SLRBox" viewBox="0 0 600 400" xmlns:xlink="http://www.w3.org/1999/xlink" style="user-select: none">
         <defs>
             <clipPath id="cut-bottom">
                 <rect x="30" y="0" width="570" height="370" />
@@ -135,8 +135,8 @@ export default {
         </defs>
         <line v-bind="getLine" stroke="var(--nord11)" stroke-width="3" clip-path="url(#cut-bottom)" />
         <text x="570" y="23" fill="var(--nord6)" dominant-baseline="hanging" text-anchor="end" font-family="monospace">
-            Intercept: {{ Math.round(calcSLR().b0 * 10)/10 }}&nbsp;&nbsp;
-            Slope: {{ Math.round(calcSLR().b1 * 10)/10 }}
+            Intercept: {{ (Math.round(calcSLR().b0 * 10)/10).toFixed(1) }}&nbsp;&nbsp;
+            Slope: {{ (Math.round(calcSLR().b1 * 10)/10).toFixed(1) }}
         </text>
         <!-- radar blip -->
         <circle
