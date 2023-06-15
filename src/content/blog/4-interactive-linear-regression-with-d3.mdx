@@ -293,7 +293,7 @@ svg.append("circle") // add circle
 
 This may seem like an odd separation at first -- it seems like it would be easier to call `.drag()` directly on the selection chain, instead of defining it in pieces as shown. However, "dragging" behavior can be more complicated than it first appears. Furthermore, using a `.call()` statement allows modularity in the functionality we add to the selection, as well as promoting method chaining[^2] by passing along the selected object. 
 
-[^2]: https://stackoverflow.com/questions/12805309/javascript-library-d3-call-function
+[^2]: [d3 call function promotes chaining](https://stackoverflow.com/questions/12805309/javascript-library-d3-call-function)
 
 Dragging an object has at least 3 events we can define, when the user starts dragging (pointer down), the actual movement (pointer move), and when the user stops (pointer up). The d3 interface allows us to hook into every single one of these. For example, to indicate to the user the selected circle, we can add a stroke border for the duration of the drag event. Here's the same dragging functionality with a step up in complexity:
 
