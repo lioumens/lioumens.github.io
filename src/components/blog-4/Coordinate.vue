@@ -101,7 +101,7 @@ export default {
         viewBox="0 0 600 400"
         preserve-aspect-ratio="xMinYMin meet"
         @pointermove="updateCoord" 
-        @touchstart.prevent="" @dragstart.prevent="">
+        @touchstart.prevent="" @dragstart.prevent="" style="user-select:none">
         <g v-if="switchValue === 'SVG'">
             <line :x1="coord.svgx" :y1="0" :x2="coord.svgx" :y2="coord.svgy" stroke="var(--nord13)" stroke-width="2"></line>
             <line :x1="0" :y1="coord.svgy" :x2="coord.svgx" :y2="coord.svgy" stroke="var(--nord13)" stroke-width="2"></line>
