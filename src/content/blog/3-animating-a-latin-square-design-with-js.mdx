@@ -47,7 +47,7 @@ Here are some tips for animating svg elements for cross-browser support, and res
 
    - Although it's supported on [most browsers other than IE](https://caniuse.com/?search=filter), I would still have trouble rendering certain elements, and the element sometimes disappeared entirely. Googling other people's experiences, some people suggested [`will-change: transform`](https://github.com/emilbjorklund/svg-weirdness/issues/27), or using `transform3d` instead of `transform`, or [filters on parent elements](https://github.com/emilbjorklund/svg-weirdness/issues/22), but you can save yourself from headache if you just avoid it altogether.
 
-* Always use `viewBox` combined with `preseveAspectRatio`.
+* Always use `viewBox` combined with `preserveAspectRatio`.
 
    - It is much easier to scale the SVG to take advantage of the vector properties, and for responsive design of viewing the animation on different screens. For the case above, since it's a Latin *Square* design, it's important that the animation actually looks like a square, so the `preserveAspectRatio` is critical.
 
@@ -209,7 +209,7 @@ Here, the css styling works for all attributes except for `pathLength`, and the 
 <figcaption style="color:#9f9f9f">Coloring emphasizes differences with SVG Text venn diagram above. <span style="color:var(--nord14)">Green attributes</span> are ones SVG `<rect>` has that SVG `<text>` does not. <span style="color:var(--nord13)">Yellow attributes</span> show ones`<rect>` and `<text>` both have, but are shifted to a different part of the venn diagram.</figcaption>
 </figure>
 
-It is obviously more convenient to work with stylesheets and classes for managing the look of svg elements, so it's useful to know which svg attributes can be modified through styles. If we use attributes, we'd be retyping several attributes for similarly styled elements, breaking the DRY principle. For the attributes that don't work in styles, there are normally work-arounds. For positioning, the workaround is to use `transform: translate(dx, dy)`. This is also useful for animations since `transform` is an animatable property. However, working with the `transform` property has it's own [pitfalls to beware of](https://css-tricks.com/transforms-on-svg-elements/) for cross-browser support. For example, using the transform *svg attribute* works in all browsers, but using the transform *css property style*, does not work in IE. The reference point for rotations and scaling can also [vary by browser](https://css-tricks.com/svg-animation-on-css-transforms/).
+It is obviously more convenient to work with stylesheets and classes for managing the look of svg elements, so it's useful to know which svg attributes can be modified through styles. If we use attributes, we'd be retyping several attributes for similarly styled elements, breaking the DRY principle. For the attributes that don't work in styles, there are normally workarounds. For positioning, the workaround is to use `transform: translate(dx, dy)`. This is also useful for animations since `transform` is an animatable property. However, working with the `transform` property has it's own [pitfalls to beware of](https://css-tricks.com/transforms-on-svg-elements/) for cross-browser support. For example, using the transform *svg attribute* works in all browsers, but using the transform *css property style*, does not work in IE. The reference point for rotations and scaling can also [vary by browser](https://css-tricks.com/svg-animation-on-css-transforms/).
 
 The inconsistency of animation properties of SVG point to using more established animation libraries like [GSAP](https://greensock.com/3) that are based in javascript, so that the animation just "works", and we don't need to manually fill in different queries or code browser specific support depending on where we are viewing the animation. That'll be the next step up in complexity for future animations. 
 
@@ -224,7 +224,7 @@ True synchronization in CSS animations simply doesn't exist. The model for havin
 Here are some resources and links to get started with using and understanding WAAPI:
 
 * [Brian Birtles](https://birtles.wordpress.com/), editor for the WAAPI working draft, has a [great blog post introducing the API](https://birtles.wordpress.com/2013/06/26/introducing-web-animations/), along with the story of how it was put together, as well as the motivations for doing so. If you're interested in the details of why WAAPI is more performant with webpage compositing, [Brian also explains the implementation](https://hacks.mozilla.org/2016/08/animating-like-you-just-dont-care-with-element-animate/) of the core `Element.animate()`.
-* [Rachel Nabors](http://rachelnabors.com/) is a cartoonist and web animations expert who also wrote the fantastic, pratical [introduction to WAAPI on the MDN web docs](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
+* [Rachel Nabors](http://rachelnabors.com/) is a cartoonist and web animations expert who also wrote the fantastic, practical [introduction to WAAPI on the MDN web docs](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
 * [Dan Wilson](https://danielcwilson.com/) has also written a [series of helpful articles](https://danielcwilson.com/blog/2015/07/animations-intro/) explaining each feature of WAAPI in more detail, as well as compiled a [helpful list of other resources](https://danielcwilson.com/r/animations/) found around the web related to WAAPI.
 * Google has some [web animation demos](https://web-animations.github.io/web-animations-demos/#waves/) along with the code using WAAPI.
 
@@ -261,7 +261,7 @@ window.onload = function() {
 `Element.animate` takes two main arguments, a keyframe array with a information about the properties and values the object should have. The "keyframes" element is very similar to the `@keyframes` usage in CSS, in that the programming is "declarative" and the program will interpolate what needs to happen in between to ensure we get from point A to point B. The second argument is an options object, which is similar to the `animation` property in CSS. The options object is where we can specify the duration, timing function, and other properties of the animation. The names for the animation options are slightly different, but they encapsulate mostly the same options. `duration` in this case must be specified in milliseconds.
 
 
-The code used in the Latin Square design animation is not all that different. There is some additional javascript code to figure out positioning depending on which label is being animatetd, and we also use the `offset` key to specify the timing of the keyframes. Finally, we use a `forEach` call to start the animation for each row label.
+The code used in the Latin Square design animation is not all that different. There is some additional javascript code to figure out positioning depending on which label is being animated, and we also use the `offset` key to specify the timing of the keyframes. Finally, we use a `forEach` call to start the animation for each row label.
 
 ```javascript
 /* positioning dictionary */
@@ -285,7 +285,7 @@ Object.entries(rowLabels).forEach(([label, pos], i) => {
    let xlabel = pos.xPos + blockShort * .5;
    let ylabel = pos.yPos + blockShort * .5;
 
-// the keyframing of the animation
+// the keyframes of the animation
    let labelPosition = [
       // start from exploded position
       // `transform-origin: center` is in stylesheet so scale is relative to middle
@@ -323,7 +323,7 @@ Object.entries(rowLabels).forEach(([label, pos], i) => {
 })
 ```
 
-As you can see, the transform feature is very powerful for transitions as it allos for multiple transformations applied, scaling and translating. The `offset` key is crucial to the timing of the animation, since we've set the entire animation option to be a loop of 6 seconds, we can use the offset as a value between 0-1 to specify what portion of time the animation should be. Conversely, we can also use the `delay` option to specify when the animation should start. But the delay does not get repeated if you want the animation to loop.
+As you can see, the transform feature is very powerful for transitions as it allows for multiple transformations applied, scaling and translating. The `offset` key is crucial to the timing of the animation, since we've set the entire animation option to be a loop of 6 seconds, we can use the offset as a value between 0-1 to specify what portion of time the animation should be. Conversely, we can also use the `delay` option to specify when the animation should start. But the delay does not get repeated if you want the animation to loop.
 
 As I mentioned, synchronization is one of the main benefits of using WAAPI. If there are already running animations, and you want to start another animation with synchronization without interrupting the existing animations, the solution with WAAPI is quite straightforward.
 
@@ -333,7 +333,7 @@ Let's add some more moving boxes and see how we can synchronize them.
 
 ```js
 /* Vue Boilerplate removed */
-fuction add() {
+function add() {
 
    // create and append the box
    const waapiParent = document.querySelector("#parent")
