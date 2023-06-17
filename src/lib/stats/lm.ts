@@ -10,7 +10,7 @@ import { Matrix,
     AbstractMatrix} from 'ml-matrix';
 
 // linear model module
-type MatrixOrVector = Matrix | number[][] | number[]
+type MatrixOrArrayOrVector = Matrix | number[][] | number[]
 
 let a = new Matrix([
         [2, 3, 5.34234],
@@ -45,7 +45,7 @@ let w = [4, 3, 2, 1]
  * @description checks if x is a number array. Used to narrow down types for ts.
  * https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
  */
-function isNumberArray(x : MatrixOrVector) : x is number[] {
+function isNumberArray(x : MatrixOrArrayOrVector) : x is number[] {
     return (Array.isArray(x) && typeof x[0] === "number")
 }
 
@@ -60,7 +60,7 @@ interface lmObject {
  * @param intercept whether to include intercept in model
  * @returns interface lmObject
  */
-export function wls(y : number[], X : MatrixOrVector , w ?: number[], intercept = true) : lmObject {
+export function wls(y : number[], X : MatrixOrArrayOrVector , w ?: number[], intercept = true) : lmObject {
     // X = Matrix.checkMatrix(X)
     // if (typeof X) {
     // }
@@ -73,9 +73,8 @@ export function wls(y : number[], X : MatrixOrVector , w ?: number[], intercept 
         X = Matrix.checkMatrix(X)
     }
 
-    // add matrix of ones
-    let modelMatrix = X.addColumn(0,new Array(X.rows).fill(1))
-    // console.log("model Matrix", modelMatrix)
+    // add intercept column
+    let modelMatrix = intercept ? X.clone().addColumn(0,new Array(X.rows).fill(1)) : X
     
     let coef;
     // solve the normal equations X'Xb = X'y
@@ -84,11 +83,97 @@ export function wls(y : number[], X : MatrixOrVector , w ?: number[], intercept 
         coef = solve(modelMatrix, Y).getColumn(0)
     } else {
         let W = Matrix.diag(w.map((x) => Math.sqrt(x)))
-        coef = solve(W.mmul(modelMatrix), W.mmul(Y)).getColumn(0)
+        coef = solve(W.clone().mmul(modelMatrix), W.clone().mmul(Y)).getColumn(0)
     }
     // wls solution
     return {coef}
 }
+
+class Binomial {
+    static link = (mu: number) => Math.log(mu / (1 - mu))
+    static linkinv = (eta: number) => 1 / (1 + Math.exp(-eta))
+}
+
+function applyRows(M:Matrix, f: (x : number) => number) : Matrix{
+    const A = M.clone()
+    for (let i = 0; i < M.rows; i++) {
+        A.setRow(i, M.getRow(i).map(f))
+    }
+    return A
+}
+
+function applyCols(M:Matrix, f: (value:number, index:number, array:number[]) => number) : Matrix {
+    const A = M.clone()
+    for (let i = 0; i < M.columns; i++) {
+        A.setColumn(i, M.getColumn(i).map(f))
+    }
+    return A
+}
+
+// const bfam = new Binomial()
+// console.log(Binomial.link(.5))
+// console.log(new Binomial())
+
+interface glmObject {
+    coef: number[]
+}
+
+export function logistic(y: number[], x: number[], maxIter = 250, tol = 1e-8) {
+    // console.log(Matrix.columnVector(x).addColumn(0, new Array(x.length).fill(1)))
+    let X = Matrix.columnVector(x).addColumn(0, new Array(x.length).fill(1))
+    let Y = Matrix.columnVector(y)
+   
+    let theta = Matrix.zeros(2, 1) // initial guess
+    // console.log(theta)
+    // console.log(modelMatrix)
+    // let eta = modelMatrix.mmul(theta)
+    // // console.log(eta)
+    // let mu = applyCols(eta, Binomial.linkinv)
+    // // console.log(mu)
+    // let score = Matrix.columnVector(y.map((yi, i) => yi/mu.get(i, 0) - (1 - yi)/(1 - mu.get(i, 0))))
+    // // console.log(score)
+    // let w = applyCols(mu, (mui) => mui * (1 - mui))
+
+    // let D = applyCols(modelMatrix, (x, i) => x * mu.get(i, 0) * (1 - mu.get(i, 0)))
+    // let yPseudo = D.mmul(theta).add(score.mulColumnVector(w))
+    // let lmobj = wls(yPseudo.getColumn(0), D, applyCols(w, (x) => 1/x).getColumn(0), false)
+    // let thetaNext = Matrix.columnVector(lmobj.coef)
+
+    // for access outside of for, modify in place more annoying?
+    // typescript complaining  about any type for mu
+    let w, eta, score, D, yPseudo, lmObj, thetaNext, eps;
+    for (let iter = 0; iter < maxIter; iter++) {
+        // console.log("theta is:", theta.data)
+        eta = X.clone().mmul(theta)
+        // console.log("eta is:", eta.data)
+        let mu = applyCols(eta, Binomial.linkinv) // this outputs Matrix, why is mu still any type?
+        // console.log("mu is:", mu.data)
+        // score = Y.divColumnVector(mu).subtract((Y.subtract(1).divColumnVector(mu.subtract(1))))
+        score = Y.clone().divColumnVector(mu).subtract(Y.clone().subtract(1).divColumnVector(mu.clone().subtract(1)))
+        // score = Matrix.columnVector(y.map((yi, i) => yi/mu.get(i, 0) - (1 - yi)/(1 - mu.get(i, 0))))
+        // console.log("Y is", Y)
+        // console.log("score is:", score.data)
+        w = applyCols(mu, (mui) => mui * (1 - mui))
+        // console.log("w is:", w.data)
+        D = applyCols(X, (x, i) => x * mu.get(i, 0) * (1 - mu.get(i, 0)))
+        // console.log("D is:", D.data)
+        yPseudo = D.clone().mmul(theta).add(score.clone().mulColumnVector(w))
+        // console.log("yPseudo is:", yPseudo.data)
+        lmObj = wls(yPseudo.getColumn(0), D, applyCols(w, (x) => 1/x).getColumn(0), false)
+        thetaNext = Matrix.columnVector(lmObj.coef)
+        // console.log(thetaNext)
+        eps = thetaNext.clone().subtract(theta).norm("frobenius")
+        if (eps < tol) {
+            break
+        }
+        theta = thetaNext
+    }
+    const glmObj = {coef: theta.getColumn(0)}
+    return(glmObj)
+}
+
+console.log(logistic([1, 0, 1, 1], [1, 2, 3, 4]).coef) // -0.2194337 0.56662
+console.log(logistic([1, 0, 1], [1, 2, 3]).coef) // 0.6931  0.0000 
 
 
 
