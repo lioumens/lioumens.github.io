@@ -87,9 +87,9 @@ article {
 // Responsive Katex display equations
 // media query for table of contents
 .katex-display > .katex {
-    display: inline-block;
+    // display: inline-block; // gives weird scroll bar on bottom
     overflow-x: auto;
-    max-width:100%;
+    max-width: 100%;
     overflow-y: hidden;
 
   /* Chrome, Edge, and Safari */
