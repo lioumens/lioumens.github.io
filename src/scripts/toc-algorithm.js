@@ -12,7 +12,7 @@ const test8 = [2, 3, 4, 4, 3].map((depth) => ({depth})) // ye
 const testa = [{depth:2}, {depth:2}, {depth:3}, {depth:3}, {depth:2}]
 const testb = [2, 3, 4, 2, 3, 3, 2, 2].map((depth) => ({depth}))
 
-function genTOC(flat) {
+export default function genTOC(flat) {
    const toc = []
    let currentDepth = 1;
   
@@ -85,21 +85,5 @@ function buildToc(headings) {
     return toc;
   }
 
-// console.dir(genTOC(testa), {depth: null})
 
-
-// console.dir(genTOC(test3), {depth: null})
-console.dir(genTOC(test6), {depth: null})
-// console.dir(genTOC(testb), {depth: null})
-
-// console.log(testb)
-// const a = new Map()
-// a.set(1, "one")
-// a.set(1, "two")
-// console.log(a)
-
-// test('Math.sqrt()', () => {
-// 	expect(Math.sqrt(4)).toBe(2);
-// 	expect(Math.sqrt(144)).toBe(12);
-// 	expect(Math.sqrt(2)).toBe(Math.SQRT2);
-// });
+// console.dir(genTOC(test6), {depth: null})
