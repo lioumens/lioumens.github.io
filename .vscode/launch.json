@@ -2,10 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
-      "name": "Development server",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": [
+        "dist/**/*.js"
+      ],
+      "name": "Debug lm",
       "request": "launch",
-      "type": "node-terminal"
+      // "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node lm.ts",
+      "program": "src/lib/stats/lm.ts",
+      "runtimeExecutable": "node",
+      "type": "node"
     }
   ]
 }

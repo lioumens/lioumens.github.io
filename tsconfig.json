@@ -3,6 +3,9 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "preact",
-    "allowJs": true
-  }
+    "allowJs": true,
+    "sourceMap": true,
+    // "skipLibCheck": true // True by default: https://github.com/withastro/astro/issues/5061
+  },
+  "exclude": ["tina/**/*"]
 }
