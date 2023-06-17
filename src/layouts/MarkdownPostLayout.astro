@@ -80,7 +80,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
                       <img class="blog-cover" src={frontmatter.image.url.src} alt={frontmatter.image.alt}/> :
                       <Image src={frontmatter.image.url.src} alt={frontmatter.image.alt} height={frontmatter.image.url.height} width={frontmatter.image.url.width}/>)}
         <slot />
-        <Giscus />
+        {frontmatter.comments && <Giscus />}
       </article>
     </div>
   </BaseLayout>
