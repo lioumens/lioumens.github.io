@@ -118,7 +118,7 @@ interface glmObject {
     coef: number[]
 }
 
-export function logistic(y: number[], x: number[], maxIter = 250, tol = 1e-8) {
+export function logistic(y: number[], x: number[], maxIter = 200, tol = 1e-8) {
     // console.log(Matrix.columnVector(x).addColumn(0, new Array(x.length).fill(1)))
     let X = Matrix.columnVector(x).addColumn(0, new Array(x.length).fill(1))
     let Y = Matrix.columnVector(y)
@@ -164,18 +164,20 @@ export function logistic(y: number[], x: number[], maxIter = 250, tol = 1e-8) {
         // console.log(thetaNext)
         eps = thetaNext.clone().subtract(theta).norm("frobenius")
         if (eps < tol) {
-            break
+            break // convergence
         }
         theta = thetaNext
     }
-    const glmObj = {coef: theta.getColumn(0)}
+    const coef = theta.getColumn(0)
+    const separationDetected = coef.reduce((a, b) => a || Number.isNaN(b), false)
+    const glmObj = {coef,separationDetected}
     return(glmObj)
 }
 
-console.log(logistic([1, 0, 1, 1], [1, 2, 3, 4]).coef) // -0.2194337 0.56662
-console.log(logistic([1, 0, 1], [1, 2, 3]).coef) // 0.6931  0.0000 
+// console.log(logistic([1, 0, 1, 1], [1, 2, 3, 4]).coef) // -0.2194337 0.56662
+// console.log(logistic([1, 0, 1], [1, 2, 3]).coef) // 0.6931  0.0000 
 
-
+// need to plot logistic function with polyline
 
 export function add(a: number, b: number) {
     return a + b;
