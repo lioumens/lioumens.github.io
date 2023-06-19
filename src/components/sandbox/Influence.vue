@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {useDragList} from "./dragList.js"
-import {ref, onMounted, watch} from "vue"
+import {ref, onMounted, watch, watchEffect} from "vue"
 import * as d3 from "d3"
 import DraggableCircle from "./DraggableCircle.vue"
+import {logistic} from "../../lib/stats/lm.ts"
 
 // Data
 const datapoints = ref([
@@ -12,6 +12,8 @@ const datapoints = ref([
                 {x: -2, y: 0},
                 {x: -3, y: 0}
                ])
+const coef = ref({b0: 0, b1: 1})
+const separated = ref(false)
 
 const SVGBox = ref(null) // populated by svg box
 const circlePoints = ref([]) // now attach event listeners?
@@ -21,11 +23,11 @@ function positionXY(datapoint) {
     return { cx: xScale(datapoint.x), cy: yScale(datapoint.y) }
 }
 
-function makeLogisticPoints(xmin, xmax, n, b0, b1) {
+function makeLogisticPoints(xmin, xmax, n) {
     let pointString = ""
     for (let i = 0; i < n; i++) {
         let x = xmin + (xmax - xmin) * i / n
-        let y = 1 / (1 + Math.exp(-b1 * (x-b0)))
+        let y = 1 / (1 + Math.exp(-(coef.value.b1 * x + coef.value.b0)))
         let xSVG = xScale(x)
         let ySVG = yScale(y)
         //STUB: translate from d3 to svg here
@@ -34,6 +36,16 @@ function makeLogisticPoints(xmin, xmax, n, b0, b1) {
     // console.log(pointString)
     return pointString
 }
+
+// update b0 and b1 when the datapoints change
+watch(datapoints, () => {
+    const X = datapoints.value.map(p => p.x)
+    const Y = datapoints.value.map(p => p.y)
+    const glmObj = logistic(Y, X)
+    coef.value.b0 = glmObj.coef[0]
+    coef.value.b1 = glmObj.coef[1]
+    separated.value = glmObj.separationDetected
+}, {deep:true})
 
 // create the axes
 const xScale = d3.scaleLinear()
@@ -60,14 +72,11 @@ onMounted(() => {
       .call(yAxis)
       .attr("transform", "translate(300, 0)")
 })
-watch(datapoints, () => console.log(datapoints))
 
 function handleX(x, datapoint, i) {
-    console.log("handling", x, datapoint, i)
     datapoint.x = xScale.invert(x)
 }
 function handleY(y, datapoint, i) {
-    console.log("update", y, datapoint, i)
     datapoint.y = yScale.invert(y)
 }
 </script>
@@ -86,7 +95,7 @@ function handleY(y, datapoint, i) {
                          @yThing="(y) => handleY(y, datapoint, i)"
                          :key="i" :radius=10 restrictDragAxis="x" :initialX=xScale(datapoint.x) :initialY=yScale(datapoint.y) />
 
-        <polyline :points="makeLogisticPoints(-6, 6, 100, 0, 1)" fill="none" stroke="black" stroke-width="1" stroke-linejoin="round"/>
+        <polyline v-if="!separated" :points="makeLogisticPoints(-6, 6, 100)" fill="none" stroke="var(--nord11)" stroke-width="1.5" stroke-linejoin="round"/>
 
     </svg>
 </template>
