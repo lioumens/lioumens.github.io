@@ -8,4 +8,13 @@ export function clamp(val, min, max) {
     return Math.min(Math.max(val, min), max);
 }
 
+export function seq(xmin, xmax, step) {
+    const n = Math.floor((xmax - xmin) / step) + 1
+    return [...Array(n).keys()].map(i => xmin + i * step)
+}
+export function seqn(xmin, xmax, n) {
+    return [...Array(n).keys()].map(i => xmin + i * (xmax - xmin) / (n - 1))
+}
+
+
 export default convertClientToSVGCoord;
