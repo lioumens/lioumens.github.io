@@ -1,4 +1,4 @@
-import { describe, expect, it, assert } from "vitest"
+import { describe, expect, it, assert, beforeAll } from "vitest"
 import {wls, logistic} from "../src/lib/stats/lm"
 import {Matrix} from "ml-matrix"
 
@@ -41,35 +41,43 @@ describe("weighted least squares", () => {
 })
 
 describe("logistic regression", () => {
-    it.only("works for simple logistic regression", () => {
+    describe("simple logistic regression", () => {
         const y = [1, 0, 1, 1]
         const x = [1, 2, 3, 4] 
-        const result = logistic(y, x)
-        const resultCoef = result.coef
-        const expected = [-.2194337, 0.56662]
-        const vcov = result.vcov 
-        console.log(vcov) // correct
-        expect(resultCoef[0]).toBeCloseTo(expected[0], 4)
-        expect(resultCoef[1]).toBeCloseTo(expected[1], 4)
+        const glmObj = logistic(y, x)
+
+        it("gives correct coef for simple logistic regression", () => {
+            const resultCoef = glmObj.coef
+            const expected = [-.2194337, 0.56662]
+            expect(resultCoef[0]).toBeCloseTo(expected[0], 4)
+            expect(resultCoef[1]).toBeCloseTo(expected[1], 4)
+        })
+        it("gives correct std errors for simple logistic regression", () => {
+         expect(glmObj.coefstderr[0]).toBeCloseTo(2.719529, 4)
+         expect(glmObj.coefstderr[1]).toBeCloseTo(1.131468, 4)
+        })
     })
     it("works for almost separation", () => {
         const y = [0, 0, 1, 0, 1, 1]
         const x = [1, 2, 3, 4, 5, 6] 
-        const result = logistic(y, x).coef
+        const glmObj = logistic(y, x)
+        const coef = glmObj.coef
         const separationDetected = logistic(y, x).separationDetected
         const expected = [-4.249097, 1.214028]
-        expect(result[0]).toBeCloseTo(expected[0], 4)
-        expect(result[1]).toBeCloseTo(expected[1], 4)
+        expect(coef[0]).toBeCloseTo(expected[0], 4)
+        expect(coef[1]).toBeCloseTo(expected[1], 4)
         expect(separationDetected).toBe(false)
     })
-    it("doesn't error for quasi separation", () => {
+    it.only("doesn't error for quasi separation", () => {
         const y = [0, 0, 1, 0, 1, 1]
         const x = [1, 2, 3, 3, 5, 6] 
-        const result = logistic(y, x).coef
+        const glmObj = logistic(y, x)
+        const glmCoef = glmObj.coef
         const separationDetected = logistic(y, x).separationDetected
-        expect(result[0]).toBeNaN()
-        expect(result[1]).toBeNaN()
+        expect(glmCoef[0]).toBeNaN()
+        expect(glmCoef[1]).toBeNaN()
         expect(separationDetected).toBe(true)
+        glmObj.coefstderr.map((x) => expect(x).toBeNaN())
     })
     it("doesn't error for complete separation", () => {
         const y = [0, 0, 0, 1, 1, 1]

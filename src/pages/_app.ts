@@ -4,9 +4,31 @@ import '../styles/main-vuetify.scss'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+const nordDarkTheme = {
+  dark: false,
+  colors: {
+    background: "#3b4252", // nord1
+    surface: '#FF0000',
+    primary: '#FF0000',
+    'primary-darken-1': '#FF0000',
+    secondary: '#FF0000',
+    'secondary-darken-1': '#018786',
+    error: '#B00020',
+    info: '#2196F3',
+    success: '#4CAF50',
+    warning: '#FB8C00',
+  },
+}
+
 const vuetify = createVuetify({
     components,
-    directives
+    directives,
+    theme: {
+      defaultTheme: "nordDarkTheme",
+      themes:{
+        nordDarkTheme
+      }
+    }
 })
 
 export default (app: App) => {

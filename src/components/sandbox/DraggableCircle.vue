@@ -17,8 +17,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'xThing', value: number): void
-  (e: 'yThing', value: number): void
+    xEvent: [value: number]
+    yEvent: [value: number]
 }>()
 
 
@@ -31,12 +31,12 @@ const pauseAnimOnDrag = computed(() => {
 })
 
 const xPos = computed(() => {
-    emit("xThing", x.value)
+    emit("xEvent", x.value)
     return x.value
 })
 
 const yPos = computed(() => {
-    emit("yThing", y.value)
+    emit("yEvent", y.value)
     return y.value
 })
 </script>
