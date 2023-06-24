@@ -141,7 +141,8 @@ export function logistic(y: number[], x: number[], maxIter = 200, tol = 1e-8) {
 
     // for access outside of for, modify in place more annoying?
     // typescript complaining  about any type for mu
-    let w, eta, score, D, yPseudo, lmObj, thetaNext, eps;
+    let w, eta, score, yPseudo, lmObj, thetaNext, eps;
+    let D = Matrix.zeros(X.rows, 1)
     for (let iter = 0; iter < maxIter; iter++) {
         // console.log("theta is:", theta.data)
         eta = X.clone().mmul(theta)
@@ -169,8 +170,10 @@ export function logistic(y: number[], x: number[], maxIter = 200, tol = 1e-8) {
         theta = thetaNext
     }
     const coef = theta.getColumn(0)
+    const vcov = inverse(D.clone().transpose().mmul(X))
+    const coefstderr = vcov.clone().diag().map((x) => Math.sqrt(x))
     const separationDetected = coef.reduce((a, b) => a || Number.isNaN(b), false)
-    const glmObj = {coef,separationDetected}
+    const glmObj = {coef,separationDetected, vcov, coefstderr}
     return(glmObj)
 }
 

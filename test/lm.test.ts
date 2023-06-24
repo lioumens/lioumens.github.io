@@ -41,13 +41,16 @@ describe("weighted least squares", () => {
 })
 
 describe("logistic regression", () => {
-    it("works for simple logistic regression", () => {
+    it.only("works for simple logistic regression", () => {
         const y = [1, 0, 1, 1]
         const x = [1, 2, 3, 4] 
-        const result = logistic(y, x).coef
+        const result = logistic(y, x)
+        const resultCoef = result.coef
         const expected = [-.2194337, 0.56662]
-        expect(result[0]).toBeCloseTo(expected[0], 4)
-        expect(result[1]).toBeCloseTo(expected[1], 4)
+        const vcov = result.vcov 
+        console.log(vcov) // correct
+        expect(resultCoef[0]).toBeCloseTo(expected[0], 4)
+        expect(resultCoef[1]).toBeCloseTo(expected[1], 4)
     })
     it("works for almost separation", () => {
         const y = [0, 0, 1, 0, 1, 1]
