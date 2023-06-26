@@ -17,7 +17,7 @@ const focus = ref(false)
 //     return(y.value.reduce((a:number, b:number) => a + b, 0) * Math.log(p.value / (1-p.value)) + n.value * Math.log(1-p.value))
 // })
 const chart = createChart({
-    svgSelector: svgBox, // ref to svg
+    svgSelector: svgBox, // ref to svg, chart will manage lifecycle
     xLim: [0, 1],
     yLim: [-200, 0],
     xTicks: [.25, .5, .75, 1.0],

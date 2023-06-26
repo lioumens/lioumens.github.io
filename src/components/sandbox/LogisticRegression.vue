@@ -17,6 +17,11 @@ const separated = ref(false)
 
 const SVGBox = ref(null) // populated by svg box
 
+const emit = defineEmits<{
+    pointsEvent: [value: {x: number, y: number}[]],
+    coefEvent: [value: {b0: number, b1: number}]
+}>()
+
 // Methods
 function makeLogisticPoints(xmin, xmax, n) {
     let pointString = ""
@@ -38,6 +43,8 @@ watchEffect(() => {
     coef.value.b0 = glmObj.coef[0]
     coef.value.b1 = glmObj.coef[1]
     separated.value = glmObj.separationDetected
+    emit("pointsEvent", points.value)
+    emit("coefEvent", coef.value)
 })
 
 // create the axes

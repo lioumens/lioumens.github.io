@@ -1,0 +1,96 @@
+---
+title: 'Mastering Logistic Regression'
+pubDate: 2023-06-16
+description: 'A complete and comprehensive guide to understanding logistic regression.'
+author: 'Michael Liou'
+slug: 'influence'
+tags:
+  - statistics
+toc: true
+comments: false
+draft: true
+---
+
+import LogisticFunction from "../../components/blog-5/LogisticFunction.vue"
+import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
+import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
+// import BetaLikelihood from "../../components/sandbox/BetaLikelihood.vue"
+import LogisticLikelihoodLinked from "../../components/sandbox/LogisticLikelihoodLinked.vue"
+// import TestMath from "../../components/sandbox/TestMath.astro"
+
+## Introduction
+
+At it's core, a logistic regression is nothing more than fitting a special function to data that takes the values between 0 and 1. The most common use cases are when the response of interest is a *dichotomous* variable, meaning that the variable we're modeling can take either of exactly 2 values. For example, a coin flip can be modeled as a dichotomous variable, where heads is 1 and tails is 0. Whether someone had breakfast or not today is also dichotomous. Sometimes, dichotomous variables are created from continuous variables. For example, high blood pressure can be modeled as dichotomous by creating a cutoff value for what is considered high blood pressure ($\geq 130$ systolic mm Hg). The "regression" part of the name comes in when you want to associate the response with some explanatory variables. For example, if you want to know the relationship between the number of hours you study (explanatory) and getting an A on an exam (response), we can use a logistic regression to model the strength of that relationship.
+
+Logistic regression has found use across many disciplines, including for classification in machine learning models, ecological models of constrained growth, and estimation in retrospective studies, so it's useful to understand the method from first statistical principles in order to fully appreciate the utility and limitations of this method.
+
+### The Logistic Function
+
+The magic of this method starts with the shape of the function itself, with a specific parameterization for regression purposes. Since this function is the core of the method, we'll spend some time developing some intuition for how this function behaves.
+
+$$
+\LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + {\color{#bf616a}\beta_1} x)}}}
+$$
+
+<LogisticFunction client:only="vue" />
+
+
+
+
+
+### Interpretation of coefficients
+
+By far the most important 
+
+## Fitting the Model
+
+### The Likelihood Principle
+
+### Likelihood for Regression
+
+### Optimization techniques
+
+## Hypothesis Testing of Coefficients
+
+### The Wald Test
+
+### The Likelihood Ratio Test
+
+### The Score Test
+
+## Model Validation
+
+### Residuals (Working, Deviance, Response, Raw)
+
+### Performance Metrics
+
+## Additional Topics
+
+### Quasi-Binomial Regression
+
+### Relation to other Binary Response Models
+
+### Relations in Categorical Data Analysis
+
+### Multinomial/Ordinal Logistic Regression
+
+### Propensity Score Matching
+
+
+A logistic regression models values between 0 and 1, but unfortunately there is no closed form solution that one can use to solve for the coefficients in the model. 
+
+The equation for a logistic function is given by:
+
+<LogisticRegression client:only="vue" />
+
+## The Likelihood Principle
+<BinaryLikelihood client:only="vue" />
+
+In order to develop a better intuition for
+
+
+{/* <BetaLikelihood client:only="vue" /> */}
+
+## Likelihood for Regression
+<LogisticLikelihoodLinked client:only="vue" />
+{/* <TestMath /> */}

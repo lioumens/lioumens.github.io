@@ -16,5 +16,4 @@ export function seqn(xmin, xmax, n) {
     return [...Array(n).keys()].map(i => xmin + i * (xmax - xmin) / (n - 1))
 }
 
-
 export default convertClientToSVGCoord;

@@ -8,8 +8,8 @@ const nordDarkTheme = {
   dark: false,
   colors: {
     background: "#3b4252", // nord1
-    surface: '#FF0000',
-    primary: '#FF0000',
+    surface: '#EDEFF3',
+    primary: '#1976D2',
     'primary-darken-1': '#FF0000',
     secondary: '#FF0000',
     'secondary-darken-1': '#018786',

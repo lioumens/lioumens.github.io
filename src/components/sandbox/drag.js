@@ -1,6 +1,6 @@
 import { ref, onMounted, onUnmounted, toValue, onBeforeUnmount} from 'vue'
 
-import {clamp} from "../../lib/util.js"
+import {clamp} from "../../lib/util.ts"
 
 // by convention, composable function names start with "use"
 // ideas for extension: x or y only, custom constrained drag

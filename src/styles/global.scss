@@ -87,6 +87,29 @@ a {
     color: var(--nord9)
 }
 
+// focus on links
+// https://github.com/codrops/LineHoverStyles/blob/main/css/base.css
+a:focus {
+  /* Provide a fallback style for browsers
+ that don't support :focus-visible */
+  outline: none;
+  background: lightgrey;
+}
+
+a:focus:not(:focus-visible) {
+  /* Remove the focus indicator on mouse-focus for browsers
+ that do support :focus-visible */
+  background: transparent;
+}
+
+a:focus-visible {
+  /* Draw a very noticeable focus style for
+ keyboard-focus on browsers that do support
+ :focus-visible */
+  outline: 2px solid red;
+  background: transparent;
+}
+
 @media screen and (min-width: 1200px) {
         main {
             // margin-top: 40px; // shift the size of fixed navigation

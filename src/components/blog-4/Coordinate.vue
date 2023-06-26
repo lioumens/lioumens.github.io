@@ -1,6 +1,6 @@
 <script>
 import * as d3 from "d3"
-import { convertClientToSVGCoord } from "../../lib/util.js"
+import { convertClientToSVGCoord } from "../../lib/util.ts"
 import {VSwitch} from 'vuetify/components/VSwitch'
 
 let xScale = d3.scaleLinear()

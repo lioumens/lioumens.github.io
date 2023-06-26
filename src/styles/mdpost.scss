@@ -8,6 +8,7 @@ h2 {
 
 
 
+
 .date {
     color: var(--nord6);
     font-size: .8rem;
@@ -96,6 +97,9 @@ article {
   &::-webkit-scrollbar {
       height: 10px;
   }
+}
+.math-inline > .katex {
+    font-size: 1rem;
 }
 @media screen and (max-width: 500px) {
     .katex-display > .katex {
