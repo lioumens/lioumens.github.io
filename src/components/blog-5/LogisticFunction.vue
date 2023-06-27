@@ -10,9 +10,7 @@ import {gsap} from "gsap"
 
 // import {MotionPathPlugin} from "gsap/MotionPathPlugin"
 const {MotionPathPlugin} = await import("gsap/MotionPathPlugin")
-onMounted(() => {
-  gsap.registerPlugin(MotionPathPlugin)
-})
+gsap.registerPlugin(MotionPathPlugin)
 
 const svg = ref()
 const b0 = ref(0)
@@ -24,9 +22,13 @@ const {xScale, yScale} = useD3Axes({
   yLim: [0, 1],
   xTicks: [-5, -2.5, 0, 2.5, 5],
   yTicks: [.5, 1],
-  yLabel: "",
+  yLabel: "p(x)",
   xLabel: "",
-  yLabelRotate: 270,
+  xLabelPosition: "center",
+  yLabelPosition: "top",
+  xLabelColor: "#9f9f9f",
+  yLabelColor: "#9f9f9f",
+  yLabelRotate: 0,
   xLabelRotate: 0,
   xAxisPosition: "bottom",
   yAxisPosition: "zero",
@@ -245,7 +247,7 @@ function showRates() {
     }}, "<")
     tl2.to(".hline", {duration: .4, attr:{x2: 300}, ease: "power2.out"})
     tl2.to(".testcircle", {duration: 1, attr:{r: 0}}, "<")
-    tl2.to(".testline", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power1.out"}, "<")
+    tl2.to(".testline", {duration: .4, attr:{x1: xScale(0), x2: xScale(0)}, ease: "power1.out"}, "<")
     tl2.to(".testlineleft", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power1.out"}, "<")
     tl2.to(".hline", {duration: .4, attr:{x1: 300}, ease: "power2.in"}, "<+.4")
     tl2.then(() => {
@@ -265,7 +267,7 @@ function showRates() {
     <circle class="testcircleleft" cx="300" cy="100" r="7" fill="var(--nord15)" style="visibility:hidden"></circle>
     <line class="testline" x1="100" x2="500" y1="100" y2="100" stroke="var(--nord15)" style="visibility:hidden"/>
     <line class="testlineleft" x1="100" x2="500" y1="100" y2="100" stroke="var(--nord15)" style="visibility:hidden"/>
-    <line class="hline" x1="100" x2="300" y1="100" y2="100" stroke="var(--nord15)" stroke-width="2" style="visibility:hidden"></line>
+    <line class="hline" x1="100" :x2="xScale(0)" :y1="yScale(.5)" :y2="yScale(.5)" stroke="var(--nord15)" stroke-width="2" style="visibility:hidden"></line>
   </svg>
   
   <v-app class="logistic-param"> 
@@ -299,7 +301,8 @@ function showRates() {
       <template v-slot:append>
         <v-label @dblclick="resetCoef('b1')" style="user-select:none;opacity:1;font-family:monospace;color:var(--nord11)"><span v-html="katex.renderToString('\\color{#bf616a} \\beta_1 =')"></span>
           &nbsp;{{ ((b1>=0) ? " " : "") + b1.toFixed(1) }}
-        </v-label> </template>
+        </v-label>
+      </template>
     </v-slider>
   </v-col>
 </v-row>

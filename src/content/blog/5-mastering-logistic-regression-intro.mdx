@@ -12,10 +12,11 @@ draft: true
 ---
 
 import LogisticFunction from "../../components/blog-5/LogisticFunction.vue"
-import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
-import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
+import {Suspense} from "vue"
+// import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
+// import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
 // import BetaLikelihood from "../../components/sandbox/BetaLikelihood.vue"
-import LogisticLikelihoodLinked from "../../components/sandbox/LogisticLikelihoodLinked.vue"
+// import LogisticLikelihoodLinked from "../../components/sandbox/LogisticLikelihoodLinked.vue"
 // import TestMath from "../../components/sandbox/TestMath.astro"
 
 ## Introduction
@@ -34,7 +35,9 @@ $$
 \LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + {\color{#bf616a}\beta_1} x)}}}
 $$
 
-<LogisticFunction client:only="vue" />
+<Suspense>
+  <LogisticFunction client:only="vue" />
+</Suspense>
 
 
 
