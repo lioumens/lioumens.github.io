@@ -64,11 +64,22 @@
 .link__graphic--slide {
     top: -3px;
     stroke-width: 2px;
-    transition: transform 0.7s;
-    transition-timing-function: cubic-bezier(0, 0.25, 0.5, 1);
 }
 
 .link:hover .link__graphic--slide {
-    transform: translate3d(-66.6%, 0, 0);
+    // transform: translate3d(-66.6%, 0, 0);
+    // transform: translateX(-66.6%);
+    // transition: transform 0.7s alternate infinite;
+    animation: slide 0.7s infinite;
+    // transition-timing-function: cubic-bezier(0, 0.25, 0.5, 1);
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-66.6%);
+    }
 }
 </style>
