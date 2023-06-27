@@ -23,9 +23,9 @@ const {xScale, yScale} = useD3Axes({
   xTicks: [-5, -2.5, 0, 2.5, 5],
   yTicks: [.5, 1],
   yLabel: "p(x)",
-  xLabel: "",
-  xLabelPosition: "center",
-  yLabelPosition: "top",
+  xLabel: "x",
+  xLabelPosition: "rightTop",
+  yLabelPosition: "topRight",
   xLabelColor: "#9f9f9f",
   yLabelColor: "#9f9f9f",
   yLabelRotate: 0,
@@ -50,10 +50,8 @@ const makeLogisticPoints = computed(() =>{
     return "M" + pointString
 })
 
-
-
 const path = ref()
-
+// old method without gsap, css to animate path
 function resetCoef(coef: string) {
   path.value.style.transition = "d .3s ease"
   setTimeout(() => {

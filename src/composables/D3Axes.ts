@@ -3,7 +3,7 @@ import * as d3 from "d3"
 import { y } from "../../dist/_astro/runtime-core.esm-bundler.a7f258e4"
 
 export interface D3AxesOptions {
-  svgRef?: Ref<SVGElement | undefined>,
+  svgRef?: Ref<SVGElement>,
   xLim?: [number, number],
   yLim?: [number, number],
   /** x-axis label */
@@ -137,23 +137,51 @@ export default function useD3Axes({
     // attach labels to x axis
     svg.append("text")
     .text(xLabel)
-    .attr("x", margin.left + ( width - margin.right - margin.left) / 2)
-    .attr("y", () => {
-      if (xAxisPosition === "top") {
-        return 0
-      } else if (xAxisPosition === "bottom") {
-        return height - 5
+    .attr("x", () => {
+      if (xLabelPosition === "center") {
+        return(margin.left + ( width - margin.right - margin.left) / 2)
+      } else if (xLabelPosition === "left" || xLabelPosition === "leftTop" || xLabelPosition === "leftBottom") {
+        return(margin.left / 2)
+      } else if (xLabelPosition === "right" || xLabelPosition === "rightTop" || xLabelPosition === "rightBottom") {
+        return(width - margin.right/ 2)
       }
-      return 0
+      return(0)
+    })
+    .attr("y", () => {
+      let xLabelYPos = 0
+      if (xAxisPosition === "bottom") {
+        xLabelYPos = height - margin.bottom // replace with y-axis size constant  
+      } else if (xAxisPosition === "top") {
+        xLabelYPos = margin.top // replace with y-axis size constant
+      } else if (xAxisPosition === "zero") {
+        xLabelYPos = yScale(0)
+      }
+      if (xLabelPosition === "leftTop" || xLabelPosition === "rightTop") {
+        xLabelYPos -= 10 // replace with bump constant?
+      }
+      else if (xLabelPosition === "leftBottom" || xLabelPosition === "rightBottom") {
+        xLabelYPos += 10 // replace with bump constant?
+      } else if ( xLabelPosition === "center" && xAxisPosition === "top") {
+        // needs more of a bump up
+        xLabelYPos -= margin.top / 1.3
+      } else if (xLabelPosition === "center" && xAxisPosition === "bottom" || (xLabelPosition === "center" && xAxisPosition === "zero")) {
+        xLabelYPos += margin.bottom / 1.3
+      }
+      return xLabelYPos
+      // if (xAxisPosition === "top") {
+      //   return 0
+      // } else if (xAxisPosition === "bottom") {
+      //   return height - 5
+      // }
     })
     .attr("text-anchor", "middle")
     .attr("dominant-baseline", () => {
-      if (xAxisPosition === "top") {
-        return "hanging"
-      } else if (xAxisPosition === "bottom") {
-        return "baseline"
-      }
-      return "center"
+      // if (xAxisPosition === "top") {
+      //   return "hanging"
+      // } else if (xAxisPosition === "bottom") {
+      //   return "baseline"
+      // }
+      return "middle"
     })
     .attr("fill", xLabelColor)
     .style("font-family", "monospace")
@@ -182,37 +210,13 @@ export default function useD3Axes({
       } else if (yLabelPosition === "center" && yAxisPosition === "left" || (yLabelPosition === "center" && yAxisPosition === "zero")) {
         yLabelXPos -= margin.left / 1.1
       }
-
-      // if (yAxisPosition === "left") {
-      //   yLabelXPos = 8 // replace with y-axis size constant  
-      // } else if (yAxisPosition === "right") {
-      //   yLabelXPos = width - 8 // replace with y-axis size constant
-      // } else if (yAxisPosition === "zero") {
-      //   yLabelXPos = xScale(0)
-      // }
-      // if (yLabelPosition === "topRight" || yLabelPosition === "bottomRight") {
-      //   // realign with axis and to right a little
-      //   yLabelXPos += margin.left + 5
-      // } 
-      // else if (yLabelPosition === "top" || yLabelPosition === "bottom") {
-      //   // realign with axis
-      //   yLabelXPos += margin.left
-      // }
-      // else if ([ "topLeft", "bottomLeft"].includes(yLabelPosition)) {
-      //   // realign with axis and to left a little
-      //   yLabelXPos += margin.left - 5
-      // }
-      // else if (["center"].includes(yLabelPosition))  {
-      //   // no adjustment needed, rely on adjust above based on axis position
-      // } 
-      // console.log(yLabelXPos)
       return yLabelXPos
     })
     .attr("y", () => {
       if (yLabelPosition === "center") {
         return(margin.top + (height - margin.top - margin.bottom) / 2)
       } else if (yLabelPosition === "top" || yLabelPosition === "topRight" || yLabelPosition === "topLeft") {
-        return(margin.top - 15)
+        return(margin.top / 2)
       } else if (yLabelPosition === "bottom" || yLabelPosition === "bottomRight" || yLabelPosition === "bottomLeft") {
         return(height - margin.bottom / 2)
       }
