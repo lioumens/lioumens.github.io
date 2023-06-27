@@ -1,5 +1,5 @@
 <template>
-<span class="link__container">
+<span class="link__container" tabindex="0">
     <span class="link link--iocaste">
         <slot></slot>
     <svg class="link__graphic link__graphic--slide" width="300%" height="100%" viewBox="0 0 1200 60" preserveAspectRatio="none">
@@ -20,7 +20,29 @@
   padding: 0;
   margin: 0;
   vertical-align: bottom;
+
+  &:focus {
+  /* Provide a fallback style for browsers
+  that don't support :focus-visible */
+  outline: none;
+  background: lightgrey;
+  }
+
+  &:focus:not(:focus-visible) {
+  /* Remove the focus indicator on mouse-focus for browsers
+  that do support :focus-visible */
+  background: transparent;
+  }
+
+  &:focus-visible {
+  /* Draw a very noticeable focus style for
+  keyboard-focus on browsers that do support
+  :focus-visible */
+  outline: 2px solid var(--nord11);
+  background: transparent;
+  }
 }
+
 
 .link {
     cursor: pointer;

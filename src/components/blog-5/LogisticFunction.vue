@@ -68,17 +68,16 @@ function killActiveTweens() {
   //   gsap.killTweensOf(b0)
   // }
   tl.kill()
+  tl = gsap.timeline() // probably a better way to reset timeline
   tl2.revert()
   tl2.kill()
-  tl = gsap.timeline() // probably a better way to reset timeline
   tl2 = gsap.timeline()
 }
 function varyb1(){
-  scrollToGraph()
-  tl.kill()
-  tl = gsap.timeline()
+  let delayScroll = scrollToGraph()
+  killActiveTweens()
   let delayFirst = (b0.value !== 0)
-  tl.to(b0, {duration: Math.abs(b0.value / 10), value: 0})
+  tl.to(b0, {duration: Math.abs(b0.value / 10), delay: (delayScroll ? .7 : 0), value: 0})
 
   let origb1 = b1.value
   let sign = b1.value === 0 ? 1 : Math.sign(b1.value)
@@ -88,14 +87,13 @@ function varyb1(){
   tl.to(b1, {duration: .5, delay:.3, value: origb1})
 }
 function varyb0(){
-  scrollToGraph()
-  tl.kill()
-  tl.invalidate()
-  tl = gsap.timeline()
+  let delayScroll = scrollToGraph()
+  killActiveTweens()
+  tl2 = gsap.timeline()
   let delayFirst = (b1.value !== 0)
   let origb0 = b0.value
   // let origb1 = b1.value
-  tl.to(b1, {duration: Math.abs(b1.value / 8), value: 0})
+  tl.to(b1, {duration: Math.abs(b1.value / 8), delay: (delayScroll ? .7 : 0), value: 0})
 
   let sign = b0.value === 0 ? 1 : Math.sign(b0.value)
     tl.to(b0, {duration: .6, delay: (delayFirst ? .5 : 0), value: sign * -4})
@@ -105,27 +103,29 @@ function varyb0(){
     // tl.to(b1, {duration: .3, value: origb1}, "<") // dont need to return original b1
 }
 function stepb0(){
-  scrollToGraph()
-  tl.kill()
-  tl = gsap.timeline()
+  let delayScroll = scrollToGraph()
+  killActiveTweens()
   let delayFirst = (b0.value !== 0 || b1.value !== 0)
-  tl.to(b1, {duration: Math.abs(b1.value / 10), value: 0})
+  tl.to(b1, {duration: Math.abs(b1.value / 10), delay: (delayScroll ? .7 : 0 ), value: 0})
   tl.to(b0, {duration: Math.abs(b0.value / 10), value: 0}, "<")
 
-  tl.to(b0, {duration: .5, delay: (delayFirst ? .7 : 0), value: 1},">")
+  tl.to(b0, {duration: .5, delay: (delayFirst ? .5 : 0), value: 1})
   tl.to(b0, {duration: .5, delay: .5, value: 2})
   tl.to(b0, {duration: .5, delay: .5, value: 3})
   tl.to(b0, {duration: .5, delay: .5, value: 4})
   tl.to(b0, {duration: .5, delay: .5, value: 5})
   tl.to(b0, {duration: .5, delay: .5, value: 6})
 }
-const graphtop = ref()
+const graphtop = ref() // holds anchor point
 
 function scrollToGraph() {
   if (graphtop.value.getBoundingClientRect().top < 0) {
     // doesn't. work on mobile
     // graph not visible
     graphtop.value.scrollIntoView({behavior: "smooth"})
+    return(true)
+  } else {
+    return(false)
   }
 }
 function findHalfY(decreasing = false) {
@@ -166,13 +166,12 @@ function findHalfY(decreasing = false) {
 // other stuff should get it's own timeline
 let tl2 = gsap.timeline()
 function showRates() {
+  let delayScroll = scrollToGraph()
+  tl.kill()
+  tl = gsap.timeline()
   tl2.revert()
   tl2.kill()
   tl2 = gsap.timeline()
-  tl2.set(".testcircle", { xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
-  tl2.set(".testcircleleft", {xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
-  tl2.set(".testline", {xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
-  tl2.set(".testlineleft", {xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
   // check if we can use current function values
   let rawPath = MotionPathPlugin.getRawPath(makeLogisticPoints.value)
   MotionPathPlugin.cacheRawPathMeasurements(rawPath)
@@ -180,8 +179,20 @@ function showRates() {
   let endP = MotionPathPlugin.getPositionOnPath(rawPath, 1)
   let startY = yScale.invert(startP.y)
   let endY = yScale.invert(endP.y)
-  if ((startY <= .5  && .5 <= endY) || (endY <= .5 && .5 <= startY) && b1.value !== 0) {
-    // can use
+  const tweentl = gsap.timeline()
+  let delayFirst = false
+  if (!(((startY <= .5  && .5 <= endY) || (endY <= .5 && .5 <= startY)) && b1.value !== 0)) {
+    // tween to usable values
+    const tweenb0 = Math.round(Math.random() * 130 - 65) / 10 // between -6.5 and 6.5
+    const b1rand = Math.round(Math.random() * 55 + 25) / 10 
+    const tweenb1 = Math.random() > .5 ? b1rand : -b1rand
+    delayFirst = true
+    
+    tweentl.to(b0, {duration: Math.abs(b0.value - tweenb0) / 10, delay: (delayScroll ? .7 : 0), value: tweenb0})
+    tweentl.to(b1, {duration: Math.abs(b1.value - tweenb1) / 10, value: tweenb1}, "<")
+  }
+  tweentl.then(() => {
+    // AFTER tweening to usable values,
     const {progress, xProgress} = findHalfY(b1.value < 0)
 
     // determine path start and end
@@ -194,16 +205,37 @@ function showRates() {
       animEnd = 1
     }
 
-    tl2.to(".testcircle", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animStart, end: progress}, 
-    // ease: "power2.in"
+    // needed tos
+    tl2.set(".testcircle", { xPercent:-50, yPercent: -50, transformOrigin: "center center"})
+    tl2.set(".testcircleleft", {xPercent:-50, yPercent: -50, transformOrigin: "center center"})
+    tl2.set(".testline", {xPercent:-50, yPercent: -50, transformOrigin: "center center"})
+    tl2.set(".testlineleft", {xPercent:-50, yPercent: -50, transformOrigin: "center center"})
+
+    // if delay scroll & not tweened
+    // delayFirst false & delay true
+    tl2.to(".testcircle", {
+      duration: 2,
+      delay: ((delayScroll && !delayFirst) ?  .7 :
+        delayFirst ?
+        .5 : 0),
+      visibility: "visible",
+      // ease: "power2.in"
+      motionPath: {
+        path:"#testpath",
+        align:"#testpath",
+        start: animStart,
+        end: progress
+      }, 
   })
     tl2.to(".testcircleleft", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animEnd, end: progress},
     // ease: "power2.in"
+    visibility: "visible",
   }, "<")
     tl2.to(".testline", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animStart, end: progress, autoRotate: true},
     // ease: "power2.in"
+    visibility: "visible",
   }, "<")
-    tl2.to(".testlineleft", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animEnd, end: progress, autoRotate: true},
+    tl2.to(".testlineleft", {duration: 2, visibility: "visible", motionPath: {path:"#testpath", align:"#testpath", start: animEnd, end: progress, autoRotate: true},
     // ease: "power2.in",
     onComplete: () => {
       gsap.set(".hline", {visibility: "visible", attr:{x1: xProgress, x2: xProgress}})
@@ -213,19 +245,13 @@ function showRates() {
     }}, "<")
     tl2.to(".hline", {duration: .4, attr:{x2: 300}, ease: "power2.out"})
     tl2.to(".testcircle", {duration: 1, attr:{r: 0}}, "<")
-    tl2.to(".testline", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power2.out"}, "<")
-    tl2.to(".testlineleft", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power2.out"}, "<")
+    tl2.to(".testline", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power1.out"}, "<")
+    tl2.to(".testlineleft", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power1.out"}, "<")
     tl2.to(".hline", {duration: .4, attr:{x1: 300}, ease: "power2.in"}, "<+.4")
     tl2.then(() => {
       tl2.revert()
     })
-    // tl.then(() => {
-    //   tl.set(".testcircle", {visibility: "hidden"})
-    //   tl.set(".testcircleleft", {visibility: "hidden"})
-    //   tl.set(".testline", {visibility: "hidden"})
-    //   tl.set(".testlineleft", {visibility: "hidden"})
-    // })
-  }
+  })
 }
 </script>
 
@@ -292,7 +318,7 @@ There are a few things I'd like you to note about this function.
     Similarly, <ActionText @click="varyb0()">fixing <Katex src="\beta_1=0"/> and varying <Katex src="\beta_0"/></ActionText> gives a completely flat line that shifts up and down implying no relationship between <Katex src="x"/> and <Katex src="y"/>. Notice also that we get diminishing movement for values further from 0. The intercept will shift more <ActionText @click="stepb0()">between <Katex src="\beta_0=0 \rightarrow 1"/> than from <Katex src="\beta_0=1\rightarrow 2" /></ActionText>, etc.
   </li>
   <li>
-    The function has symmetry about the inflection point, meaning the rate that the function increases starting from the bottom is the same as the rate the function decreases starting from the top. This implies the <ActionText @click="showRates()">inflection point always occurs at <Katex src="y=0.5" />.</ActionText>
+    The function has symmetry about the inflection point, meaning the rate that the function increases starting from the bottom is the same as the rate the function decreases starting from the top. This implies the <ActionText @click="showRates()">inflection point always occurs at <Katex src="y=0.5" />.</ActionText> A step-by-step proof of this can be found on <a href="https://socratic.org/questions/how-do-you-find-the-inflection-point-of-a-logistic-function#108227">Socratic Q&A</a>.
   </li>
 </ul>
 </p>
