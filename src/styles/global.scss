@@ -106,7 +106,7 @@ a:focus-visible {
   /* Draw a very noticeable focus style for
  keyboard-focus on browsers that do support
  :focus-visible */
-  outline: 2px solid red;
+  outline: 2px solid var(--nord11);
   background: transparent;
 }
 

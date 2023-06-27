@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import useD3Axes from "../../composables/D3Axes.ts"
-import {ref, computed} from "vue"
+import {ref, computed, onMounted} from "vue"
 import {VSlider} from 'vuetify/components/VSlider'
 import katex from "katex"
 import Katex from "./Katex.vue";
 import ActionText from "./ActionText.vue";
+import {gsap} from "gsap"
+// import {MotionPathPlugin} from "gsap/MotionPathPlugin"
+
+// import {MotionPathPlugin} from "gsap/MotionPathPlugin"
+const {MotionPathPlugin} = await import("gsap/MotionPathPlugin")
+onMounted(() => {
+  gsap.registerPlugin(MotionPathPlugin)
+})
 
 const svg = ref()
 const b0 = ref(0)
@@ -21,7 +29,8 @@ const {xScale, yScale} = useD3Axes({
   yLabelRotate: 270,
   xLabelRotate: 0,
   xAxisPosition: "bottom",
-  yAxisPosition: "zero"
+  yAxisPosition: "zero",
+  height: 200
 })
 
 const makeLogisticPoints = computed(() =>{
@@ -31,23 +40,15 @@ const makeLogisticPoints = computed(() =>{
     let pointString = ""
     for (let i = 0; i < steps; i++) {
         let xGrid = xmin + (xmax - xmin) * i / steps
-        let yGrid = 1 / (1 + Math.exp(-(b1.value * xGrid + b0.value))) 
+        let yGrid = 1 / (1 + Math.exp(-(b1.value * xGrid + b0.value)))
         let xSVG = xScale(xGrid)
         let ySVG = yScale(yGrid)
         pointString = pointString + `${xSVG},${ySVG} `
     }
     return "M" + pointString
 })
-function b1label() {
-  return katex.renderToString("\\color{#bf616a} \\beta_1=")
-}
-const b1Format = computed(() => {
-  if (b1.value >= 0) {
-    return "&nbsp;" + `${b1.value.toFixed(1)}"`
-  } else {
-    return b1.value.toFixed(1)
-  }
-})
+
+
 
 const path = ref()
 
@@ -60,43 +61,217 @@ function resetCoef(coef: string) {
   else b1.value = 1
 }
 
+let tl : gsap.core.Timeline = gsap.timeline();
+function killActiveTweens() {
+  // if (gsap.isTweening(b1) || gsap.isTweening(b0)) {
+  //   gsap.killTweensOf(b1)
+  //   gsap.killTweensOf(b0)
+  // }
+  tl.kill()
+  tl2.revert()
+  tl2.kill()
+  tl = gsap.timeline() // probably a better way to reset timeline
+  tl2 = gsap.timeline()
+}
+function varyb1(){
+  scrollToGraph()
+  tl.kill()
+  tl = gsap.timeline()
+  let delayFirst = (b0.value !== 0)
+  tl.to(b0, {duration: Math.abs(b0.value / 10), value: 0})
+
+  let origb1 = b1.value
+  let sign = b1.value === 0 ? 1 : Math.sign(b1.value)
+    tl.to(b1, {duration: .5, delay: (delayFirst ? .5 : 0), value: sign * -3})
+    tl.to(b1, {duration: .5, delay:.3, value: sign * 3})
+    tl.to(b1, {duration: .5, delay:.3, value: sign * -3})
+  tl.to(b1, {duration: .5, delay:.3, value: origb1})
+}
+function varyb0(){
+  scrollToGraph()
+  tl.kill()
+  tl.invalidate()
+  tl = gsap.timeline()
+  let delayFirst = (b1.value !== 0)
+  let origb0 = b0.value
+  // let origb1 = b1.value
+  tl.to(b1, {duration: Math.abs(b1.value / 8), value: 0})
+
+  let sign = b0.value === 0 ? 1 : Math.sign(b0.value)
+    tl.to(b0, {duration: .6, delay: (delayFirst ? .5 : 0), value: sign * -4})
+    tl.to(b0, {duration: .6, delay:.3, value: sign * 4})
+    tl.to(b0, {duration: .6, delay:.3, value: sign * -4})
+    tl.to(b0, {duration: .3, delay:.3, value: origb0})
+    // tl.to(b1, {duration: .3, value: origb1}, "<") // dont need to return original b1
+}
+function stepb0(){
+  scrollToGraph()
+  tl.kill()
+  tl = gsap.timeline()
+  let delayFirst = (b0.value !== 0 || b1.value !== 0)
+  tl.to(b1, {duration: Math.abs(b1.value / 10), value: 0})
+  tl.to(b0, {duration: Math.abs(b0.value / 10), value: 0}, "<")
+
+  tl.to(b0, {duration: .5, delay: (delayFirst ? .7 : 0), value: 1},">")
+  tl.to(b0, {duration: .5, delay: .5, value: 2})
+  tl.to(b0, {duration: .5, delay: .5, value: 3})
+  tl.to(b0, {duration: .5, delay: .5, value: 4})
+  tl.to(b0, {duration: .5, delay: .5, value: 5})
+  tl.to(b0, {duration: .5, delay: .5, value: 6})
+}
+const graphtop = ref()
+
+function scrollToGraph() {
+  if (graphtop.value.getBoundingClientRect().top < 0) {
+    // doesn't. work on mobile
+    // graph not visible
+    graphtop.value.scrollIntoView({behavior: "smooth"})
+  }
+}
+function findHalfY(decreasing = false) {
+  let rawPath = MotionPathPlugin.stringToRawPath(makeLogisticPoints.value)
+  MotionPathPlugin.cacheRawPathMeasurements(rawPath)
+  // let svgP = MotionPathPlugin.getPositionOnPath(rawPath, .5)
+  let tol = .001
+  const maxIter = 200
+  let left = 0
+  let right = 1
+  for (let i = 0; i < maxIter; i++) {
+     let mid = (left + right) / 2
+      let midP = MotionPathPlugin.getPositionOnPath(rawPath, mid)
+      if (Math.abs(yScale.invert(midP.y) - .5) < tol) {
+        // console.log("converged")
+        // console.log(yScale.invert(midP.y))
+        // console.log(mid)
+        return({progress : mid, xProgress : midP.x})
+      }
+
+      if (decreasing) {
+        if (yScale.invert(midP.y) > 0.5) {
+          left = mid
+        } else {
+          right = mid
+        }
+      } else {
+        if (yScale.invert(midP.y) > 0.5) {
+          right = mid
+        } else {
+          left = mid
+        }  
+      }
+  }
+  console.log("did not converge", left, right)
+  return({progress: .5, xProgress: 0})
+}
+// other stuff should get it's own timeline
+let tl2 = gsap.timeline()
+function showRates() {
+  tl2.revert()
+  tl2.kill()
+  tl2 = gsap.timeline()
+  tl2.set(".testcircle", { xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
+  tl2.set(".testcircleleft", {xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
+  tl2.set(".testline", {xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
+  tl2.set(".testlineleft", {xPercent:-50, yPercent: -50, transformOrigin: "center center", visibility: "visible"})
+  // check if we can use current function values
+  let rawPath = MotionPathPlugin.getRawPath(makeLogisticPoints.value)
+  MotionPathPlugin.cacheRawPathMeasurements(rawPath)
+  let startP = MotionPathPlugin.getPositionOnPath(rawPath, 0)
+  let endP = MotionPathPlugin.getPositionOnPath(rawPath, 1)
+  let startY = yScale.invert(startP.y)
+  let endY = yScale.invert(endP.y)
+  if ((startY <= .5  && .5 <= endY) || (endY <= .5 && .5 <= startY) && b1.value !== 0) {
+    // can use
+    const {progress, xProgress} = findHalfY(b1.value < 0)
+
+    // determine path start and end
+    let animStart, animEnd;
+    if (1 - progress > progress) {
+      animStart = 0
+      animEnd = progress * 2
+    } else {
+      animStart = progress * 2 - 1
+      animEnd = 1
+    }
+
+    tl2.to(".testcircle", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animStart, end: progress}, 
+    // ease: "power2.in"
+  })
+    tl2.to(".testcircleleft", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animEnd, end: progress},
+    // ease: "power2.in"
+  }, "<")
+    tl2.to(".testline", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animStart, end: progress, autoRotate: true},
+    // ease: "power2.in"
+  }, "<")
+    tl2.to(".testlineleft", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animEnd, end: progress, autoRotate: true},
+    // ease: "power2.in",
+    onComplete: () => {
+      gsap.set(".hline", {visibility: "visible", attr:{x1: xProgress, x2: xProgress}})
+      gsap.set(".testcircleleft", {visibility: "hidden"})
+      // gsap.set(".testlineleft", {visibility: "hidden"})
+      // gsap.set(".testline", {visibility: "hidden"})
+    }}, "<")
+    tl2.to(".hline", {duration: .4, attr:{x2: 300}, ease: "power2.out"})
+    tl2.to(".testcircle", {duration: 1, attr:{r: 0}}, "<")
+    tl2.to(".testline", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power2.out"}, "<")
+    tl2.to(".testlineleft", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power2.out"}, "<")
+    tl2.to(".hline", {duration: .4, attr:{x1: 300}, ease: "power2.in"}, "<+.4")
+    tl2.then(() => {
+      tl2.revert()
+    })
+    // tl.then(() => {
+    //   tl.set(".testcircle", {visibility: "hidden"})
+    //   tl.set(".testcircleleft", {visibility: "hidden"})
+    //   tl.set(".testline", {visibility: "hidden"})
+    //   tl.set(".testlineleft", {visibility: "hidden"})
+    // })
+  }
+}
 </script>
 
+
 <template>
-  <svg ref="svg" viewBox="0 0 600 300">
+  <a ref="graphtop" id="logistic-plot-anchor" style="visibility:hidden;font-size:.1px;position:absolute;">Top of Logistic Plot</a>
+  <svg ref="svg" viewBox="0 0 600 200">
     <!-- <polyline class="logistic-line" :points="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></polyline> -->
-    <path ref="path" class="logistic-path" :d="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></path>
+    <path id = "testpath" ref="path" class="logistic-path" :d="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></path>
+    <circle class="testcircle" cx="300" cy="100" r="7" fill="var(--nord15)" style="visibility:hidden"></circle>
+    <circle class="testcircleleft" cx="300" cy="100" r="7" fill="var(--nord15)" style="visibility:hidden"></circle>
+    <line class="testline" x1="100" x2="500" y1="100" y2="100" stroke="var(--nord15)" style="visibility:hidden"/>
+    <line class="testlineleft" x1="100" x2="500" y1="100" y2="100" stroke="var(--nord15)" style="visibility:hidden"/>
+    <line class="hline" x1="100" x2="300" y1="100" y2="100" stroke="var(--nord15)" stroke-width="2" style="visibility:hidden"></line>
   </svg>
   
   <v-app class="logistic-param"> 
     <v-row justify="center" class="mt-0">
       <v-col sm="10">
+        <!-- hint="Shifts the location of the inflection point" -->
         <v-slider
-        @dblclick="resetCoef('b0')"
+        @pointerdown="killActiveTweens()"
         color="var(--nord13)"
         v-model="b0"
-        hint="Shifts the location of the inflection point"
         step=".1"
-        min="-10"
-        max="10"
+        min="-8"
+        max="8"
         thumb-size="15">
         <template v-slot:append>
-          <v-label style="user-select:none;opacity:1;font-family: monospace;color:var(--nord13)"><span v-html="katex.renderToString('\\color{#ebcb8b} \\beta_0 =')"></span>
+          <v-label @dblclick="resetCoef('b0')" style="user-select:none;opacity:1;font-family: monospace;color:var(--nord13)"><span v-html="katex.renderToString('\\color{#ebcb8b} \\beta_0 =')"></span>
             &nbsp;{{ ((b0 >= 0) ? " ": "") + b0.toFixed(1) }}
           </v-label>
         </template>
       </v-slider>
+
+      <!-- hint="Controls the rate of inflection, and the location of the inflection point simultaneously." -->
       <v-slider
-      @dblclick="resetCoef('b1')"
+      @pointerdown="killActiveTweens()"
       color="var(--nord11)"
       v-model="b1"
-      hint="Controls the rate of inflection, and the location of the inflection point simultaneously."
       step=".1"
-      min="-5"
-      max="5"
+      min="-8"
+      max="8"
       thumb-size="15">
       <template v-slot:append>
-        <v-label style="user-select:none;opacity:1;font-family:monospace;color:var(--nord11)"><span v-html="katex.renderToString('\\color{#bf616a} \\beta_1 =')"></span>
+        <v-label @dblclick="resetCoef('b1')" style="user-select:none;opacity:1;font-family:monospace;color:var(--nord11)"><span v-html="katex.renderToString('\\color{#bf616a} \\beta_1 =')"></span>
           &nbsp;{{ ((b1>=0) ? " " : "") + b1.toFixed(1) }}
         </v-label> </template>
     </v-slider>
@@ -105,7 +280,21 @@ function resetCoef(coef: string) {
 
 </v-app>
 <p>
-There are a few things to note about this function <ActionText @click="resetCoef('b0')"> set <Katex src="\beta_0=0"/> and vary <Katex src="\beta_1"/></ActionText>
+There are a few things I'd like you to note about this function. 
+<ul>
+  <li>
+    The range of this function is bounded between <Katex src="0" /> and <Katex src = "1" />, while <Katex src="x" /> can take on any value on the real line in the domain. This also means that <Katex src="\beta_0, \beta_1"/> are free to take on any value.
+  </li>
+  <li>
+    When we <ActionText @click="varyb1()"> set <Katex src="\beta_0=0"/> and vary <Katex src="\beta_1"/></ActionText>, the <Katex src="y"/>-intercept always stays fixed at <Katex src="0.5" />. In fact, <Katex src="\beta_0"/> by itself determines the <Katex src="y" />-intercept which is why we call <Katex src="\beta_0"/> the <em>intercept parameter</em>.
+  </li>
+  <li>
+    Similarly, <ActionText @click="varyb0()">fixing <Katex src="\beta_1=0"/> and varying <Katex src="\beta_0"/></ActionText> gives a completely flat line that shifts up and down implying no relationship between <Katex src="x"/> and <Katex src="y"/>. Notice also that we get diminishing movement for values further from 0. The intercept will shift more <ActionText @click="stepb0()">between <Katex src="\beta_0=0 \rightarrow 1"/> than from <Katex src="\beta_0=1\rightarrow 2" /></ActionText>, etc.
+  </li>
+  <li>
+    The function has symmetry about the inflection point, meaning the rate that the function increases starting from the bottom is the same as the rate the function decreases starting from the top. This implies the <ActionText @click="showRates()">inflection point always occurs at <Katex src="y=0.5" />.</ActionText>
+  </li>
+</ul>
 </p>
 </template>
 
@@ -124,105 +313,4 @@ There are a few things to note about this function <ActionText @click="resetCoef
     margin-top: -.7rem;
   }
 
-// .logistic-line {
-//   transition: all 2s ease;
-// }
-
-.link__container {
-  display: inline-block;
-  width: fit-content;
-  overflow: hidden;  
-  position: relative;
-  padding: 0;
-  margin: 0;
-  vertical-align: bottom;
-}
-.content__item {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    counter-increment: itemcounter;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-// .content__item::before {
-//     color: var(--color-number);
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     content: counters(itemcounter, ".", decimal-leading-zero);
-// }
-
-
-a {
-  outline: none;
-  text-decoration: none;
-  // position: relative;
-  position: relative;
-}
-
-.link {
-    cursor: pointer;
-    font-size: 18px;
-    position: relative;
-    overflow: hidden;
-    white-space: nowrap;
-    color: var(--color-text);
-}
-
-.link::before,
-.link::after {
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background: currentColor;
-    top: 100%;
-    left: 0;
-    pointer-events: none;
-}
-
-.link::before {
-    content: '';
-    /* show by default */
-}
-.link--iocaste {
-    overflow: hidden;
-    padding: 7px 0;
-}
-
-.link__graphic {
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    overflow: hidden;
-    fill: none;
-    stroke: var(--nord15);
-    stroke-width: 1px;
-}
-
-.link__graphic--slide {
-    top: -3px;
-    stroke-width: 2px;
-    transition: transform 0.7s;
-    transition-timing-function: cubic-bezier(0, 0.25, 0.5, 1);
-}
-
-.link:hover .link__graphic--slide {
-    transform: translate3d(-66.6%, 0, 0);
-    transition: transform 0.7s ease infinite; 
-}
-.hover-action {
-  cursor: pointer;
-  color: var(--nord13);
-  &::before {
-    content: "";
-    
-  }
-}
 </style>
