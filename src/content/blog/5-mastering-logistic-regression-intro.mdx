@@ -12,12 +12,12 @@ draft: true
 ---
 
 import LogisticFunction from "../../components/blog-5/LogisticFunction.vue"
-import {Suspense} from "vue"
 // import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
 // import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
 // import BetaLikelihood from "../../components/sandbox/BetaLikelihood.vue"
 // import LogisticLikelihoodLinked from "../../components/sandbox/LogisticLikelihoodLinked.vue"
 // import TestMath from "../../components/sandbox/TestMath.astro"
+import TestMojs from "../../components/sandbox/TestMojs.vue"
 
 ## Introduction
 
@@ -35,9 +35,7 @@ $$
 \LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + {\color{#bf616a}\beta_1} x)}}}
 $$
 
-<Suspense>
-  <LogisticFunction client:only="vue" />
-</Suspense>
+<LogisticFunction client:only="vue" />
 
 
 
@@ -45,7 +43,15 @@ $$
 
 ### Interpretation of coefficients
 
-By far the most important 
+Having a function that maps values between 0 and 1 sets the stage perfectly for introducing probability, which will also take values between 0 and 1! To make this into a concrete example, suppose I'm interested in modeling how many fruit snacks one can eat (explanatory variable, $x$) before getting a stomach ache (response variable, $y$). It's reasonable to think about the probability of such an event since I could probably have 100 fruit snacks one day and not get a stomach ache while another day also having 100 and getting a stomach ache. 
+
+{/* <TestMojs client:only="vue"/> */}
+
+So we have a function that maps to a value between 0 and 1 -- this sets the stage perfectly for introducing probability! It's no accident I chose to write the logistic function as $p(x)$ with $p$ standing for probability. The main idea is that we can take any number from the real line, and associate it with a probability of an event happening. Since we think about dichotomous event, things either happen or they don't, the statistical foundation for this is called a Bernoulli distribution. Suppose we model the events we observe with the random variable $Y$, we would say our event follows a Bernoulli distribution with parameter $p$, capturing the probability of the event happening ($Y = 1$). In symbols,
+
+$$
+Y \sim \text{Bernoulli}(p)
+$$
 
 ## Fitting the Model
 

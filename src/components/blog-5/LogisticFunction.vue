@@ -6,11 +6,13 @@ import katex from "katex"
 import Katex from "./Katex.vue";
 import ActionText from "./ActionText.vue";
 import {gsap} from "gsap"
-// import {MotionPathPlugin} from "gsap/MotionPathPlugin"
+import {useScriptTag} from "@vueuse/core"
 
-// import {MotionPathPlugin} from "gsap/MotionPathPlugin"
+// dynamic import seems fine here
 const {MotionPathPlugin} = await import("gsap/MotionPathPlugin")
 gsap.registerPlugin(MotionPathPlugin)
+
+
 
 const svg = ref()
 const b0 = ref(0)
@@ -34,6 +36,40 @@ const {xScale, yScale} = useD3Axes({
   yAxisPosition: "zero",
   height: 200
 })
+
+let purpleBurst;
+useScriptTag("https://cdn.jsdelivr.net/npm/@mojs/core", () => {
+  // after mounted, define the object
+  purpleBurst = new mojs.Burst({
+    left: 0, top: 0,
+    parent:       '#mojsparent',
+    radius:       {0: 40},
+    rotate:       {0: 180},
+    count:        7,
+    isShowStart: false,
+    children: {
+      shape:        'rect',
+      fill:       'var(--nord15)',
+      strokeWidth:  0,
+      radiusY:      {2: 1},
+      radiusX:      {5: 10},
+      duration:     1000,
+      easing: "cubic.out"
+    }
+
+  })
+  // document.addEventListener("click", () => {
+  //   purpleBurst.replay()
+  // })
+  // bouncyCircle.play()
+  // bouncyCircle.tune({x: (svgBox.left), y: (svgBox.top + svgBox.bottom) / 2})
+})
+function makeBurst(moBurst, x:number, y:number) {
+    const svgP = new DOMPoint(xScale(x), yScale(y)) // this probably changes depending on load?
+    const domP = svgP.matrixTransform(svg.value?.getScreenCTM())
+    moBurst.tune({x: domP.x + window.scrollX, y: domP.y + window.scrollY})
+    moBurst.replay()
+}
 
 const makeLogisticPoints = computed(() =>{
     const steps = 150
@@ -119,7 +155,9 @@ function stepb0(){
 const graphtop = ref() // holds anchor point
 
 function scrollToGraph() {
-  if (graphtop.value.getBoundingClientRect().top < 0) {
+  const mediaQuery = window.matchMedia('(max-width: 1200px)')
+  let visibleTop = mediaQuery.matches ? 55 : 0
+  if (graphtop.value.getBoundingClientRect().top <= visibleTop) {
     // doesn't. work on mobile
     // graph not visible
     graphtop.value.scrollIntoView({behavior: "smooth"})
@@ -227,7 +265,14 @@ function showRates() {
         end: progress
       }, 
   })
-    tl2.to(".testcircleleft", {duration: 2, motionPath: {path:"#testpath", align:"#testpath", start: animEnd, end: progress},
+    tl2.to(".testcircleleft",{
+      duration: 2,
+      motionPath: {
+        path:"#testpath",
+        align:"#testpath",
+        start: animEnd,
+        end: progress
+      },
     // ease: "power2.in"
     visibility: "visible",
   }, "<")
@@ -248,6 +293,7 @@ function showRates() {
     tl2.to(".testline", {duration: .4, attr:{x1: xScale(0), x2: xScale(0)}, ease: "power1.out"}, "<")
     tl2.to(".testlineleft", {duration: .4, attr:{x1: 300, x2: 300}, ease: "power1.out"}, "<")
     tl2.to(".hline", {duration: .4, attr:{x1: 300}, ease: "power2.in"}, "<+.4")
+       .call(makeBurst, [purpleBurst, 0, .5], "-=.2")
     tl2.then(() => {
       tl2.revert()
     })
@@ -258,6 +304,7 @@ function showRates() {
 
 <template>
   <a ref="graphtop" id="logistic-plot-anchor" style="visibility:hidden;font-size:.1px;position:absolute;">Top of Logistic Plot</a>
+  <div id="mojsparent"></div>
   <svg ref="svg" viewBox="0 0 600 200">
     <!-- <polyline class="logistic-line" :points="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></polyline> -->
     <path id = "testpath" ref="path" class="logistic-path" :d="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></path>
@@ -267,7 +314,6 @@ function showRates() {
     <line class="testlineleft" x1="100" x2="500" y1="100" y2="100" stroke="var(--nord15)" style="visibility:hidden"/>
     <line class="hline" x1="100" :x2="xScale(0)" :y1="yScale(.5)" :y2="yScale(.5)" stroke="var(--nord15)" stroke-width="2" style="visibility:hidden"></line>
   </svg>
-  
   <v-app class="logistic-param"> 
     <v-row justify="center" class="mt-0">
       <v-col sm="10">
@@ -313,13 +359,13 @@ There are a few things I'd like you to note about this function.
     The range of this function is bounded between <Katex src="0" /> and <Katex src = "1" />, while <Katex src="x" /> can take on any value on the real line in the domain. This also means that <Katex src="\beta_0, \beta_1"/> are free to take on any value.
   </li>
   <li>
-    When we <ActionText @click="varyb1()"> set <Katex src="\beta_0=0"/> and vary <Katex src="\beta_1"/></ActionText>, the <Katex src="y"/>-intercept always stays fixed at <Katex src="0.5" />. In fact, <Katex src="\beta_0"/> by itself determines the <Katex src="y" />-intercept which is why we call <Katex src="\beta_0"/> the <em>intercept parameter</em>.
+    When we <ActionText @click="varyb1()"> set <Katex src="\beta_0=0"/> and vary <Katex src="\beta_1"/></ActionText>, the <Katex src="p(x)"/>-intercept always stays fixed at <Katex src="0.5" />. In fact, <Katex src="\beta_0"/> by itself determines the <Katex src="p(x)" />-intercept which is why we call <Katex src="\beta_0"/> the <em>intercept parameter</em>.
   </li>
   <li>
-    Similarly, <ActionText @click="varyb0()">fixing <Katex src="\beta_1=0"/> and varying <Katex src="\beta_0"/></ActionText> gives a completely flat line that shifts up and down implying no relationship between <Katex src="x"/> and <Katex src="y"/>. Notice also that we get diminishing movement for values further from 0. The intercept will shift more <ActionText @click="stepb0()">between <Katex src="\beta_0=0 \rightarrow 1"/> than from <Katex src="\beta_0=1\rightarrow 2" /></ActionText>, etc.
+    Similarly, <ActionText @click="varyb0()">fixing <Katex src="\beta_1=0"/> and varying <Katex src="\beta_0"/></ActionText> gives a completely flat line that shifts up and down implying <Katex src="x"/> is not useful information. Notice also that we get diminishing movement for values further from 0. The intercept will shift more <ActionText @click="stepb0()">between <Katex src="\beta_0=0 \rightarrow 1"/> than from <Katex src="\beta_0=1\rightarrow 2" /></ActionText>, etc.
   </li>
   <li>
-    The function has symmetry about the inflection point, meaning the rate that the function increases starting from the bottom is the same as the rate the function decreases starting from the top. This implies the <ActionText @click="showRates()">inflection point always occurs at <Katex src="y=0.5" />.</ActionText> A step-by-step proof of this can be found on <a href="https://socratic.org/questions/how-do-you-find-the-inflection-point-of-a-logistic-function#108227">Socratic Q&A</a>.
+    The function has a symmetry about the inflection point, meaning the rate that the function increases starting from the bottom is the same as the rate the function decreases starting from the top. This implies the <ActionText @click="showRates()">inflection point always occurs at <Katex src="y=0.5" />.</ActionText> A step-by-step proof of this can be found on <a href="https://socratic.org/questions/how-do-you-find-the-inflection-point-of-a-logistic-function#108227">Socratic Q&A</a>. 
   </li>
 </ul>
 </p>

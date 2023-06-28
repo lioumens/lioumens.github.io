@@ -9,7 +9,7 @@ import * as d3 from "d3"
 import { seq, seqn } from "../../lib/util.js"
 import {Matrix} from "ml-matrix"
 import { x } from "../../../dist/_astro/runtime-core.esm-bundler.a7f258e4";
-import {outer} from "../../lib/util.ts"
+// import {outer} from "../../lib/util.ts"
 
 
 const tester = ref() // dom element to attach plot
@@ -61,7 +61,7 @@ function betall(b0, b1) {
     return(sumll)
 }
 const calcZ = computed(() => {        
-    return(outer(yGrid.value, xGrid.value, betall))
+    // return(outer(yGrid.value, xGrid.value, betall))
 })
 
 watchEffect(() => {
