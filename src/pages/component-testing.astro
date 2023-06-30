@@ -2,6 +2,7 @@
 import Collapsable from "../components/sandbox/Collapsable.vue";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Proof from "../components/Proof.astro"
+import BlockQuote from "../components/BlockQuote.astro";
 import "../styles/global.scss"
 import MyCodeBlock from "../components/MyCodeBlock/MyCodeBlock.astro";
 ---
@@ -11,10 +12,29 @@ import MyCodeBlock from "../components/MyCodeBlock/MyCodeBlock.astro";
     <p>
     You've found the component testing page! This page is simply here for me to make sure that the components I make for this webpage remain stable and in a usable state. Once I'm a little more proficient with a front-end testing framework, perhaps this is not going to be as necessary, but for now I'm manually verifying that everything works as expected! </p>
 
+    <h2>Block Quote</h2>
+
+    <BlockQuote quote="Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit id ducimus assumenda voluptatem hic corrupti laborum, quod incidunt culpa possimus molestiae optio quisquam vitae accusantium quis dolor dicta quaerat recusandae" source="unknown">
+    </BlockQuote>
+    
     <h2>Proof environment </h2>
-    <Proof title="proof strategy">
+    <Proof title="proof">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod autem vel vero minus fugit facilis hic similique rem dignissimos, repellat, natus maxime explicabo. Voluptas illum dicta fugit qui harum ut!
     </Proof>
+    <ul>
+        <li>The arrow next to proof is actually constructed from a 0x0 div element, with a top-border while making the left, bottom, right transparent. You can change the shape of the border by changing stroke width of the border elements. I found this trick originally on <a href="https://css-tricks.com/snippets/css/css-triangle/">CSS Tricks</a>. </li>
+        <li>The arrow movement is calculated by <code>getBoundingClientRect()</code> for variable block sizes, and animated with WAAPI by composing rotations and translate by transform. The spinning needs to be broken down into 90deg increments of keyframe, otherwise <a href="https://stackoverflow.com/questions/35186768/safari-css-bug-animation-rotation-direction-incorrect">Safari will not spin the element properly.</a> Same thing with the QED element.</li>
+        <li>
+            The "path" traced out is actually a border element around the contents in the details. There are pseudo-elements the same color as the background covering the borders at first, and then the height and width are shrunk to reveal the borders. The coloring of the borders has a gradient applied with <code>border-image-slice</code> and <code>border-image-source</code> The timing is coordinated by adding a class at specific times, and using CSS transitions to modify the height/width. I had originally tried using transform scale functions for more performant animations (not triggering layout changes), but scaling down to 0 makes the border completely disappear. I think the transform constants would depend non-trivially on the size of the element.
+        </li>
+        <li>
+            The content transform to appear is rotating on the X axis by 90deg, and changing the transform location from the top, which makes the text look like it's expanding.
+        </li>
+        <li>
+            Preference for reduced motion is also captured, and animations are switched to a blinking arrow, and opacity transition in.
+        </li>
+
+    </ul>
     </main>
     </BaseLayout>
 
