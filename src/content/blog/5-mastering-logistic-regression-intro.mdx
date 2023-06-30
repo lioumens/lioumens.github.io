@@ -32,7 +32,7 @@ The magic of this method starts with the shape of the function itself, with a sp
 [^1]: Note there are other related parameterizations floating around, but the one I give is most common in statistics because the parameters are linearly related with each other. This allows the function to fit into the framework of Generalized Linear Model theory.
 
 $$
-\LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + {\color{#bf616a}\beta_1} x)}}}
+\LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + x{\color{#bf616a}\beta_1})}}}
 $$
 
 <LogisticFunction client:only="vue" />
@@ -41,17 +41,32 @@ $$
 
 
 
-### Interpretation of coefficients
+### Now with Probability!
 
-Having a function that maps values between 0 and 1 sets the stage perfectly for introducing probability, which will also take values between 0 and 1! To make this into a concrete example, suppose I'm interested in modeling how many fruit snacks one can eat (explanatory variable, $x$) before getting a stomach ache (response variable, $y$). It's reasonable to think about the probability of such an event since I could probably have 100 fruit snacks one day and not get a stomach ache while another day also having 100 and getting a stomach ache. 
+Having a function that maps values between 0 and 1 sets the stage perfectly for introducing probability, which will also take values between 0 and 1! To make this into a concrete example, suppose I'm interested in modeling how many fruit snacks one can eat (explanatory variable, $x$) before getting a stomach ache (response variable, $y$). It's reasonable to think about the probability of such an event since I could probably have 100 fruit snacks one day and get a stomach ache and do the same another day and not get a stomach ache. It is a little ambitious to think that there are no other variables that might affect this probability, and that the entire population will have the same tolerance for fruit snacks. For example, if kids can tolerate more fruit snacks than adults, we'd likely need to model more covariates, but we'll just keep it simple for now.
 
-{/* <TestMojs client:only="vue"/> */}
+To be clear mathematically, we're modeling a single data point as a dichotomous (Bernoulli) random variable $Y$ with parameter $p$. The value of $Y$ can either be $Y=1$ for stomach ache, and $Y=0$ for not stomach ache.[^2] $p$ is the probability that we observe a stomach ache. In this case, $p$ will depend on the number of fruit snacks that someone eats, so we should instead write $p(x)$, where $x$ is the number of fruit snacks. The probabilities are related to $x$ by the logistic function as $p(x)$ is defined above. If we're making multiple observations of $Y_i$ given some values of $x_i$, we'll need to introduce a subscript $i$ that indexes all the observations and write $p(x_i)$ since the probability is different for each observation. Finally, the coefficients for the logistic regression are $\beta_0$ and $\beta_1$, that (for now) we assume are known. We can include the dependence explicitly in $p(x_i; \beta_0, \beta_1)$, using a ";" to separate our observations from our parameters. In symbols, this is all summarized by the statement
+
+[^2]: As is convention in statistics, the capital $Y$ means we don't know the value yet (is random, or not yet observed) but a lower case $y$ means that it's known (fixed, or already observed).
+
+$$
+Y_i | x_i \sim \text{Bernoulli}(p(x_i; \beta_0, \beta_1))
+$$
+
+Often we'll just remember that $p$ depends on our parameters and data, so we can shorten the notation to just $p_i = p(x_i; \beta_0, \beta_1)$. I'll shorten this to $Y_i \sim \text{Bernoulli}(p_i)$ since we're thinking of $x_i$ as fixed values.
+
+### Interpretation of Coefficients
+
+In order to understand the implication of $\beta_0, \beta_1$ on the probability of an event, we need to invert the logistic function to get: 
+
+$$
+\beta_0 + x\beta_1 =  {\color{#bf616a} \underbrace{\color{#eceff4}\log\left(\frac{p(x)}{1 - p(x)}\right)}_{\text{log odds}}}
+$$
+
+
 
 So we have a function that maps to a value between 0 and 1 -- this sets the stage perfectly for introducing probability! It's no accident I chose to write the logistic function as $p(x)$ with $p$ standing for probability. The main idea is that we can take any number from the real line, and associate it with a probability of an event happening. Since we think about dichotomous event, things either happen or they don't, the statistical foundation for this is called a Bernoulli distribution. Suppose we model the events we observe with the random variable $Y$, we would say our event follows a Bernoulli distribution with parameter $p$, capturing the probability of the event happening ($Y = 1$). In symbols,
 
-$$
-Y \sim \text{Bernoulli}(p)
-$$
 
 ## Fitting the Model
 

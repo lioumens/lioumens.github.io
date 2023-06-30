@@ -37,6 +37,10 @@ const {xScale, yScale} = useD3Axes({
   height: 200
 })
 
+// polyfill for vuetify support, did not work though
+// https://vuetifyjs.com/en/getting-started/browser-support/
+useScriptTag("https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,ResizeObserver,WebAnimations,Object.fromEntries,Array.prototype.at")
+
 let purpleBurst;
 useScriptTag("https://cdn.jsdelivr.net/npm/@mojs/core", () => {
   // after mounted, define the object
