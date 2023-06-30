@@ -1,29 +1,25 @@
 ---
+interface Props {
+  title?: string;
+}
+const {title = "proof"} = Astro.props
 
+if (title.length > 20) throw new Error("title too long, must be less than 20 characters");
 ---
 <div class="m-proof">
   <details class="m-proof--details">
     <summary class="m-proof--summary">
       <span class="m-proof--header">
-        <em class="m-proof--title">Proof</em>
+        <em class="m-proof--title">{ title }</em>
         <div class="m-proof--arrow"></div>
       </span>
     </summary>
     <div class="m-proof--content">
       <div class="m-proof--proof">
-
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias iusto nulla suscipit eaque! Ducimus minima ratione molestias totam iure impedit cum veniam reiciendis iusto minus officiis officia, ipsum dignissimos esse.
-      
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi exercitationem qui cum molestias, suscipit praesentium, quis dolores neque sapiente veniam id expedita debitis ducimus illo voluptatem quae? Velit, nulla quas!
-      
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquam nemo aperiam ipsa odit aliquid ullam omnis autem quidem officiis incidunt dolorum, repudiandae qui necessitatibus quas, sint quo tempore earum? Molestias.
-
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque facilis atque officia obcaecati est dolores expedita eveniet iusto. Quas hic, quos cumque est nihil qui inventore asperiores eos unde quia!
-
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis totam molestiae et cupiditate impedit dolore voluptatum tenetur temporibus eos. Libero quis soluta minima sint voluptatum at quasi error illum nemo!
+        <slot />
       </div>
       <div class="m-proof--qed"></div>
-
+      
     </div>
   </details>
 </div>
@@ -39,30 +35,70 @@
   }
   .m-proof--header {
     cursor: pointer;
+    position: relative; // destroys hover effect?, because lowers the element in z-index
     border-bottom: 1px solid;
     border-image-slice: 1;
     border-image-source: linear-gradient(to bottom right, var(--nord7), var(--nord9) 100%);
-    // border-right: 1px solid var(--nord6); // drawn after opening?
+    // border-right: 1px solid; // drawn after opening?
     padding-bottom: 3px; // mobile single pixel issue, include bottom border is 4. 
     margin-bottom: 0px;
     box-sizing: border-box;
-    z-index: -1;
+    // z-index: -1; // hide border behind arrow, but nolonger hovers
+    z-index: 2; // bring up
+    
+    
+    &::after {
+      box-sizing: inherit;
+      content: "";
+      width: 100%; // why does this not line up with the parent border? slightly smaller
+      height: 0%;
+      position: absolute;
+      left: 0;
+      bottom: 50%;
+      border-right: 1px solid;
+      border-image-slice: 1;
+      border-image-source: linear-gradient(to bottom right, var(--nord7), var(--nord9) 100%);
+    }
+    
+    &.revealY::after {
+      box-sizing: inherit;
+      content: "";
+      width: 100%; // why does this not line up with the parent border? slightly smaller
+      height: 50%;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      border-right: 1px solid;
+      border-image-slice: 1;
+      border-image-source: linear-gradient(to bottom right, var(--nord7), var(--nord9) 100%);
+      transition: height .1s ease-out, bottom .1s ease-out;
+    }
   }
   // animation was still showing flashes on mouse over
   .m-proof--details:not([open]) .m-proof--header:hover > .m-proof--arrow {
-    animation: bounce 1s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
+    animation: bounce 1s linear infinite;
   }
+  
+  @media (prefers-reduced-motion: reduce) {
+    // blink arrow instead
+    .m-proof--details:not([open]) .m-proof--header:hover > .m-proof--arrow {
+      animation: blink 1.5s infinite;
+      // transition: opacity 1.5s alternate infinite;
+    }
+  }
+  
   .m-proof--summary {
     /* pointer-events: none; */
     position: relative;
     list-style: none;
     padding: 0;
     margin: 0;
-
+    user-select: none;
+    -webkit-user-select: none;
+    
     &::-webkit-details-marker {
       display: none;
     }
-
   }
   .m-proof--title {
     padding-left: 1rem;
@@ -71,13 +107,14 @@
     box-sizing: border-box;
     position: relative;
     color: var(--nord9);
-    user-select: none;
-    -webkit-user-select: none;
     
     &::after {
+      // I don't remember why I used title instead of header,
+      // seems to work out the same though
       box-sizing: inherit;
       content: "";
       border-bottom: 4px solid var(--nord1);
+      // border-bottom: 4px solid red;
       position: absolute;
       height: 110%;
       width: 103%;
@@ -90,7 +127,8 @@
       box-sizing: inherit;
       content: "";
       position: absolute;
-      border-bottom: 4px solid red;
+      border-bottom: 4px solid var(--nord1);
+      // border-bottom: 4px solid red;
       height: 110%;
       width: 0%;
       left: 0px;
@@ -104,14 +142,17 @@
   .m-proof--arrow {
     display: inline-block;
     position: absolute;
-    left: 66px;
-    top: 13px;
+    // left: 66px;
+    // left: 130px;
+    right: -4.5px; // manually adjusted to line up w/ border
+    top: 9px;
     height: 10px;
     width: 10px;
     border-top: .5rem solid var(--nord9);
     border-bottom: .5rem solid transparent;
     border-left: .3rem solid transparent;
     border-right: .3rem solid transparent;
+    opacity: 1;
     /* margin-bottom: -7px; */
     /* margin-left: 7px; */
     transform-origin: center 25%;
@@ -119,9 +160,10 @@
     
     &.hidden {
       display: none;
+      opacity: 0;
     }
   }
-
+  
   
   .m-proof--content {
     border-bottom: 1px solid;
@@ -131,13 +173,16 @@
     border-image-source: linear-gradient(to bottom right, var(--nord7), var(--nord10) 100%);
     padding-left: 2rem;
     padding-bottom: 1.5rem;
-    position: relative; // needed for before pseudo element sytling
+    position: relative; // needed for before pseudo element styling
     padding-top: 4px;
-
+    // perspective-origin: left bottom; // i can't get these to change the effect
+    // transform-style: preserve-3d;
+    // backface-visibility: visible;
+    
     &::before {
       // box-sizing: inherit;
       content: "";
-      border-left: 4px solid var(--nord1);
+      border-left: 4px solid var(--nord1); // make large to cover pixel weirdness on mobile
       border-bottom: 4px solid var(--nord1);
       // border-left: 2px solid red;
       // border-bottom: 2px solid red;
@@ -180,38 +225,73 @@
       transition: all .5s ease-out;
     }
   }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .m-proof--content {
+      &::before {
+        opacity: 1;
+        right: 0px;
+        bottom: -2px;
+      }
+      &.revealY::before {
+        opacity: 0;
+        // transform: scaleY(0);
+        height: 100%;
+        width: 100%;
+        right: 0px;
+        // bottom: -2px;
+        transition: opacity .4s ease-out; // instead of all (height/width)
+        // transition: transform 1s ease-in-out;
+      }
+      &.revealX::before {
+        opacity: 0;
+        // transform: scaleY(0);
+        width: 100%;
+        height: 100%;
+        right: 0px;
+        // bottom: -2px;
+        transition: opacity .4s ease-out; // instead of all (height/width)
+      }
+    }
+    .m-proof--title {
+      &::after {
+        // I don't remember why I used title instead of header,
+        // seems to work out the same though
+        opacity: 1;
+        height: 110%;
+        width: 103%;
+        right: -2px;
+        bottom: -2px;
+        // border-right: 2px solid red; // drawn after opening?
+        // border-bottom: 2px solid red;
+      }
+      &.revealX::after {
+        opacity: 0;
+        height: 110%;
+        width: 103%;
+        right: -2px;
+        bottom: -2px;
+        transition: opacity .4s ease-out;
+        // border-right: 2px solid red; // drawn after opening?
+        // border-bottom: 2px solid red;
+      }
+    }
+    .m-proof--header {
+      &::after {
+        opacity: 0;
+      }
+      
+      &.revealY::after {
+        opacity: 1;
+        transition: opacity .4s ease-out;
+      }
+    }
+  }
+  
+  
   .m-proof--proof {
-    &.revealContent {
-      transform-origin: top center;
-      perspective-origin: 50% 0%;
-      animation: reveal .4s ease-out;
-      // transition: transform .4s ease-out;
-      // transition: opacity .4s ease-out;
-      opacity:1;
-    }
-    &.hidden {
-      opacity: 0;
-    }
+    // animated by WAAPI
   }
-  @keyframes reveal {
-    0% {
-      opacity: 0;
-      // perspective: 500px;
-      // transform: translateZ(0) translateY(-20px) rotateX(90deg)
-    }
-    100% {
-      opacity: 100%;
-      // perspective: 10px;
-      // transform: translateZ(0) translateY(0px) rotateX(0deg)
-    }
-  }
-  /* .m-proof--content::before {
-    box-sizing: inherit;
-    content: "dlfkjsdf";
-    background: red;
-    width: 100%;
-    height: 100%;
-  } */
   .m-proof--qed {
     height: .6rem;
     width: .6rem;
@@ -231,15 +311,38 @@
     0% {
       transform: translateY(0) scale(1, 1);
     }
+    
+    20% {
+      transform: translateY(-4px) scale(1.2, .76);
+    }
     50% {
-      transform: translateY(-7px) scale(1.3, .7);
+      transform: translateY(0) scale(1, 1);
+    }
+    80% {
+      transform: translateY(3px) scale(.9, 1.1);
     }
     100% {
       transform: translateY(0) scale(1, 1);
     }
   }
+  
+  @keyframes blink {
+    // for reduced motion
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
 </style>
 <script lang="ts">
+  // a11y
+  
   const proof = document.querySelector('.m-proof--proof');
   const details = document.querySelector('.m-proof--details');
   const summary = document.querySelector('.m-proof--summary');
@@ -249,32 +352,36 @@
   const content = document.querySelector('.m-proof--content');
   const qed = document.querySelector('.m-proof--qed');
   
+  // prevent default click behavior on details element
   details.addEventListener('click', (e) => {
     e.preventDefault();
   })
- 
+  
   let borderAnim1 = 0, borderAnim2 = 0, borderAnim3 = 0;
   let proofAnim = 0;
+  let proofReveal, arrowMove, arrowSpin, qedSpin;
   header.addEventListener('click', (e) => {
     if (details.hasAttribute("open")) {
-      document.getAnimations().forEach(anim => {
-        anim.cancel();
-      });
-      details.removeAttribute("open");
+      // console.log(proofReveal) // i have no idea why this errors here
+      [ proofReveal, arrowMove, arrowSpin, qedSpin].forEach(anim => {
+        anim?.cancel();
+      })
+      
+      details.removeAttribute("open"); // if you animate close, you'll need to manage timing of this
       arrow.classList.remove('hidden');
       title.classList.remove('revealX');
       content.classList.remove('revealX');
       content.classList.remove('revealY');
-      proof.classList.add("hidden")
+      header.classList.remove('revealY');
       qed.classList.add('hidden');
-      clearTimeout(borderAnim1)
-      clearTimeout(borderAnim2)
-      clearTimeout(borderAnim3)
-      clearTimeout(proofAnim)
+      [borderAnim1, borderAnim2, borderAnim3].forEach(anim => {
+        clearTimeout(anim)
+      })
     } else {
       details.setAttribute("open", "");
-      proof.classList.remove("hidden")
-      
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
       const proofBox = proof.getBoundingClientRect();
       const contentBox = content.getBoundingClientRect();
       const summaryBox = summary.getBoundingClientRect();
@@ -284,117 +391,138 @@
       const distLeftToBorder = headerBox.right - contentBox.left;
       const distDownToBottom = contentBox.bottom - headerBox.bottom;
       
+      // reduced reveal
+      if (prefersReducedMotion) {
+        const animOptions = {
+          duration: 400,
+          iterations: 1,
+          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+        }
+        proofReveal = proof.animate({opacity: [0, 1]}, animOptions)
+        // cant get current opacity value
+        arrowSpin = arrow.animate({opacity: [.3, 0]}, animOptions)
+        arrowSpin.onfinish = () => {
+          arrow.classList.add("hidden")
+        }
+        qedSpin = qed.animate({opacity: [0, 1]}, animOptions)
+        qedSpin.onfinish = () => {
+          qed.classList.remove("hidden")
+        }
+        
+        content.classList.add('revealY', 'revealX');
+        title.classList.add("revealX");
+        header.classList.add("revealY");
+        
+      } else {
+        // for some reason the translateZ will prevent overlapping on z-index
+        // for the arrow.
+        // https://stackoverflow.com/questions/40895387/z-index-not-working-on-safari-fine-on-firefox-and-chrome
+        proofReveal = proof.animate([
+        {opacity: 0, transform: "translateZ(-20px) translateY(-15px)  rotateX(-90deg)", transformOrigin: "top center", },
+        {opacity: 1, transform: "translateZ(0px) translateY(0px) rotateX(0deg)", transformOrigin: "top center", }
+        ],{
+          duration: 400,
+          iterations: 1,
+          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+        })
+        arrowMove = arrow.animate([
+        { transform: 'rotate(0) '},
+        { transform: `rotate(0) translateY(${distDownToTop}px)` },
+        { transform: `translateY(${distDownToTop}px) rotate(90deg)` }, // rotate first before translate
+        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px) rotate(90deg)` },
+        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px)`},
+        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px)`},
+        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
+        ],
+        {
+          duration: 1500,
+          iterations: 1,
+          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+        })
+        // must be less than 180 deg when composing transforms
+        arrowSpin = arrow.animate([
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`,
+        opacity: "100%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(0deg)`,
+        opacity: "90%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(90deg)`,
+        opacity: "80%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(180deg)`,
+        opacity: "70%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(270deg)`,
+        opacity: "50%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(360deg)`,
+        opacity: "30%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(450deg)`,
+        opacity: "20%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(540deg)`,
+        opacity: "10%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(630deg)`,
+        opacity: "5%"},
+        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(720deg)`,
+        opacity: "0%"},
+        ],{
+          duration: 1000,
+          iterations: 1,
+          delay: 1500,
+          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+        })
+        
+        arrowSpin.onfinish = () => {
+          arrow.classList.add("hidden")
+        }
+        
+        // spin qed
+        // issue with safari spinning more than 180deg
+        // https://stackoverflow.com/questions/35186768/safari-css-bug-animation-rotation-direction-incorrect
+        qedSpin = qed.animate([
+        {transform: "translate(50%, 50%) rotate(0)", opacity: 0},
+        {transform: "translate(50%, 50%) rotate(90deg)", opacity: 1/7},
+        {transform: "translate(50%, 50%) rotate(180deg)", opacity: 2/7},
+        {transform: "translate(50%, 50%) rotate(270deg)", opacity: 3/7},
+        {transform: "translate(50%, 50%) rotate(360deg)", opacity: 4/7},
+        {transform: "translate(50%, 50%) rotate(540deg)", opacity: 5/7},
+        {transform: "translate(50%, 50%) rotate(630deg)", opacity: 6/7},
+        {transform: "translate(50%, 50%) rotate(720deg)", opacity: 1},
+        ], {
+          duration: 1000,
+          iterations: 1,
+          delay: 1500,
+          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+        })
+        
+        qedSpin.onfinish = () => {
+          qed.classList.remove("hidden")
+        }
+        
+        // pseudoelement animation needs class approach, instead of direct animation
+        // this needs to match class addition, otherwise interrupts transition
+        // proofAnim = setTimeout(() => {
+          // proof.classList.remove("notAnijmated")
+          // proof.classList.add('revealContent');
+          // }, 10) // timeout becuase animate code was using transformed coordinates
+          header.classList.add("revealY")
+          borderAnim1 = setTimeout(() => {
+            title.classList.add('revealX');
+          }, 100)
+          borderAnim2 = setTimeout(() => {
+            content.classList.add('revealY');
+          }, 500)
+          borderAnim3 = setTimeout(() => {
+            content.classList.add('revealX');
+          }, 1000);
+        }
+        
+      };
       
-      // console.log("proof", proofBox)
-      // console.log("arrow", arrowBox)
-      // console.log("dist", distLeftToBorder)
-      // console.log("content top", contentBox.top)
-      // console.log("summary bottom", summaryBox.bottom)
-
-      const proofReveal = proof.animate([
-        {opacity: 0},
-        {opacity: 1}
-      ],{
-        duration: 400,
-        iterations: 1,
-        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
-      })
-      
-      const arrowMove = arrow.animate([
-      { transform: 'rotate(0) '},
-      { transform: `rotate(0) translateY(${distDownToTop}px)` },
-      { transform: `translateY(${distDownToTop}px) rotate(90deg)` }, // rotate first before translate
-      { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px) rotate(90deg)` },
-      { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px)`},
-      { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px)`},
-      { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
-      ],
-      {
-        duration: 1500,
-        iterations: 1,
-        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-      })
-      // must be less than 180 deg when composing transforms
-      const arrowSpin = arrow.animate([
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`,
-      opacity: "100%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(0deg)`,
-      opacity: "90%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(90deg)`,
-      opacity: "80%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(180deg)`,
-      opacity: "70%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(270deg)`,
-      opacity: "50%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(360deg)`,
-      opacity: "30%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(450deg)`,
-      opacity: "20%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(540deg)`,
-      opacity: "10%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(630deg)`,
-      opacity: "5%"},
-      { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(720deg)`,
-      opacity: "0%"},
-      ],{
-        duration: 1000,
-        iterations: 1,
-        delay: 1500,
-        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
-      })
-      
-      arrowSpin.onfinish = () => {
-        arrow.classList.add("hidden")
-      }
-
-      // spin qed
-      // issue with safari spinning more than 180deg
-      // https://stackoverflow.com/questions/35186768/safari-css-bug-animation-rotation-direction-incorrect
-      const qedSpin = qed.animate([
-      {transform: "translate(50%, 50%) rotate(0)", opacity: 0},
-      {transform: "translate(50%, 50%) rotate(90deg)", opacity: 1/7},
-      {transform: "translate(50%, 50%) rotate(180deg)", opacity: 2/7},
-      {transform: "translate(50%, 50%) rotate(270deg)", opacity: 3/7},
-      {transform: "translate(50%, 50%) rotate(360deg)", opacity: 4/7},
-      {transform: "translate(50%, 50%) rotate(540deg)", opacity: 5/7},
-      {transform: "translate(50%, 50%) rotate(630deg)", opacity: 6/7},
-      {transform: "translate(50%, 50%) rotate(720deg)", opacity: 1},
-      ], {
-        duration: 1000,
-        iterations: 1,
-        delay: 1500,
-        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
-      })
-
-      qedSpin.onfinish = () => {
-        qed.classList.remove("hidden")
-      }
-      
-      // pseudoelement animation needs class approach, instead of direct animation
-      // this needs to match class addition, otherwise interrupts transition
-      // proofAnim = setTimeout(() => {
-      // proof.classList.remove("notAnijmated")
-      // proof.classList.add('revealContent');
-      // }, 10) // timeout becuase animate code was using transformed coordinates
-      borderAnim1 = setTimeout(() => {
-      title.classList.add('revealX');
-      }, 100)
-      borderAnim2 = setTimeout(() => {
-      content.classList.add('revealY');
-      }, 500)
-      borderAnim3 = setTimeout(() => {
-        content.classList.add('revealX');
-      }, 1000);
-    };
+    })
     
-  })
-  
-  
-  
-  
-  
-</script>
+    
+    
+    
+    
+  </script>
   
   
   
