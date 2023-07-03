@@ -8,23 +8,25 @@ const {title = "proof", vMargin = "2rem", hMargin = "2rem"} = Astro.props
 
 if (title.length > 20) throw new Error("title too long, must be less than 20 characters");
 ---
-<div class="m-proof">
-  <details class="m-proof--details">
-    <summary class="m-proof--summary">
-      <span class="m-proof--header">
-        <em class="m-proof--title">{ title }</em>
-        <div class="m-proof--arrow"></div>
-      </span>
-    </summary>
-    <div class="m-proof--content">
-      <div class="m-proof--proof">
-        <slot />
+<proof-env>
+  <div class="m-proof">
+    <details class="m-proof--details">
+      <summary class="m-proof--summary">
+        <span class="m-proof--header">
+          <em class="m-proof--title">{ title }</em>
+          <div class="m-proof--arrow"></div>
+        </span>
+      </summary>
+      <div class="m-proof--content">
+        <div class="m-proof--proof">
+          <slot />
+        </div>
+        <div class="m-proof--qed"></div>
+        
       </div>
-      <div class="m-proof--qed"></div>
-      
-    </div>
-  </details>
-</div>
+    </details>
+  </div>
+</proof-env>
 
 <style lang="scss" define:vars={{ vMargin, hMargin }}>
   .m-proof {
@@ -342,189 +344,186 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
   }
   
 </style>
-<script lang="ts">
-  // a11y
-  
-  const proof = document.querySelector('.m-proof--proof');
-  const details = document.querySelector('.m-proof--details');
-  const summary = document.querySelector('.m-proof--summary');
-  const title = document.querySelector('.m-proof--title');
-  const header = document.querySelector('.m-proof--header');
-  const arrow = document.querySelector('.m-proof--arrow');
-  const content = document.querySelector('.m-proof--content');
-  const qed = document.querySelector('.m-proof--qed');
-  
-  // prevent default click behavior on details element
-  details.addEventListener('click', (e) => {
-    e.preventDefault();
-  })
-  
-  let borderAnim1 = 0, borderAnim2 = 0, borderAnim3 = 0;
-  let proofAnim = 0;
-  let proofReveal, arrowMove, arrowSpin, qedSpin;
-  header.addEventListener('click', (e) => {
-    if (details.hasAttribute("open")) {
-      // console.log(proofReveal) // i have no idea why this errors here
-      [ proofReveal, arrowMove, arrowSpin, qedSpin].forEach(anim => {
-        anim?.cancel();
-      })
-      
-      details.removeAttribute("open"); // if you animate close, you'll need to manage timing of this
-      arrow.classList.remove('hidden');
-      title.classList.remove('revealX');
-      content.classList.remove('revealX');
-      content.classList.remove('revealY');
-      header.classList.remove('revealY');
-      qed.classList.add('hidden');
-      [borderAnim1, borderAnim2, borderAnim3].forEach(anim => {
-        clearTimeout(anim)
-      })
-    } else {
-      details.setAttribute("open", "");
 
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      const proofBox = proof.getBoundingClientRect();
-      const contentBox = content.getBoundingClientRect();
-      const summaryBox = summary.getBoundingClientRect();
-      const arrowBox = arrow.getBoundingClientRect();
-      const headerBox = header.getBoundingClientRect();
-      const distDownToTop = (contentBox.top - headerBox.top) / 2;
-      const distLeftToBorder = headerBox.right - contentBox.left;
-      const distDownToBottom = contentBox.bottom - headerBox.bottom;
+<script>
+  class ProofEnv extends HTMLElement {
+    constructor() {
+      super();
+      const proof = this.querySelector('.m-proof--proof');
+      const details = this.querySelector('.m-proof--details');
+      const summary = this.querySelector('.m-proof--summary');
+      const title = this.querySelector('.m-proof--title');
+      const header = this.querySelector('.m-proof--header');
+      const arrow = this.querySelector('.m-proof--arrow');
+      const content = this.querySelector('.m-proof--content');
+      const qed = this.querySelector('.m-proof--qed');
       
-      // reduced reveal
-      if (prefersReducedMotion) {
-        const animOptions = {
-          duration: 400,
-          iterations: 1,
-          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+      // prevent default click behavior on details element
+      details.addEventListener('click', (e) => {
+        e.preventDefault();
+      })
+      let borderAnim1 = 0, borderAnim2 = 0, borderAnim3 = 0;
+      let proofAnim = 0;
+      let proofReveal, arrowMove, arrowSpin, qedSpin;
+      header.addEventListener('click', (e) => {
+        if (details.hasAttribute("open")) {
+          // console.log(proofReveal) // i have no idea why this errors here
+          [ proofReveal, arrowMove, arrowSpin, qedSpin].forEach(anim => {
+            anim?.cancel();
+          })
+          
+          details.removeAttribute("open"); // if you animate close, you'll need to manage timing of this
+          arrow.classList.remove('hidden');
+          title.classList.remove('revealX');
+          content.classList.remove('revealX');
+          content.classList.remove('revealY');
+          header.classList.remove('revealY');
+          qed.classList.add('hidden');
+          [borderAnim1, borderAnim2, borderAnim3].forEach(anim => {
+            clearTimeout(anim)
+          })
+        } else {
+          details.setAttribute("open", "");
+          
+          const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          
+          const proofBox = proof.getBoundingClientRect();
+          const contentBox = content.getBoundingClientRect();
+          const summaryBox = summary.getBoundingClientRect();
+          const arrowBox = arrow.getBoundingClientRect();
+          const headerBox = header.getBoundingClientRect();
+          const distDownToTop = (contentBox.top - headerBox.top) / 2;
+          const distLeftToBorder = headerBox.right - contentBox.left;
+          const distDownToBottom = contentBox.bottom - headerBox.bottom;
+          
+          // reduced reveal
+          if (prefersReducedMotion) {
+            const animOptions = {
+              duration: 400,
+              iterations: 1,
+              easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+            }
+            proofReveal = proof.animate({opacity: [0, 1]}, animOptions)
+            // cant get current opacity value
+            arrowSpin = arrow.animate({opacity: [.3, 0]}, animOptions)
+            arrowSpin.onfinish = () => {
+              arrow.classList.add("hidden")
+            }
+            qedSpin = qed.animate({opacity: [0, 1]}, animOptions)
+            qedSpin.onfinish = () => {
+              qed.classList.remove("hidden")
+            }
+            
+            content.classList.add('revealY', 'revealX');
+            title.classList.add("revealX");
+            header.classList.add("revealY");
+            
+          } else {
+            // for some reason the translateZ will prevent overlapping on z-index
+            // for the arrow.
+            // https://stackoverflow.com/questions/40895387/z-index-not-working-on-safari-fine-on-firefox-and-chrome
+            proofReveal = proof.animate([
+            {opacity: 0, transform: "translateZ(-20px) translateY(-15px)  rotateX(-90deg)", transformOrigin: "top center", },
+            {opacity: 1, transform: "translateZ(0px) translateY(0px) rotateX(0deg)", transformOrigin: "top center", }
+            ],{
+              duration: 400,
+              iterations: 1,
+              easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+            })
+            arrowMove = arrow.animate([
+            { transform: 'rotate(0) '},
+            { transform: `rotate(0) translateY(${distDownToTop}px)` },
+            { transform: `translateY(${distDownToTop}px) rotate(90deg)` }, // rotate first before translate
+            { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px) rotate(90deg)` },
+            { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px)`},
+            { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px)`},
+            { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
+            ],
+            {
+              duration: 1500,
+              iterations: 1,
+              easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+            })
+            // must be less than 180 deg when composing transforms
+            arrowSpin = arrow.animate([
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`,
+            opacity: "100%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(0deg)`,
+            opacity: "90%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(90deg)`,
+            opacity: "80%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(180deg)`,
+            opacity: "70%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(270deg)`,
+            opacity: "50%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(360deg)`,
+            opacity: "30%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(450deg)`,
+            opacity: "20%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(540deg)`,
+            opacity: "10%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(630deg)`,
+            opacity: "5%"},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(720deg)`,
+            opacity: "0%"},
+            ],{
+              duration: 1000,
+              iterations: 1,
+              delay: 1500,
+              easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+            })
+            
+            arrowSpin.onfinish = () => {
+              arrow.classList.add("hidden")
+            }
+            
+            // spin qed
+            // issue with safari spinning more than 180deg
+            // https://stackoverflow.com/questions/35186768/safari-css-bug-animation-rotation-direction-incorrect
+            qedSpin = qed.animate([
+            {transform: "translate(50%, 50%) rotate(0)", opacity: 0},
+            {transform: "translate(50%, 50%) rotate(90deg)", opacity: 1/7},
+            {transform: "translate(50%, 50%) rotate(180deg)", opacity: 2/7},
+            {transform: "translate(50%, 50%) rotate(270deg)", opacity: 3/7},
+            {transform: "translate(50%, 50%) rotate(360deg)", opacity: 4/7},
+            {transform: "translate(50%, 50%) rotate(540deg)", opacity: 5/7},
+            {transform: "translate(50%, 50%) rotate(630deg)", opacity: 6/7},
+            {transform: "translate(50%, 50%) rotate(720deg)", opacity: 1},
+            ], {
+              duration: 1000,
+              iterations: 1,
+              delay: 1500,
+              easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
+            })
+            
+            qedSpin.onfinish = () => {
+              qed.classList.remove("hidden")
+            }
+            
+            // pseudoelement animation needs class approach, instead of direct animation
+            // this needs to match class addition, otherwise interrupts transition
+            // proofAnim = setTimeout(() => {
+            // proof.classList.remove("notAnijmated")
+            // proof.classList.add('revealContent');
+            // }, 10) // timeout becuase animate code was using transformed coordinates
+            header.classList.add("revealY")
+            borderAnim1 = setTimeout(() => {
+              title.classList.add('revealX');
+            }, 100)
+            borderAnim2 = setTimeout(() => {
+              content.classList.add('revealY');
+            }, 500)
+            borderAnim3 = setTimeout(() => {
+              content.classList.add('revealX');
+            }, 1000);
+          }
         }
-        proofReveal = proof.animate({opacity: [0, 1]}, animOptions)
-        // cant get current opacity value
-        arrowSpin = arrow.animate({opacity: [.3, 0]}, animOptions)
-        arrowSpin.onfinish = () => {
-          arrow.classList.add("hidden")
-        }
-        qedSpin = qed.animate({opacity: [0, 1]}, animOptions)
-        qedSpin.onfinish = () => {
-          qed.classList.remove("hidden")
-        }
-        
-        content.classList.add('revealY', 'revealX');
-        title.classList.add("revealX");
-        header.classList.add("revealY");
-        
-      } else {
-        // for some reason the translateZ will prevent overlapping on z-index
-        // for the arrow.
-        // https://stackoverflow.com/questions/40895387/z-index-not-working-on-safari-fine-on-firefox-and-chrome
-        proofReveal = proof.animate([
-        {opacity: 0, transform: "translateZ(-20px) translateY(-15px)  rotateX(-90deg)", transformOrigin: "top center", },
-        {opacity: 1, transform: "translateZ(0px) translateY(0px) rotateX(0deg)", transformOrigin: "top center", }
-        ],{
-          duration: 400,
-          iterations: 1,
-          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
-        })
-        arrowMove = arrow.animate([
-        { transform: 'rotate(0) '},
-        { transform: `rotate(0) translateY(${distDownToTop}px)` },
-        { transform: `translateY(${distDownToTop}px) rotate(90deg)` }, // rotate first before translate
-        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px) rotate(90deg)` },
-        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px)`},
-        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px)`},
-        { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
-        ],
-        {
-          duration: 1500,
-          iterations: 1,
-          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-        })
-        // must be less than 180 deg when composing transforms
-        arrowSpin = arrow.animate([
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`,
-        opacity: "100%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(0deg)`,
-        opacity: "90%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(90deg)`,
-        opacity: "80%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(180deg)`,
-        opacity: "70%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(270deg)`,
-        opacity: "50%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(360deg)`,
-        opacity: "30%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(450deg)`,
-        opacity: "20%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(540deg)`,
-        opacity: "10%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(630deg)`,
-        opacity: "5%"},
-        { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(720deg)`,
-        opacity: "0%"},
-        ],{
-          duration: 1000,
-          iterations: 1,
-          delay: 1500,
-          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
-        })
-        
-        arrowSpin.onfinish = () => {
-          arrow.classList.add("hidden")
-        }
-        
-        // spin qed
-        // issue with safari spinning more than 180deg
-        // https://stackoverflow.com/questions/35186768/safari-css-bug-animation-rotation-direction-incorrect
-        qedSpin = qed.animate([
-        {transform: "translate(50%, 50%) rotate(0)", opacity: 0},
-        {transform: "translate(50%, 50%) rotate(90deg)", opacity: 1/7},
-        {transform: "translate(50%, 50%) rotate(180deg)", opacity: 2/7},
-        {transform: "translate(50%, 50%) rotate(270deg)", opacity: 3/7},
-        {transform: "translate(50%, 50%) rotate(360deg)", opacity: 4/7},
-        {transform: "translate(50%, 50%) rotate(540deg)", opacity: 5/7},
-        {transform: "translate(50%, 50%) rotate(630deg)", opacity: 6/7},
-        {transform: "translate(50%, 50%) rotate(720deg)", opacity: 1},
-        ], {
-          duration: 1000,
-          iterations: 1,
-          delay: 1500,
-          easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
-        })
-        
-        qedSpin.onfinish = () => {
-          qed.classList.remove("hidden")
-        }
-        
-        // pseudoelement animation needs class approach, instead of direct animation
-        // this needs to match class addition, otherwise interrupts transition
-        // proofAnim = setTimeout(() => {
-          // proof.classList.remove("notAnijmated")
-          // proof.classList.add('revealContent');
-          // }, 10) // timeout becuase animate code was using transformed coordinates
-          header.classList.add("revealY")
-          borderAnim1 = setTimeout(() => {
-            title.classList.add('revealX');
-          }, 100)
-          borderAnim2 = setTimeout(() => {
-            content.classList.add('revealY');
-          }, 500)
-          borderAnim3 = setTimeout(() => {
-            content.classList.add('revealX');
-          }, 1000);
-        }
-        
-      };
-      
-    })
-    
-    
-    
-    
-    
-  </script>
+      })
+    }
+  }
+  customElements.define("proof-env", ProofEnv)
+</script>
   
   
   
