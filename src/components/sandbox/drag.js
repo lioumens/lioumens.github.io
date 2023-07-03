@@ -71,9 +71,9 @@ export function useDrag(target, innerMargin, constrainAxis, initialX, initialY) 
 
   // was getting null on unmounted
   onBeforeUnmount(() => {
-      toValue(target).removeEventListener('pointerdown', startDrag)
-      toValue(target).removeEventListener('pointermove', doDrag)
-      toValue(target).removeEventListener('pointerup', stopDrag)
+      toValue(target)?.removeEventListener('pointerdown', startDrag)
+      toValue(target)?.removeEventListener('pointermove', doDrag)
+      toValue(target)?.removeEventListener('pointerup', stopDrag)
     }
   )
 

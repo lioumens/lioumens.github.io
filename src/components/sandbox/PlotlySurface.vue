@@ -202,6 +202,6 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="el" style="margin: 0 auto;width:70%;height:400px;"></div>
+    <div ref="el" style="width:70%;height:400px;"></div>
 </template>
 

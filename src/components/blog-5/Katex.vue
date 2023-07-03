@@ -1,7 +1,4 @@
 <script setup lang="ts">
-/**
- * @fileoverview defines a component that renders a katex expression in similar manner to markdown
- */
 import katex from "katex"
 
 export interface Props {

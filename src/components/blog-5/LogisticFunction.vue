@@ -5,13 +5,28 @@ import {VSlider} from 'vuetify/components/VSlider'
 import katex from "katex"
 import Katex from "./Katex.vue";
 import ActionText from "./ActionText.vue";
-import {gsap} from "gsap"
 import {useScriptTag} from "@vueuse/core"
 
-// dynamic import seems fine here
-const {MotionPathPlugin} = await import("gsap/MotionPathPlugin")
+import {gsap} from "gsap"
+//UMD seems to work better for
+
+import {MotionPathPlugin} from "gsap/dist/MotionPathPlugin"
 gsap.registerPlugin(MotionPathPlugin)
 
+
+// crazy... but this seems to work
+// let statement outside makes available to entire doc, typing satisfies ts
+// Need to "destructure" the export, but {MotionPathPlugin} gets interpreted as block code
+// await dynamic import, get the MotionPathPlugin from the default object
+// register like normal
+// let MotionPathPlugin : gsap.plugins.MotionPathPlugin;
+// if (typeof window !== "undefined") {
+//   console.log((await import("gsap/MotionPathPlugin")))
+//   MotionPathPlugin = (await import("gsap/MotionPathPlugin")).MotionPathPlugin
+//   // const {MotionPathPlugin} = await import("gsap/MotionPathPlugin")
+// //   // import {MotionPathPlugin} from "gsap/MotionPathPlugin"
+//   // gsap.registerPlugin(MotionPathPlugin)
+// }
 
 
 const svg = ref()
@@ -39,7 +54,7 @@ const {xScale, yScale} = useD3Axes({
 
 // polyfill for vuetify support, did not work though
 // https://vuetifyjs.com/en/getting-started/browser-support/
-useScriptTag("https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,ResizeObserver,WebAnimations,Object.fromEntries,Array.prototype.at")
+// useScriptTag("https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,ResizeObserver,WebAnimations,Object.fromEntries,Array.prototype.at")
 
 let purpleBurst;
 useScriptTag("https://cdn.jsdelivr.net/npm/@mojs/core", () => {
@@ -309,7 +324,7 @@ function showRates() {
 <template>
   <a ref="graphtop" id="logistic-plot-anchor" style="visibility:hidden;font-size:.1px;position:absolute;">Top of Logistic Plot</a>
   <div id="mojsparent"></div>
-  <svg ref="svg" viewBox="0 0 600 200">
+  <svg ref="svg" viewBox="0 0 600 200" style="user-select: none; -webkit-user-select: none;">
     <!-- <polyline class="logistic-line" :points="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></polyline> -->
     <path id = "testpath" ref="path" class="logistic-path" :d="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></path>
     <circle class="testcircle" cx="300" cy="100" r="7" fill="var(--nord15)" style="visibility:hidden"></circle>
@@ -358,6 +373,7 @@ function showRates() {
 </v-app>
 <p>
 There are a few things I'd like you to note about this function. 
+</p>
 <ul>
   <li>
     The range of this function is bounded between <Katex src="0" /> and <Katex src = "1" />, while <Katex src="x" /> can take on any value on the real line in the domain. This also means that <Katex src="\beta_0, \beta_1"/> are free to take on any value.
@@ -372,7 +388,6 @@ There are a few things I'd like you to note about this function.
     The function has a symmetry about the inflection point, meaning the rate that the function increases starting from the bottom is the same as the rate the function decreases starting from the top. This implies the <ActionText @click="showRates()">inflection point always occurs at <Katex src="y=0.5" />.</ActionText> A step-by-step proof of this can be found on <a href="https://socratic.org/questions/how-do-you-find-the-inflection-point-of-a-logistic-function#108227">Socratic Q&A</a>. 
   </li>
 </ul>
-</p>
 </template>
 
 <style scoped lang="scss">

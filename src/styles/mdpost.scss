@@ -81,6 +81,12 @@ article {
     margin-right: auto;
 }
 
+// Basic Figure Styling
+figcaption {
+    color: var(--secondary-text);
+    font-size: 1rem;
+}
+
 .toc-nav {
     display: none;
 }
@@ -93,10 +99,15 @@ article {
     max-width: 100%;
     overflow-y: hidden;
 
+  & .tag .vlist-t2 {
+    margin-right: 0; // normally -2px, which triggers scroll bar
+  }
+
   /* Chrome, Edge, and Safari */
   &::-webkit-scrollbar {
       height: 10px;
   }
+
 }
 .math-inline > .katex {
     font-size: 1.2rem;
@@ -112,16 +123,16 @@ article {
     grid-template-columns: minmax(0px, 1fr) fit-content(250px);
     grid-template-areas: "content toc";
     max-width: 1500px;
-    & .toc-nav {
-        grid-area: toc;
-        position: sticky;
-        align-self: start;
-        margin-right: 2rem;
-        margin-left: 0rem;
-        top: 3.5rem;
+        & .toc-nav {
+            grid-area: toc;
+            position: sticky;
+            align-self: start;
+            margin-right: 2rem;
+            margin-left: 0rem;
+            top: 3.5rem;
+        }
     }
+    .toc-nav {
+        display: block;
     }
-.toc-nav {
-    display: block;
-}
 }

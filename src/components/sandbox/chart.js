@@ -33,6 +33,7 @@ export default function createChart({
             const svg = d3.select(toValue(svgSelector))
             const xAxisSVG = svg.append("g")
             .call(xAxis)
+            .lower()
             .attr("transform", `translate(0, ${margin7})`)
             xAxisSVG.selectAll(".tick line, .domain")
             .attr("stroke", "#9f9f9f")
@@ -41,6 +42,7 @@ export default function createChart({
             
             const yAxisSVG = svg.append("g")
             .call(yAxis)
+            .lower()
             .attr("transform", `translate(${marginL}, 0)`)
             yAxisSVG.selectAll(".tick line, .domain")
             .attr("stroke", "#9f9f9f")

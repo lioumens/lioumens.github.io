@@ -2,7 +2,7 @@
 import {ref, onMounted, watchEffect,computed} from "vue"
 import LogisticRegression from "./LogisticRegression.vue";
 import PlotlySurface from "./PlotlySurface.vue"
-import {seqn, outer} from "../../lib/util.ts"
+import {seqn} from "../../lib/util.ts"
 import {Matrix} from "ml-matrix"
 
 const x = ref([])

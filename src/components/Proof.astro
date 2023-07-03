@@ -1,8 +1,10 @@
 ---
 interface Props {
   title?: string;
+  vMargin?: string;
+  hMargin?: string;
 }
-const {title = "proof"} = Astro.props
+const {title = "proof", vMargin = "2rem", hMargin = "2rem"} = Astro.props
 
 if (title.length > 20) throw new Error("title too long, must be less than 20 characters");
 ---
@@ -24,9 +26,9 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
   </details>
 </div>
 
-<style lang="scss">
+<style lang="scss" define:vars={{ vMargin, hMargin }}>
   .m-proof {
-    margin: 2rem 2rem; // i'm not sure what indents I like. maybe make into a  prop for more control
+    margin: var(--vMargin) var(--hMargin); // i'm not sure what indents I like. maybe make into a  prop for more control
   }
   .m--proof--details {
     box-sizing: border-box;

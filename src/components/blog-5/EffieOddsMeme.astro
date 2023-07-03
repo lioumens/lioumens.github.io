@@ -1,0 +1,29 @@
+---
+import effieMeme from "../../assets/blog-5/effie_log_odds.mp4"
+---
+
+<figure class="effie-wrapper">
+ <video class="effie-meme" width="480" height="270" autoplay loop muted playsinline >
+ <source src={effieMeme} type="video/mp4" />
+ Sorry your browser does not support this video.
+ </video>
+</figure>
+
+
+<style>
+.effie-wrapper {
+    /* object-fit: cover; */
+    /* object-position: center center; */
+    /* object-fit: cover; */
+    display:grid;
+    height: fit-content;
+}
+
+.effie-meme {
+    display: block;
+    justify-self: center;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+</style>

@@ -21,6 +21,9 @@ import MyCodeBlock from "../components/MyCodeBlock/MyCodeBlock.astro";
     <Proof title="proof">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod autem vel vero minus fugit facilis hic similique rem dignissimos, repellat, natus maxime explicabo. Voluptas illum dicta fugit qui harum ut!
     </Proof>
+    <Proof title="second proof">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod autem vel vero minus fugit facilis hic similique rem dignissimos, repellat, natus maxime explicabo. Voluptas illum dicta fugit qui harum ut!
+    </Proof>
     <ul>
         <li>The arrow next to proof is actually constructed from a 0x0 div element, with a top-border while making the left, bottom, right transparent. You can change the shape of the border by changing stroke width of the border elements. I found this trick originally on <a href="https://css-tricks.com/snippets/css/css-triangle/">CSS Tricks</a>. </li>
         <li>The arrow movement is calculated by <code>getBoundingClientRect()</code> for variable block sizes, and animated with WAAPI by composing rotations and translate by transform. The spinning needs to be broken down into 90deg increments of keyframe, otherwise <a href="https://stackoverflow.com/questions/35186768/safari-css-bug-animation-rotation-direction-incorrect">Safari will not spin the element properly.</a> Same thing with the QED element.</li>
@@ -33,9 +36,11 @@ import MyCodeBlock from "../components/MyCodeBlock/MyCodeBlock.astro";
         <li>
             Preference for reduced motion is also captured, and animations are switched to a blinking arrow, and opacity transition in.
         </li>
-
     </ul>
+    <h2>D3 Axes </h2>
+    <p></p>
+
     </main>
-    </BaseLayout>
+</BaseLayout>
 
 

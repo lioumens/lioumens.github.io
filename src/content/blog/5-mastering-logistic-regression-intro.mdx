@@ -1,5 +1,5 @@
 ---
-title: 'Mastering Logistic Regression'
+title: 'Mastering Logistic Regression: Introduction'
 pubDate: 2023-06-16
 description: 'A complete and comprehensive guide to understanding logistic regression.'
 author: 'Michael Liou'
@@ -12,12 +12,14 @@ draft: true
 ---
 
 import LogisticFunction from "../../components/blog-5/LogisticFunction.vue"
-// import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
-// import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
+import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
+import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
 // import BetaLikelihood from "../../components/sandbox/BetaLikelihood.vue"
 // import LogisticLikelihoodLinked from "../../components/sandbox/LogisticLikelihoodLinked.vue"
 // import TestMath from "../../components/sandbox/TestMath.astro"
+import Proof from "../../components/Proof.astro"
 import TestMojs from "../../components/sandbox/TestMojs.vue"
+import EffieOddsMeme from "../../components/blog-5/EffieOddsMeme.astro"
 
 ## Introduction
 
@@ -35,17 +37,14 @@ $$
 \LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + x{\color{#bf616a}\beta_1})}}}
 $$
 
-<LogisticFunction client:only="vue" />
-
-
-
+<LogisticFunction client:visible />
 
 
 ### Now with Probability!
 
 Having a function that maps values between 0 and 1 sets the stage perfectly for introducing probability, which will also take values between 0 and 1! To make this into a concrete example, suppose I'm interested in modeling how many fruit snacks one can eat (explanatory variable, $x$) before getting a stomach ache (response variable, $y$). It's reasonable to think about the probability of such an event since I could probably have 100 fruit snacks one day and get a stomach ache and do the same another day and not get a stomach ache. It is a little ambitious to think that there are no other variables that might affect this probability, and that the entire population will have the same tolerance for fruit snacks. For example, if kids can tolerate more fruit snacks than adults, we'd likely need to model more covariates, but we'll just keep it simple for now.
 
-To be clear mathematically, we're modeling a single data point as a dichotomous (Bernoulli) random variable $Y$ with parameter $p$. The value of $Y$ can either be $Y=1$ for stomach ache, and $Y=0$ for not stomach ache.[^2] $p$ is the probability that we observe a stomach ache. In this case, $p$ will depend on the number of fruit snacks that someone eats, so we should instead write $p(x)$, where $x$ is the number of fruit snacks. The probabilities are related to $x$ by the logistic function as $p(x)$ is defined above. If we're making multiple observations of $Y_i$ given some values of $x_i$, we'll need to introduce a subscript $i$ that indexes all the observations and write $p(x_i)$ since the probability is different for each observation. Finally, the coefficients for the logistic regression are $\beta_0$ and $\beta_1$, that (for now) we assume are known. We can include the dependence explicitly in $p(x_i; \beta_0, \beta_1)$, using a ";" to separate our observations from our parameters. In symbols, this is all summarized by the statement
+Introducing the mathematical description, we're modeling a single data point as a dichotomous (Bernoulli) random variable $Y$ with parameter $p$. The value of $Y$ can either be $Y=1$ for stomach ache, and $Y=0$ for not stomach ache.[^2] $p$ is the probability that we observe a stomach ache. In this case, $p$ will depend on the number of fruit snacks that someone eats, so we should instead write $p(x)$, where $x$ is the number of fruit snacks. The probabilities are related to $x$ by the logistic function as $p(x)$ is defined above. If we're making multiple observations of $Y_i$ given some values of $x_i$, we'll need to introduce a subscript $i$ that indexes all the observations and write $p(x_i)$ since the probability is different for each observation. Finally, the coefficients for the logistic regression are $\beta_0$ and $\beta_1$, that (for now) we assume are given to us. We can include the dependence explicitly in $p(x_i; \beta_0, \beta_1)$, using a ";" to separate our observations from our parameters. In symbols, this is all summarized by the statement
 
 [^2]: As is convention in statistics, the capital $Y$ means we don't know the value yet (is random, or not yet observed) but a lower case $y$ means that it's known (fixed, or already observed).
 
@@ -53,28 +52,177 @@ $$
 Y_i | x_i \sim \text{Bernoulli}(p(x_i; \beta_0, \beta_1))
 $$
 
-Often we'll just remember that $p$ depends on our parameters and data, so we can shorten the notation to just $p_i = p(x_i; \beta_0, \beta_1)$. I'll shorten this to $Y_i \sim \text{Bernoulli}(p_i)$ since we're thinking of $x_i$ as fixed values.
+If you're curious, I read this, "Y sub i conditional on x sub i is distributed as a Bernoulli random variable with parameter p of x sub i given beta 0 and beta 1". Often we'll just remember that $p$ depends on our parameters and data, so we can shorten the notation to just $p_i = p(x_i; \beta_0, \beta_1)$. I'll shorten this to $Y_i \sim \text{Bernoulli}(p_i)$ since we're thinking of $x_i$ as fixed values as well, sacrificing some precision for clarity.
+
+This is our data model. We have now attached a probabilistic nature to the data events that we observe. Our data model provides a description of the probability of observing each event, known as a *probability mass function (pmf)*. For the bernoulli distribution, $\text{Bernoulli}(p_i)$, the pmf is given by:
+
+$$
+\begin{aligned}
+Pr(Y_i = y_i ; p_i) &= p_i^{y_i}(1 - p_i)^{1 - y_i} \\[1em]
+&= \begin{cases}
+p_i & \text{if } y_i = 1 \\
+1-p_i & \text{if } y_i = 0
+\end{cases}
+\end{aligned}
+$$
+
+Wow. This is a notationally heavy way to say the probability of getting a stomach ache ($Y_i = 1$) is $p_i$ and not getting one is 1 minus that. The precision of such a statement takes some getting used to, but trace the function through to make sure you can map the english back to the mathematical statement.
+
+* $Y_i = y_i$ is a common point of confusion. Just think that $Y_i$ is before we observe the data, so we can talk about the probability of such a random variable. $y_i$ is the actual value, and has no probability associated with it, you either had the stomach ache or not. For interpretation, you can always think about "plugging" in the value of the lower case variable, and we can read $Pr(Y_i = 1)$ as "probability of getting a stomach ache".
+* $Pr(Y_i = y_i ; p_i)$ again separates data from parameters, and sometimes the parameters of the pmf are left off. We need to be given our parameter $p_i$ (which in turn is a function of number of fruit snacks and $\beta_0, \beta_1$), in order to state the probability of observing an event $Y_i$.
 
 ### Interpretation of Coefficients
 
-In order to understand the implication of $\beta_0, \beta_1$ on the probability of an event, we need to invert the logistic function to get: 
+With $p(x)$ understood as the probability of an event, we can determine the meaning of $\beta_0, \beta_1$ on the probability of an event. We need to invert the logistic function to get: 
 
 $$
 \beta_0 + x\beta_1 =  {\color{#bf616a} \underbrace{\color{#eceff4}\log\left(\frac{p(x)}{1 - p(x)}\right)}_{\text{log odds}}}
 $$
 
+<Proof title="Steps" hMargin="0" vMargin="0">
+$$
+\begin{aligned}
+p(x) &= \frac{1}{1 + \exp(-(\beta_0 + x\beta_1))} \\
+\frac{1}{p(x)} &= 1 + \exp(-(\beta_0 + x\beta_1)) \\
+\frac{1}{p(x)} - 1 &= \exp(-(\beta_0 + x\beta_1)) \\
+\log\left(\frac{1 - p(x)}{p(x)}\right)  &=-(\beta_0 + x\beta_1) \\
+\log\left(\frac{p(x)}{1 - p(x)}\right)  &= \beta_0 + x\beta_1 \\
+\end{aligned}
+$$
+</Proof>
 
+The term appearing on the right hand side has a name -- we call it the *log odds*. The term "odds" is the same as you would use colloquially, as in, if you had a $1/3$ chance of winning a game, your *odds* are 1:2. If you plug in $p(x) = 1/3$ into the formula above, the log odds on the right hand side is $\log(\frac{1}{2})$. Thus, a 1 unit increase in $\beta_0$ implies that there is a 1 unit increase of the *log odds* of the event happening. Similarly, a 1 unit increase in $x$ implies that there is a $\beta_1$ unit increase on the scale of log odds. If you're a "show me the math" type person, suppose we have two observations of someone eating 55 fruit snacks, and someone else eating 56 fruit snacks, $x_1 = 55, x_2 = 56$ (a one unit difference in $x$). If we take the difference of these two scenarios,  
 
-So we have a function that maps to a value between 0 and 1 -- this sets the stage perfectly for introducing probability! It's no accident I chose to write the logistic function as $p(x)$ with $p$ standing for probability. The main idea is that we can take any number from the real line, and associate it with a probability of an event happening. Since we think about dichotomous event, things either happen or they don't, the statistical foundation for this is called a Bernoulli distribution. Suppose we model the events we observe with the random variable $Y$, we would say our event follows a Bernoulli distribution with parameter $p$, capturing the probability of the event happening ($Y = 1$). In symbols,
+$$
+\begin{aligned}
+\beta_0 + x_2\beta_1 &= \log\left(\frac{p(x_2)}{1 - p(x_2)}\right) \\[1em]
+-\qquad \beta_0 + x_1\beta_1 &= \log\left(\frac{p(x_1)}{1 - p(x_1)}\right) \\[1em]
+\hline \\
+(x_2 - x_1)\beta_1 &= \text{log odds}(x_2)- \text{log odds}(x_1) \\[1em]
+\beta_1 &= \frac{\text{log odds}(x_2)- \text{log odds}(x_1)}{(x_2 - x_1)}
+\end{aligned}
+$$
 
+We say that $\beta_1$ is the *slope* on the log odds scale, and $\beta_0$ is the *intercept* on the log odds scale when $x = 0$. In our scenario of $x_1 = 55, x_2 = 56$ with 1 fruit snack difference (where the denominator is zero), $\beta_1$ is directly interpreted as the difference of log odds.
+
+To be frank, interpreting the coefficients on a log odds scale is quite futile -- as shown above in the logistic regression function, changes on the log odds scale depends on where you are on the scale, with larger changes in probability when you are close to 0. The most I interpret, is if the log odds are positive, this means the probability is greater than half.
+
+<EffieOddsMeme />
+
+Even exponentiating both sides to get something on the "odds" scale is quite
+dubious. I suspect the reason odds are used so often in
+the gambling industry is because they prey on the fact that odds are fraught
+with misinterpretations. Seeing an odds of 1:2, you'll likely
+jump to thinking about a probability of 1/2, yet there's quite a large difference
+between winning probabilities of 1/3 and 1/2. Inversely, when talking about
+"payouts", for example on a craps table, you'll commonly see that an [Any 7 bet](https://www.crapspit.org/craps-bets/any-7-bet/) pays "5
+for 1", whose true meaning is a 4:1 payout, you get 4\$ for every 1\$ you put
+down. When it comes to taking your money, the casino will make it seem it's less
+likely you'll lose money (odds), but for paying you out, they'll make it seem that you
+get more money (proportion)! Mixing the usage of this is intentionally confusing, and that's not even discussing "difference" of odds, which is what
+$\exp(\beta_1)$ would mean, and still difficult to interpret. Avoid odds if you can.[^3]
+
+[^3]: Odds do have a tremendous advantage in (mostly) epidemiological contexts, in that if you are trying to estimate the odds ratio of a disease conditional on some sort of exposure, an important property is that the odds ratio is symmetric with respect to the role of disease and exposure. This implies that you can estimate the odds of a disease conditional on exposure, the same that you would estimate exposure conditional on disease, i.e. you can use retrospective studies to estimate quantities you'd normally be interested in prospective studies! Note odds ratios are [NOT the same as relative risk](https://doi.org/10.1097/smj.0b013e31817a7ee4), another common quantity in epidemiology.
+
+My recommendation is to use the function to translate things onto the probability scale, you'll likely have a more intuitive understanding of the values (even better yet, is to plot the entire probability function as a function of your variable). However, one of my professors pointed me toward a [Car Talk riddle about potatoes](https://www.cartalk.com/radio/puzzler/porch-potatoes) that highlights some misconceptions about the probability scale as well. Be careful with interpretation, it's very easy to get tripped up!
 
 ## Fitting the Model
 
+<figure>
+{/* Currently has issue doing serverside rendering to be faster, hydration mismatch, likely cuased by d3 */}
+<LogisticRegression client:only="vue" />
+<figcaption>
+The fitted logistic regression model is shown in the equation above. As you drag the dots around, do you agree with how the function is fitting? Is there anything surprising about the function fit? Take note of situations that the function looks linear. Also note something embarrassing happens when you <em>completely separate</em> the datapoints that we'll discuss later.
+</figcaption>
+</figure>
+
+Now that we know the general form and interpretation of the logistic function, we can take our data and find the best fit model. Our observations take the form of either 1 or 0, so the drag points are constrained. A major question is how do we know what is "best fit". There are various criteria for determining that, but most will be centered around the idea of likelihood. 
+
 ### The Likelihood Principle
+
+Likelihood is a frequently encountered principle for estimating parameters given some data. It is different from the concept of "probability", even though commonly we'd use those words interchangeably. In fact, the fundamental idea of likelihood is that it's kind of the "opposite" of probability. If we think about our data model as the statistical world, and our observations as the real world, the probability function is how we can move from our statistical model to the observations. In turn, the likelihood function uses what we observe in the real world to inform us of better parameters for our data model in the statistical world. We feed parameters into our probability function, and we feed data into our likelihood function.
+
+<figure>
+$$
+\begin{CD}
+\text{\color{#bf616a}Data Model} @>\text{parameters}>> \text{Probability Function} \\
+@A\text{estimate}AA @VV\text{generate}V \\
+\text{Likelihood Function} @<\text{data}<< \text{\color{#a3be8c}Observations}
+\end{CD}
+$$
+<figcaption>
+The probability function allows us to think how observations in the <span style="color: var(--nord14)">real world</span> come from our data model in the <span style="color: var(--nord11)">statistical world</span>. The likelihood function allows us to move in the other direction and think about "likely" data models given what we have observed in the <span style="color: var(--nord14)">real world</span>.
+</figcaption>
+</figure>
+
+Let's skip thinking about the regression $p(x_i)$ for now, and just think about observations from a data model with a single parameter $p$. The definition of likelihood for a single observation from Bernoulli distribution is: 
+
+$$
+\mathcal{L}(p; y) = Pr(Y = y; p)
+$$
+
+For multiple independent observations, we multiply the probabilities,
+
+$$
+\mathcal{L}(p; y_1, y_2, \dots, y_n) = \prod_{i=1}^n Pr(Y_i = y_i; p)
+$$
+
+
+What?! Likelihood is defined by the probability function?! So does this mean likelihood can be interpreted as the probability that that $p$ is a particular value? Unfortunately no -- and I get why this is confusing at first. In frequentist statistics, parameters are thought of as fixed values of the population, i.e. there is no randomness associated with parameters. Hence, it does not make sense to discuss the probability that $p$ takes a certain value.[^4] If you pause and think about what the definition says though, it will make sense because there must be a correspondence between the data model and our observations. It's a two way road, but it's just a matter of *perspective* which direction you're currently moving in.
+
+[^4]: Likelihood also differs from posterior probability in bayesian statistics. In a bayesian framework, we do think about parameters as being random values, and thus we are able to make probabilistic statements about them. [Bayes Theorem](https://en.wikipedia.org/wiki/Bayes%27_theorem) describes the relationship between the prior probability, posterior probability and likelihood function.
+
+Substituting in our pmf for a Bernoulli distribution above, we get
+
+$$
+\mathcal{L}(p; y_1, y_2, \dots, y_n) = p^{\left(\sum_i^n y_i\right)}(1 - p)^{\left(n -  \sum_i^n y_i\right)}
+$$
+
+ Higher values of $\mathcal{L(p)}$ mean that value of $p$ is more likely to have generated the data that we fed in. Relative values of likelihood are also meaningful, in fact, this forms the basis of the likelihood ratio test. In order to find the most likely value of $p$ given our data, we would try maximizing the function. We call the value of $p$ that maximizes this function the *maximum likelihood estimate (MLE)* of $p$. In order to denote estimates of parameters, you'll commonly see little hats on the parameter, $\widehat p_{MLE}$. Since the objective is to maximize this function, we normally take the log of the likelihood function, which doesn't change the maximum since log is a monotonic function. The log likelihood allows us to avoid dealing with the exponential terms, and the expression is,
+
+ $$
+ \ell(p; y_1, y_2, \dots, y_n) = \left({\color{#ebcb8b}\sum_i^n y_i}\right) \log p + \left({\color{#bf616a}n} -  {\color{#ebcb8b}\sum_i^n y_i}\right) \log (1 - p)
+ $$
+
+<BinaryLikelihood client:idle />
+
+In this situation, it's not difficult to calculate a closed form solution for the maximum likelihood estimate of the function. We'll take the derivative and set it equal to 0, and solve for $p$ to get:
+
+$$
+\widehat p_{\tiny MLE} = \frac{\sum_i^n y_i}{n}
+$$
+
+{/* needs component proof env 
+<Proof>
+$$
+\begin{aligned}
+\frac{\partial \ell(p; y_1, y_2, \dots, y_n)}{\partial p} &= \frac{\left(\sum_i^n y_i\right)}{p} - \frac{\left(n -  \sum_i^n y_i\right)}{1 - p} = 0\\
+\frac{\left(\sum_i^n y_i\right)}{p} &= \frac{\left(n -  \sum_i^n y_i\right)}{1 - p} \\
+\left(\sum_i^n y_i\right)(1 - p) &= \left(n -  \sum_i^n y_i\right)p \\
+\sum_i^n y_i - \sum_i^n y_ip &= np - \sum_i^n y_ip \\
+\sum_i^n y_i &= np \\
+\widehat p_{\tiny MLE} &= \frac{\sum_i^n y_i}{n}
+\end{aligned}
+$$
+</Proof> */}
 
 ### Likelihood for Regression
 
+{/* <LogisticLikelihoodLinked client:only="vue" /> */}
+
 ### Optimization techniques
+
+Given that this is a relatively standard non-linear (convex) optimization problem, you have a choice of many methods that will give you the same optimal answer. Probably the most common you'll see in the context of 
+
+* Gradient Descent
+* Newton-Raphson
+* Fisher Scoring
+* Iteratively Reweighted Least Squares
+
+   - This
+### Relation to Cross-Entropy
+
+If you come from machine learning or engineering disciplines, it's common instead to think about minimizing loss functions instead of maximizing likelihood functions. There is a correspondence. In the case of logistic regression, maximizing the likelihood is equivalent to [minimizing the *cross-entropy*](https://stats.stackexchange.com/questions/364216/the-relationship-between-maximizing-the-likelihood-and-minimizing-the-cross-entr) of the fitted probabilities of our model and the data values. There is an additional factor of $\frac{1}{n}$ that does not change the results of the optimization.
 
 ## Hypothesis Testing of Coefficients
 
