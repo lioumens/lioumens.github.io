@@ -1,6 +1,5 @@
 import {unref, ref, onMounted, toValue, Ref} from "vue"
 import * as d3 from "d3"
-import { y } from "../../dist/_astro/runtime-core.esm-bundler.a7f258e4"
 
 export interface D3AxesOptions {
   svgRef?: Ref<SVGElement>,
