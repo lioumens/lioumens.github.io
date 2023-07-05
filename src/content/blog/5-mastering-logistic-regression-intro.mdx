@@ -1,25 +1,28 @@
 ---
-title: 'Mastering Logistic Regression: Introduction'
-pubDate: 2023-06-16
+title: 'Mastering Logistic Regression: Interpretation and Fitting'
+pubDate: 2023-06-29
 description: 'A complete and comprehensive guide to understanding logistic regression.'
 author: 'Michael Liou'
-slug: 'influence'
+slug: 'mastering-logistic-regression-interpretation-and-fitting'
+image: 
+  url: "../../assets/blog-5/logistic_sledding.svg"
+  alt: "The optimal slope parameter for a logistic function sledding hill is -1.5."
+  caption: "A logistic function would make an amazing shape for a sledding hill. I think the optimal slope parameter would be -1.5."
 tags:
   - statistics
 toc: true
-comments: false
-draft: true
+comments: true
+draft: false
 ---
 
-import LogisticFunction from "../../components/blog-5/LogisticFunction.vue"
-import LogisticRegression from "../../components/sandbox/LogisticRegression.vue"
-import BinaryLikelihood from "../../components/sandbox/BinaryLikelihood.vue"
-// import BetaLikelihood from "../../components/sandbox/BetaLikelihood.vue"
-// import LogisticLikelihoodLinked from "../../components/sandbox/LogisticLikelihoodLinked.vue"
-// import TestMath from "../../components/sandbox/TestMath.astro"
 import Proof from "../../components/Proof.astro"
-import TestMojs from "../../components/sandbox/TestMojs.vue"
 import EffieOddsMeme from "../../components/blog-5/EffieOddsMeme.astro"
+
+import LogisticFunction from "../../components/blog-5/LogisticFunction.vue"
+import LogisticRegression from "../../components/blog-5/LogisticRegression.vue"
+import BinaryLikelihood from "../../components/blog-5/BinaryLikelihood.vue"
+import LogisticLikelihoodLinked from "../../components/blog-5/LogisticLikelihoodLinked.vue"
+import HauckDonner from "../../components/blog-5/HauckDonner.vue"
 
 ## Introduction
 
@@ -37,7 +40,7 @@ $$
 \LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + x{\color{#bf616a}\beta_1})}}}
 $$
 
-<LogisticFunction client:visible />
+<LogisticFunction client:idle />
 
 
 ### Now with Probability!
@@ -66,7 +69,7 @@ p_i & \text{if } y_i = 1 \\
 \end{aligned}
 $$
 
-Wow. This is a notationally heavy way to say the probability of getting a stomach ache ($Y_i = 1$) is $p_i$ and not getting one is 1 minus that. The precision of such a statement takes some getting used to, but trace the function through to make sure you can map the english back to the mathematical statement.
+This is a notationally heavy way to say the probability of getting a stomach ache ($Y_i = 1$) is $p_i$ and not getting one is 1 minus that. The precision of such a statement takes some getting used to, but trace the function through to make sure you can map the english back to the mathematical statement.
 
 * $Y_i = y_i$ is a common point of confusion. Just think that $Y_i$ is before we observe the data, so we can talk about the probability of such a random variable. $y_i$ is the actual value, and has no probability associated with it, you either had the stomach ache or not. For interpretation, you can always think about "plugging" in the value of the lower case variable, and we can read $Pr(Y_i = 1)$ as "probability of getting a stomach ache".
 * $Pr(Y_i = y_i ; p_i)$ again separates data from parameters, and sometimes the parameters of the pmf are left off. We need to be given our parameter $p_i$ (which in turn is a function of number of fruit snacks and $\beta_0, \beta_1$), in order to state the probability of observing an event $Y_i$.
@@ -79,7 +82,7 @@ $$
 \beta_0 + x\beta_1 =  {\color{#bf616a} \underbrace{\color{#eceff4}\log\left(\frac{p(x)}{1 - p(x)}\right)}_{\text{log odds}}}
 $$
 
-<Proof title="Steps" hMargin="0" vMargin="0">
+<Proof title="Steps" hMargin="1rem" vMargin="1rem">
 $$
 \begin{aligned}
 p(x) &= \frac{1}{1 + \exp(-(\beta_0 + x\beta_1))} \\
@@ -192,7 +195,6 @@ $$
 \widehat p_{\tiny MLE} = \frac{\sum_i^n y_i}{n}
 $$
 
-{/* needs component proof env 
 <Proof>
 $$
 \begin{aligned}
@@ -204,67 +206,79 @@ $$
 \widehat p_{\tiny MLE} &= \frac{\sum_i^n y_i}{n}
 \end{aligned}
 $$
-</Proof> */}
+</Proof>
+
+There's a good reason the likelihood principle is so prominent -- the likelihood function is very useful for guiding us toward good estimates of parameters for our model. However, finding an estimate for $\beta_0$ and $\beta_1$ is not as straightforward when we try to associate data with our logistic function, and no closed form solution exists like the simplified case.
 
 ### Likelihood for Regression
 
-{/* <LogisticLikelihoodLinked client:only="vue" /> */}
+The likelihood function for logistic regression is instead a function of the parameters $\beta_0, \beta_1$. Instead of just the number of 1's and 0's we observe in the data $\bm y = y_1, y_2, \ldots, y_n$, we must also take into consideration the values of $\bm x = x_1, x_2, \ldots, x_n$ that we observe. In a sense, the likelihood function transfers along to the next stage of modeling since $p_i$ itself is subsequently a function of $\beta_0, \beta_1$ and $x_i$.The likelihood is given by substituting the logistic function for $p$ in the binary likelihood function. If we simplify the expression, we get
 
-### Optimization techniques
+$$
+\begin{aligned}
+\ell(\beta_0, \beta_1; \bm x, \bm y) &=  -\sum_i^n \log\left(1 + e^{\beta_0 + \beta_1 x_i}\right)  + \sum_i^n y_i(\beta_0 + \beta_1 x_i)
+\end{aligned}
+$$
 
-Given that this is a relatively standard non-linear (convex) optimization problem, you have a choice of many methods that will give you the same optimal answer. Probably the most common you'll see in the context of 
+<Proof vMargin="1rem" hMargin="1rem">
+For a single $x_i, y_i$, we have: 
+$$
+\begin{aligned}
+\ell(\beta_0, \beta_1;x_i, y_i) &= y_i \log p_i + (1 - y_i) \log (1 - p_i) \\
+&= y_i \underbrace{\log \left(\frac{p_i}{1 - p_i}\right)}_{\text{log odds}} + \log (1 - p_i) \\
+\end{aligned}
+$$
 
-* Gradient Descent
-* Newton-Raphson
-* Fisher Scoring
-* Iteratively Reweighted Least Squares
+We found in the interpretation section that the log odds is the same as the linear predictor, $\log \frac{p_i}{1-p_i} = \beta_0 + \beta_1 x_i$, and substituting with logistic function,
 
-   - This
-### Relation to Cross-Entropy
+$$
+\begin{aligned}
+\ldots &= y_i (\beta_0 + \beta_1 x_i) + \log (1 - p_i) \\
+&= y_i (\beta_0 + \beta_1 x_i) + \log(1 - \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}) \\
+&= y_i (\beta_0 + \beta_1 x_i) + \log\left(\frac{(1 + e^{-(\beta_0 + \beta_1 x_i)}) - 1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}\right) \\
+&= y_i (\beta_0 + \beta_1 x_i) + \log\left(\frac{(e^{-(\beta_0 + \beta_1 x_i)})}{1 + e^{-(\beta_0 + \beta_1 x_i)}}\frac{(e^{\beta_0 + \beta_1 x_i})}{(e^{\beta_0 + \beta_1 x_i})}\right) \\
+&= y_i (\beta_0 + \beta_1 x_i) - \log\left(1 + e^{\beta_0 + \beta_1 x_i}\right)
+\end{aligned}
+$$
+
+For multiple observations, we just sum the log-likelihoods, and we get the expression shown.
+</Proof>
+
+It's certainly not a friendly expression, and we are now dealing with two parameters $\beta_0, \beta_1$ instead of just a single $p$, so we are optimizing over a surface instead of just a curve, but we can still visualize the likelihood. 
+
+
+
+<LogisticLikelihoodLinked client:only="vue" />
+
+### Hauck-Donner Effect
+
+Above we saw that the logistic function "disappears" when we separate the data. Can you rationalize why this happens as you play around with the likelihood plot and the logistic regression function? The maximum likelihood no longer exists (or not numerically stable) in these situations because the likelihood surface becomes very flat, and the coefficients escape off to infinity. We can make the magnitude of $\beta_1$ arbitrarily large, because the logistic function will become sharper and there will also be many values that $\beta_0$ can take on. This phenomenon is known as the Hauck-Donner effect, and happens often in logistic regression, especially in higher dimensional spaces. It's not the only way this can happen, but it's important to keep in mind as you diagnose possible issues with your model. One sign is that the standard errors of your $\beta$ coefficients will be very large.
+
+<figure>
+<HauckDonner client:idle />
+<figcaption>
+When $\beta_1 \rightarrow \infty$, the logistic function will start to look like a vertical line separating the points, while $\beta_0$ still controls the location of the separation. The reason the likelihood fails to give estimates in perfectly separated data is because it can't choose between any of these possible values.
+</figcaption>
+</figure>
+
+There are various ways of dealing with this issue, philosophical by nature:
+
+* If you're using logistic regression for classification, you can choose any of the values and get the same classification. You can also consider using a simpler model, like a threshold on $x$.
+* Change your model by including different or excluding variables. It's possible that with this separation, you were asking an ill-posed question in the first place, and a different formulation should be considered.
+* You can also adjust the likelihood function with a penalty for large values of coefficients, commonly a ridge or lasso penalty. This is the approach of [python's scikit-learn implementation](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html).
+* Changing to a bayesian framework, if we add a prior distribution on the coefficients, we can get a well defined posterior distribution. `bayesglm` in R package "arm" uses this approach.
+* Other solutions are listed on this [stack exchange post](https://stats.stackexchange.com/questions/11109/how-to-deal-with-perfect-separation-in-logistic-regression).
+
+
+
+### Optimization Topics
+
+Given that this is a relatively standard nonlinear (convex) optimization problem, you have a choice of many methods that will give you the same optimal answer. I won't get too much into the nitty gritty, as chances are this will be mostly done already by a computing program. Probably the most common implementations are:
+
+*  <span style="font-variant:small-caps;">Gradient Descent</span>  -- A general purpose descent algorithm that is normally used for simplicity. It's not as efficient as other methods.
+* <span style="font-variant:small-caps;">Newton Raphson</span> --
+A faster algorithm that uses the second derivative of the likelihood function to find the optimal solution. However looking at the surface of the likelihood function, a quadratic approximation is not always reliable especially as the likelihood function becomes flatter.
+* <span style="font-variant:small-caps;">Iteratively Reweighted Least Squares</span> --
+Used for models in generalized linear models because each iteration is solving a least squares problem, which also contains useful statistical information by default. This method is the same as "Fisher-Scoring", which is similar to Newton-Raphson, but instead uses the *expected value* of the second derivative of the likelihood. This is the method used in R's `glm.fit` function. 
 
 If you come from machine learning or engineering disciplines, it's common instead to think about minimizing loss functions instead of maximizing likelihood functions. There is a correspondence. In the case of logistic regression, maximizing the likelihood is equivalent to [minimizing the *cross-entropy*](https://stats.stackexchange.com/questions/364216/the-relationship-between-maximizing-the-likelihood-and-minimizing-the-cross-entr) of the fitted probabilities of our model and the data values. There is an additional factor of $\frac{1}{n}$ that does not change the results of the optimization.
-
-## Hypothesis Testing of Coefficients
-
-### The Wald Test
-
-### The Likelihood Ratio Test
-
-### The Score Test
-
-## Model Validation
-
-### Residuals (Working, Deviance, Response, Raw)
-
-### Performance Metrics
-
-## Additional Topics
-
-### Quasi-Binomial Regression
-
-### Relation to other Binary Response Models
-
-### Relations in Categorical Data Analysis
-
-### Multinomial/Ordinal Logistic Regression
-
-### Propensity Score Matching
-
-
-A logistic regression models values between 0 and 1, but unfortunately there is no closed form solution that one can use to solve for the coefficients in the model. 
-
-The equation for a logistic function is given by:
-
-{/* <LogisticRegression client:only="vue" /> */}
-
-## The Likelihood Principle
-{/* <BinaryLikelihood client:only="vue" /> */}
-
-In order to develop a better intuition for
-
-
-{/* <BetaLikelihood client:only="vue" /> */}
-
-## Likelihood for Regression
-{/* <LogisticLikelihoodLinked client:only="vue" /> */}
-{/* <TestMath /> */}

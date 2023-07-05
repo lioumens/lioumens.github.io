@@ -13,7 +13,8 @@ const blogCollection = defineCollection({
             url: image().refine((img) => img.width >= 500, {
                 message: "cover image must be at least 500 wide!",
             }),
-            alt: z.string()
+            alt: z.string(),
+            caption: z.string().optional()
         }).optional(),
         tags: z.array(z.string()),
         toc: z.boolean().default(false),

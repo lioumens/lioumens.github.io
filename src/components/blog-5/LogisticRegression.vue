@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import {ref, onMounted, watchEffect, computed} from "vue"
 import * as d3 from "d3"
-import DraggableCircle from "./DraggableCircle.vue"
+import DraggableCircle from "./DraggableCircle.vue.ts"
 import {logistic} from "../../lib/stats/lm.ts"
 import useD3Axes from "../../composables/D3Axes.ts"
-import Katex from "../blog-5/Katex.vue"
+import Katex from "./Katex.vue.ts"
 
-defineProps<{
-    showEquation?: {value: boolean, default: true}
-}>()
+const props = withDefaults(defineProps<{
+    showEquation?: boolean
+}>(), {
+    showEquation: true
+})
+
 
 // Data
 const points = ref([
@@ -120,7 +123,7 @@ const eqString = computed(() => {
 </script>
 
 <template>
-    <Katex :src="eqString" :inline=false />
+    <Katex v-if="props.showEquation" :src="eqString" :inline=false />
     <svg class="SVGBox" ref="SVGBox" viewBox="0 0 600 200">
         <DraggableCircle v-for="(datapoint, i) in points"
                          @xEvent="(x) => handleX(x, datapoint)"

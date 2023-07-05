@@ -50,7 +50,8 @@ html {
 body {
   font-family: 'Crimson Pro Variable', sans-serif;
   font-size: 1.2rem;
-  font-variation-settings: "wdth" 90, "wght" 200;
+  font-variation-settings: "wdth" 90;
+  font-weight: 200; // using font-variation-settings means weight can't be overridden
   min-height: 100vh; // seems necessary when toggetling
   height: 100%;
   min-height: 0px;

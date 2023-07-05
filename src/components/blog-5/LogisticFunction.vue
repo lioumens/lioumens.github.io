@@ -175,7 +175,7 @@ const graphtop = ref() // holds anchor point
 
 function scrollToGraph() {
   const mediaQuery = window.matchMedia('(max-width: 1200px)')
-  let visibleTop = mediaQuery.matches ? 55 : 0
+  let visibleTop = mediaQuery.matches ? 50 : 0
   if (graphtop.value.getBoundingClientRect().top <= visibleTop) {
     // doesn't. work on mobile
     // graph not visible

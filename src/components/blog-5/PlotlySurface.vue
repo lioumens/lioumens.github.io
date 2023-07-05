@@ -7,8 +7,12 @@ const el = ref(null)
 const props = defineProps<{
     x: number[],
     y: number[],
-    z: number[][]
+    z: number[][],
+    beta0: number, // coef
+    beta1: number, // coef
+    maxLL: number
 }>()
+
 
 const layout = {
     // title: "A 3d plot",
@@ -47,6 +51,24 @@ const layout = {
             showspikes: false,
             showgrid: true,
         },
+        // https://plotly.com/javascript/text-and-annotations/#3d-annotations
+        annotations: [{
+            showarrow: true,
+            x: props.beta0,
+            y: props.beta1,
+            z: props.maxLL,
+            text: "MLE",
+            font: {
+                color: "#5e81ac",
+                size: 16
+            },
+            arrowcolor: "#5e81ac",
+            arrowsize: 2,
+            arrowwidth: 1,
+            arrowhead: 1,
+            ax: 0,
+            ay:-50
+        }],
         camera: {
             eye: {
                 x: -1.5,
@@ -80,6 +102,10 @@ const data = [{
     y: props.y,
     z: props.z,
     type: 'surface', // surface geom
+    hovertemplate: "Beta0: %{x}<br>Beta1: %{y}<br>LL: %{z}<extra></extra>",
+    xhoverformat: ".2f",
+    yhoverformat: ".2f",
+    zhoverformat: ".2f",
     // colorscale: [[0, "#5e81ac"],[1, "#bf616a"]],
     // colorscale: "Viridis",
     // colorscale: "Picnic",
@@ -107,7 +133,22 @@ const data = [{
     }
 }]
 
-watch(() => props.z, () => {
+watch([() => props.z, () => props.beta0, () => props.beta1, () => props.maxLL ], ([newz, newBeta0, newBeta1, newMaxLL]) => {
+    const noBeta0 = isNaN(newBeta0) || newBeta0 <= -3 || newBeta0 >= 3
+    const noBeta1 = isNaN(newBeta1) || newBeta1 <= -3 || newBeta1 >= 3
+    if (noBeta0 || noBeta1) {
+        layout.scene.annotations[0].x = 0
+        layout.scene.annotations[0].y = 0
+        layout.scene.annotations[0].z = 0
+        layout.scene.annotations[0].text = ""
+        layout.scene.annotations[0].showarrow= false
+    } else {
+        layout.scene.annotations[0].x = newBeta0
+        layout.scene.annotations[0].y = newBeta1
+        layout.scene.annotations[0].z = newMaxLL
+        layout.scene.annotations[0].text = "MLE"
+        layout.scene.annotations[0].showarrow= true
+    }
     data[0].z = props.z
     el.value ? 
     Plotly.react(el.value, data, layout, {displaylogo: false, responsive:true, displayModeBar:false,scrollZoom: false}) :
@@ -164,6 +205,24 @@ onMounted(() => {
                             showspikes: false,
                             showgrid: true,
                         },
+                        // https://plotly.com/javascript/text-and-annotations/#3d-annotations
+                        annotations: [{
+                            showarrow: true,
+                            x: props.beta0,
+                            y: props.beta1,
+                            z: props.maxLL,
+                            text: "MLE",
+                            font: {
+                                color: "#5e81ac",
+                                size: 16
+                            },
+                            arrowcolor: "#5e81ac",
+                            arrowsize: 2,
+                            arrowwidth: 1,
+                            arrowhead: 1,
+                            ax: 0,
+                            ay:-50
+                        }],
                         camera: {
                             eye: {
                                 x: -1.5,
@@ -202,6 +261,6 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="el" style="width:70%;height:400px;"></div>
+    <div ref="el" style="width:70%;height:400px;margin:0 auto;cursor: grab;"></div>
 </template>
 

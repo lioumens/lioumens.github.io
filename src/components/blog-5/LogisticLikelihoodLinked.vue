@@ -4,12 +4,17 @@ import LogisticRegression from "./LogisticRegression.vue";
 import PlotlySurface from "./PlotlySurface.vue"
 import {seqn} from "../../lib/util.ts"
 import {Matrix} from "ml-matrix"
+import Katex from "./Katex.vue"
 
+const showComponent = ref(false)
 const x = ref([])
 const y = ref([])
 const beta = ref([0, 0])
 const X = computed(() => {
     return(new Matrix(x.value.map((xi) => [1, xi])))
+})
+const maxLL = computed(() => {
+    return(betall(beta.value[0], beta.value[1]))
 })
 
 function handlePoints(emittedPoints) {
@@ -53,14 +58,32 @@ const z = computed(() => {
     // } 
     return(outer(xGrid, yGrid, betall))
 })
+
+const coefMLE = computed(() => {
+    return(`\\hat{\\beta}_0 = ${beta.value[0].toFixed(2)}, \\quad \\hat{\\beta}_1 = ${beta.value[1].toFixed(2)}`)
+})
 </script>
 
 
 
 <template>
-    <p>Beta0: {{ beta[0].toFixed(2) }}, Beta1: {{ beta[1].toFixed(2) }}</p>
-    <LogisticRegression @pointsEvent="handlePoints" @coefEvent="handleCoef" />
+    <figure>
+    <div v-if="showComponent">
+    <Katex :src="coefMLE" :inline="false" />
+    <!-- <p>Beta0: {{ beta[0].toFixed(2) }}, Beta1: {{ beta[1].toFixed(2) }}</p> -->
+    <LogisticRegression :showEquation="false" @pointsEvent="handlePoints" @coefEvent="handleCoef" />
     <Suspense>
-        <PlotlySurface :x="xGrid" :y="yGrid" :z="z" />
+        <PlotlySurface :x="xGrid" :y="yGrid" :z="z" :beta0="beta[0]" :beta1="beta[1]" :maxLL="maxLL"/>
     </Suspense>
+    </div>
+    <picture v-else>
+<img
+src="../../assets/blog-5/logistic_beta_likelihood_fvs1d4_c_scale,w_1400.png"
+style="max-width: 100%;width: 100%; height: auto;"
+alt="">
+</picture>
+    <figcaption>
+        This figure is very computationally intensive, so I've disabled it by default and replaced it with a screenshot. If you'd like to play with it, I'd recommend at the very least being on a laptop. It'll freeze on mobile in my testing. <span @click="(e) => showComponent = !showComponent"><a style="cursor:pointer">Click here to enable/disable it.</a></span> Left click to rotate, right click to pan. Double click on the surface to reset view.
+    </figcaption>
+    </figure>
 </template>

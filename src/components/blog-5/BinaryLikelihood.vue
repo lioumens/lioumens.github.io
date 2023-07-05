@@ -3,10 +3,9 @@ import {computed, ref, watchEffect, onMounted, watch} from 'vue'
 import createChart from "./chart.js"
 import {VSlider} from 'vuetify/components/VSlider'
 import katex from "katex"
-import Katex from "../blog-5/Katex.vue"
-import ActionText from '../blog-5/ActionText.vue'
+import Katex from "./Katex.vue"
+import ActionText from './ActionText.vue'
 import {gsap} from "gsap"
-import { S } from '../../../dist/_astro/runtime-core.esm-bundler.a7f258e4'
 
 const html = katex.renderToString("y_i \\sim \\text{Bernoulli}(p)")
 
@@ -140,6 +139,7 @@ function varyN() {
         <v-row justify="center" class="mt-0">
             <v-col sm="10">
                 <v-slider
+                @click="tl.clear()"
                 color="var(--nord11)"
                 v-model="n"
                 hint="total number of observations"
@@ -150,6 +150,7 @@ function varyN() {
             <template v-slot:append> <v-label><span style="font-family: monospace;color: var(--nord11);opacity: 1;">&nbsp;&nbsp;&nbsp;n = {{ n.toFixed(0).padEnd(3, "&nbsp;") }}&nbsp;</span></v-label> </template>
             </v-slider>
                 <v-slider
+                @click="tl.clear()"
                 color="var(--nord13)"
                 v-model="p"
                 hint="proportion of 1's observed in the data (no stochasticity)"

@@ -1,0 +1,14 @@
+---
+import {Image} from 'astro:assets'
+
+const {src, alt, format, height, width, caption} = Astro.props
+
+const isSVGorGIF = ["svg", "gif", "GIF"].includes(format)
+---
+
+
+<figure>
+{isSVGorGIF ? <img class="blog-cover" src={src} alt={alt} /> :
+                      <Image src={src} alt={alt} height={height} width={width}/>}
+{caption && <figcaption>{caption}</figcaption>}
+</figure>

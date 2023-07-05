@@ -4,6 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import TableOfContents from "../components/TableOfContents.astro";
 import Giscus from "../components/Giscus.astro";
 import TagList from "../components/TagList.astro"
+import CoverPhoto from "../components/CoverPhoto.astro"
 import { Image } from "astro:assets";
 
 // style sheets
@@ -28,6 +29,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
           height: number;
           width: number;
           format: string;
+          caption: string;
         };
         alt: string;
       };
@@ -75,10 +77,14 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
         </div>
         <h1 class="title">{frontmatter.title}</h1>
         <!-- <Image src={frontmatter.image.url} alt={frontmatter.title} height="405" width="720"/> -->
+
+
         <!-- display cover photo -->
-        {hasCover && (isSVGorGIF ? 
+        {hasCover && <CoverPhoto src={frontmatter.image.url.src} alt={frontmatter.image.alt} height={frontmatter.image.url.height} width={frontmatter.image.url.width} format={frontmatter.image.url.format} caption={frontmatter.image.caption} />}
+         {/*hasCover && (isSVGorGIF ? 
                       <img class="blog-cover" src={frontmatter.image.url.src} alt={frontmatter.image.alt}/> :
-                      <Image src={frontmatter.image.url.src} alt={frontmatter.image.alt} height={frontmatter.image.url.height} width={frontmatter.image.url.width}/>)}
+         <Image src={frontmatter.image.url.src} alt={frontmatter.image.alt} height={frontmatter.image.url.height} width={frontmatter.image.url.width}/>)*/}
+
         <slot />
         {frontmatter.comments && <Giscus />}
       </article>

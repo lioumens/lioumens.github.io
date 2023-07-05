@@ -44,11 +44,15 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
     border-image-slice: 1;
     border-image-source: linear-gradient(to bottom right, var(--nord7), var(--nord9) 100%);
     // border-right: 1px solid; // drawn after opening?
-    padding-bottom: 3px; // mobile single pixel issue, include bottom border is 4. 
+    // firefox issue, adding inline-block gives width to parent
+    display: inline-block;
+    // padding now showing too much
+    // padding-bottom: 3px; // mobile single pixel issue, include bottom border is 4. 
     margin-bottom: 0px;
     box-sizing: border-box;
     // z-index: -1; // hide border behind arrow, but nolonger hovers
     z-index: 2; // bring up
+
     
     
     &::after {
@@ -66,6 +70,8 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
     
     &.revealY::after {
       box-sizing: inherit;
+      -moz-box-sizing:border-box;
+      -webkit-box-sizing:border-box;
       content: "";
       width: 100%; // why does this not line up with the parent border? slightly smaller
       height: 50%;
@@ -107,7 +113,8 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
   .m-proof--title {
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-bottom: 3px; // mobile issue
+    padding-bottom: 4px; // mobile issue
+    // oh no, back to 4px becase it wasn't hiding correctly
     box-sizing: border-box;
     position: relative;
     color: var(--nord9);
