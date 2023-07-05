@@ -5,6 +5,7 @@ import PlotlySurface from "./PlotlySurface.vue"
 import {seqn} from "../../lib/util.ts"
 import {Matrix} from "ml-matrix"
 import Katex from "./Katex.vue"
+import screenshot from "../../assets/blog-5/logistic_beta_likelihood_fvs1d4_c_scale,w_1400.png?url"
 
 const showComponent = ref(false)
 const x = ref([])
@@ -78,7 +79,7 @@ const coefMLE = computed(() => {
     </div>
     <picture v-else>
 <img
-src="../../assets/blog-5/logistic_beta_likelihood_fvs1d4_c_scale,w_1400.png"
+:src="screenshot"
 style="max-width: 100%;width: 100%; height: auto;"
 alt="">
 </picture>
