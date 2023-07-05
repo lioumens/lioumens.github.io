@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {ref, onMounted, watchEffect, computed} from "vue"
 import * as d3 from "d3"
-import DraggableCircle from "./DraggableCircle.vue.ts"
+import DraggableCircle from "./DraggableCircle.vue"
 import {logistic} from "../../lib/stats/lm.ts"
 import useD3Axes from "../../composables/D3Axes.ts"
-import Katex from "./Katex.vue.ts"
+import Katex from "./Katex.vue"
 
 const props = withDefaults(defineProps<{
     showEquation?: boolean
