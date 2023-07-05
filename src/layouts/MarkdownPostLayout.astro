@@ -39,6 +39,15 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
         alt: string;
         caption?: string;
       };
+      socialImage?: {
+        url: {
+          src: string;
+          height: number;
+          width: number;
+          format: string;
+        };
+        alt: string;
+      };
     };
     headings: {
       depth: number;
@@ -65,6 +74,22 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   // console.log(headings)
   // console.log(content.astro?.headings)
   // console.log(Astro.props.getHeadings())
+
+  // SEO related
+  // Astro.site is from config
+  // defaults
+  const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+  const defaultImageURL = new URL("/home_compressed.svg", Astro.site) //TODO: replace with logo
+  const defaultImageAlt = "Michael Liou's Digital Home"
+  const defaultImageHeight = 500;
+  const defaultImageWidth= 500;
+
+  // social -> cover -> default
+  const socialImage = frontmatter.socialImage ? frontmatter.socialImage : frontmatter.image ? frontmatter.image : undefined
+  const socialImageURL = socialImage?.url.src ? new URL(socialImage.url.src, Astro.site) : defaultImageURL
+  const socialImageAlt = frontmatter.socialImage?.alt || defaultImageAlt
+  const socialImageHeight = socialImage?.url.height || defaultImageHeight
+  const socialImageWidth = socialImage?.url.width || defaultImageWidth
   
   // constants
   const activeNav = 1;
@@ -74,21 +99,22 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   <BaseLayout pageTitle={frontmatter.title} activeNav={1}>
     <SEO
       slot="head"
-      title="Michael Liou - Blog"
-      titleDefault="Michael Liou"
+      // title="Michael Liou - Blog" // covered by baseLayout prop
+      // titleDefault="Michael Liou"
+      canonical={canonicalURL.href}
       charset="utf-8"
       description={frontmatter.description}
       openGraph={{
         basic: {
           title: frontmatter.title, // maybe different from tab title?
           type: "article",
-          image: frontmatter.image?.url.src ? frontmatter.image?.url.src : "",
+          image: socialImageURL.href,
         },
         image: {
-          url: frontmatter.image?.url.src ? frontmatter.image?.url.src : "",
-          alt: frontmatter.image?.alt ? frontmatter.image?.alt : "",
-          width: frontmatter.image?.url.width ? frontmatter.image?.url.width : undefined,
-          height: frontmatter.image?.url.height ? frontmatter.image?.url.height : undefined,
+          url: socialImageURL.href, // ignored
+          alt: socialImageAlt,
+          width: socialImageWidth,
+          height: socialImageHeight,
         },
         article: {
           publishedTime: dateFormatter.format(frontmatter.pubDate),
@@ -104,13 +130,14 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
       twitter={{
         card: "summary",
         title: frontmatter.title,
-        image: frontmatter.image?.url.src ? frontmatter.image?.url.src : "",
-        imageAlt: frontmatter.image?.alt ? frontmatter.image?.alt : "",
+        image: socialImageURL.href,
+        imageAlt: socialImageAlt,
         description: frontmatter.description,
         site: "@lioumens",
         creator: "@lioumens",
-      }} />
-    <main>
+      }} 
+      />
+      <main>
       {frontmatter.toc && <TableOfContents headings={headings} class="toc-nav" />}
       <article class="article-content">
         <div class="blog-meta">
