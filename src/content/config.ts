@@ -19,8 +19,8 @@ const blogCollection = defineCollection({
         }).optional(),
         // alternate image for social media sharing
         socialImage: z.object({
-            url: image().refine((img) => img.width >= 500, {
-                message: "social image must be at least 500 wide!",
+            url: image().refine((img) => img.width >= 100, {
+                message: "social image must be at least 100 wide!",
             }),
             alt: z.string(),
         }).optional(),

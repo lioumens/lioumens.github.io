@@ -87,7 +87,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   // social -> cover -> default
   const socialImage = frontmatter.socialImage ? frontmatter.socialImage : frontmatter.image ? frontmatter.image : undefined
   const socialImageURL = socialImage?.url.src ? new URL(socialImage.url.src, Astro.site) : defaultImageURL
-  const socialImageAlt = frontmatter.socialImage?.alt || defaultImageAlt
+  const socialImageAlt = socialImage?.alt || defaultImageAlt
   const socialImageHeight = socialImage?.url.height || defaultImageHeight
   const socialImageWidth = socialImage?.url.width || defaultImageWidth
   
@@ -125,6 +125,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
         },
         optional: {
           siteName: "Michael Liou",
+          description: frontmatter.description,
         },
       }},
       twitter={{
