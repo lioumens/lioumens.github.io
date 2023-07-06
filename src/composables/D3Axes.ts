@@ -111,9 +111,9 @@ export default function useD3Axes({
     
     // style x axis
     xAxisSVG.selectAll(".tick line, .domain")
-    .attr("stroke", "#9f9f9f")
+    .attr("stroke", "#b0b0b0")
     xAxisSVG.selectAll(".tick text")
-    .attr("fill", "#9f9f9f")
+    .attr("fill", "#b0b0b0")
     
     // create y axis
     const yAxisSVG = svg.append("g")
@@ -128,9 +128,9 @@ export default function useD3Axes({
     
     // style y axis
     yAxisSVG.selectAll(".tick line, .domain")
-    .attr("stroke", "#9f9f9f")
+    .attr("stroke", "#b0b0b0")
     yAxisSVG.selectAll(".tick text")
-    .attr("fill", "#9f9f9f")
+    .attr("fill", "#b0b0b0")
     
     
     // attach labels to x axis

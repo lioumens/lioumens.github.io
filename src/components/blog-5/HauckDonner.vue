@@ -24,7 +24,7 @@ tl.to(range, {duration: 2, value: 400, ease: "power1.inOut", repeat: -1, yoyo: t
                 viewBox="0 0 10 10"
                 refX="5"
                 refY="5"
-                fill="#9f9f9f" 
+                fill="#b0b0b0" 
                 markerWidth="6"
                 markerHeight="6"
                 orient="auto-start-reverse">
@@ -32,16 +32,16 @@ tl.to(range, {duration: 2, value: 400, ease: "power1.inOut", repeat: -1, yoyo: t
             </marker>
         </defs>
         <line x1="30" y1="170" x2="570" y2="170" 
-        stroke="#9f9f9f" stroke-width="2" marker-end="url(#arrow)"></line>
-        <line x1="30" y1="170" x2="30" y2="30" stroke="#9f9f9f" stroke-width="2"
+        stroke="#b0b0b0" stroke-width="2" marker-end="url(#arrow)"></line>
+        <line x1="30" y1="170" x2="30" y2="30" stroke="#b0b0b0" stroke-width="2"
         marker-end="url(#arrow)"></line>
-        <line x1="22" x2="30" y1="50" y2="50" stroke="#9f9f9f" stroke-width="1"></line>
-        <text x="10" y="170" fill="#9f9f9f" dominant-baseline="middle">0</text>
-        <text x="10" y="50" fill="#9f9f9f" dominant-baseline="middle">1</text>
-        <line x1="22" x2="30" y1="170" y2="170" stroke="#9f9f9f" stroke-width="1"></line>
+        <line x1="22" x2="30" y1="50" y2="50" stroke="#b0b0b0" stroke-width="1"></line>
+        <text x="10" y="170" fill="#b0b0b0" dominant-baseline="middle">0</text>
+        <text x="10" y="50" fill="#b0b0b0" dominant-baseline="middle">1</text>
+        <line x1="22" x2="30" y1="170" y2="170" stroke="#b0b0b0" stroke-width="1"></line>
 
-        <text x="45" y="30" style="font-family:monospace;" fill="#9f9f9f">p(x)</text>
-        <text x="565" y="155" style="font-family:monospace;" fill="#9f9f9f">x</text>
+        <text x="45" y="30" style="font-family:monospace;" fill="#b0b0b0">p(x)</text>
+        <text x="565" y="155" style="font-family:monospace;" fill="#b0b0b0">x</text>
 
         <circle v-for="(x, i) in xPos" :cx="x" :cy="yPos[i]" r="7" fill="var(--nord11)"></circle>
 

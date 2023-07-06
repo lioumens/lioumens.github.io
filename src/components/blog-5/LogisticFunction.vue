@@ -43,8 +43,8 @@ const {xScale, yScale} = useD3Axes({
   xLabel: "x",
   xLabelPosition: "rightTop",
   yLabelPosition: "topRight",
-  xLabelColor: "#9f9f9f",
-  yLabelColor: "#9f9f9f",
+  xLabelColor: "#b0b0b0",
+  yLabelColor: "#b0b0b0",
   yLabelRotate: 0,
   xLabelRotate: 0,
   xAxisPosition: "bottom",
@@ -318,6 +318,14 @@ function showRates() {
     })
   })
 }
+
+onMounted(() => {
+  // manually add aria labels for sliders 
+  const beta0Slider = document.querySelector(".beta0-slider .v-slider-thumb")
+  const beta1Slider = document.querySelector(".beta1-slider .v-slider-thumb")
+  beta0Slider?.setAttribute("aria-label", "beta0")
+  beta1Slider?.setAttribute("aria-label", "beta1")
+})
 </script>
 
 
@@ -338,6 +346,7 @@ function showRates() {
       <v-col sm="10">
         <!-- hint="Shifts the location of the inflection point" -->
         <v-slider
+        class="beta0-slider"
         @pointerdown="killActiveTweens()"
         color="var(--nord13)"
         v-model="b0"
@@ -354,15 +363,16 @@ function showRates() {
 
       <!-- hint="Controls the rate of inflection, and the location of the inflection point simultaneously." -->
       <v-slider
+      class="beta1-slider"
       @pointerdown="killActiveTweens()"
-      color="var(--nord11)"
+      color="var(--nord14)"
       v-model="b1"
       step=".1"
       min="-8"
       max="8"
       thumb-size="15">
       <template v-slot:append>
-        <v-label @dblclick="resetCoef('b1')" style="user-select:none;opacity:1;font-family:monospace;color:var(--nord11)"><span v-html="katex.renderToString('\\color{#bf616a} \\beta_1 =')"></span>
+        <v-label @dblclick="resetCoef('b1')" style="user-select:none;opacity:1;font-family:monospace;color:var(--nord14)"><span v-html="katex.renderToString('\\color{#a3be8c} \\beta_1 =')"></span>
           &nbsp;{{ ((b1>=0) ? " " : "") + b1.toFixed(1) }}
         </v-label>
       </template>

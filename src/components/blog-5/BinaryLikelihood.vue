@@ -125,6 +125,14 @@ function varyN() {
     tl.to(n, {value: 100, duration: .2, delay: .7 , ease: "Power2.out"} )
 }
 
+// add aria-labelledby manually to vuetify sliders
+onMounted(() => {
+    const nSlider = document.querySelector(".n-slider .v-slider-thumb")
+    const propSlider = document.querySelector(".prop-slider .v-slider-thumb")
+    nSlider?.setAttribute("aria-label", "n")
+    propSlider?.setAttribute("aria-label", "proportion")
+})
+
 </script>
 
 <template>
@@ -138,18 +146,22 @@ function varyN() {
     <v-app class="llslider">
         <v-row justify="center" class="mt-0">
             <v-col sm="10">
+                <!-- <label for="n">n</label> -->
                 <v-slider
+                class="n-slider"
                 @click="tl.clear()"
-                color="var(--nord11)"
+                color="var(--nord14)"
                 v-model="n"
                 hint="total number of observations"
                 step="1"
                 min="1"
                 max="100"
                 thumb-size="15">
-            <template v-slot:append> <v-label><span style="font-family: monospace;color: var(--nord11);opacity: 1;">&nbsp;&nbsp;&nbsp;n = {{ n.toFixed(0).padEnd(3, "&nbsp;") }}&nbsp;</span></v-label> </template>
+            <template v-slot:append> <v-label><span style="font-family: monospace;color: var(--nord14);opacity: 1;">&nbsp;&nbsp;&nbsp;n = {{ n.toFixed(0).padEnd(3, "&nbsp;") }}&nbsp;</span></v-label> </template>
             </v-slider>
+            <!-- <label for="prop">prop</label> -->
                 <v-slider
+                class="prop-slider"
                 @click="tl.clear()"
                 color="var(--nord13)"
                 v-model="p"

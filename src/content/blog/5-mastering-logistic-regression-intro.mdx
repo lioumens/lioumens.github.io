@@ -37,7 +37,7 @@ The magic of this method starts with the shape of the function itself, with a sp
 [^1]: Note there are other related parameterizations floating around, but the one I give is most common in statistics because the parameters are linearly related with each other. This allows the function to fit into the framework of Generalized Linear Model theory.
 
 $$
-\LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + x{\color{#bf616a}\beta_1})}}}
+\LARGE{p(x) = \frac{1}{1 + e^{-({\color{#ebcb8b}\beta_0} + x{\color{#a3be8c}\beta_1})}}}
 $$
 
 <LogisticFunction client:idle />
@@ -79,7 +79,7 @@ This is a notationally heavy way to say the probability of getting a stomach ach
 With $p(x)$ understood as the probability of an event, we can determine the meaning of $\beta_0, \beta_1$ on the probability of an event. We need to invert the logistic function to get: 
 
 $$
-\beta_0 + x\beta_1 =  {\color{#bf616a} \underbrace{\color{#eceff4}\log\left(\frac{p(x)}{1 - p(x)}\right)}_{\text{log odds}}}
+\beta_0 + x\beta_1 =  {\color{#ebcb8b} \underbrace{\color{#eceff4}\log\left(\frac{p(x)}{1 - p(x)}\right)}_{\text{log odds}}}
 $$
 
 <Proof title="Steps" hMargin="1rem" vMargin="1rem">
@@ -148,13 +148,13 @@ Likelihood is a frequently encountered principle for estimating parameters given
 <figure>
 $$
 \begin{CD}
-\text{\color{#bf616a}Data Model} @>\text{parameters}>> \text{Probability Function} \\
+\text{\color{#ebcb8b}Data Model} @>\text{parameters}>> \text{Probability Function} \\
 @A\text{estimate}AA @VV\text{generate}V \\
 \text{Likelihood Function} @<\text{data}<< \text{\color{#a3be8c}Observations}
 \end{CD}
 $$
 <figcaption>
-The probability function allows us to think how observations in the <span style="color: var(--nord14)">real world</span> come from our data model in the <span style="color: var(--nord11)">statistical world</span>. The likelihood function allows us to move in the other direction and think about "likely" data models given what we have observed in the <span style="color: var(--nord14)">real world</span>.
+The probability function allows us to think how observations in the <span style="color: var(--nord14)">real world</span> come from our data model in the <span style="color: var(--nord13)">statistical world</span>. The likelihood function allows us to move in the other direction and think about "likely" data models given what we have observed in the <span style="color: var(--nord14)">real world</span>.
 </figcaption>
 </figure>
 
@@ -184,7 +184,7 @@ $$
  Higher values of $\mathcal{L(p)}$ mean that value of $p$ is more likely to have generated the data that we fed in. Relative values of likelihood are also meaningful, in fact, this forms the basis of the likelihood ratio test. In order to find the most likely value of $p$ given our data, we would try maximizing the function. We call the value of $p$ that maximizes this function the *maximum likelihood estimate (MLE)* of $p$. In order to denote estimates of parameters, you'll commonly see little hats on the parameter, $\widehat p_{MLE}$. Since the objective is to maximize this function, we normally take the log of the likelihood function, which doesn't change the maximum since log is a monotonic function. The log likelihood allows us to avoid dealing with the exponential terms, and the expression is,
 
  $$
- \ell(p; y_1, y_2, \dots, y_n) = \left({\color{#ebcb8b}\sum_i^n y_i}\right) \log p + \left({\color{#bf616a}n} -  {\color{#ebcb8b}\sum_i^n y_i}\right) \log (1 - p)
+ \ell(p; y_1, y_2, \dots, y_n) = \left({\color{#ebcb8b}\sum_i^n y_i}\right) \log p + \left({\color{#a3be8c}n} -  {\color{#ebcb8b}\sum_i^n y_i}\right) \log (1 - p)
  $$
 
 <BinaryLikelihood client:idle />

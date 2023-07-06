@@ -37,9 +37,9 @@ const {xScale, yScale} = useD3Axes({
     yLabelPosition: "topRight",
     yLabelRotate: 0,
     yLabel: "p(x)",
-    yLabelColor: "#9f9f9f",
+    yLabelColor: "#b0b0b0",
     xLabelPosition: "rightTop",
-    xLabelColor: "#9f9f9f"
+    xLabelColor: "#b0b0b0"
 })
 
 // For the linked binary likelihood component

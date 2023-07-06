@@ -117,7 +117,7 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
     // oh no, back to 4px becase it wasn't hiding correctly
     box-sizing: border-box;
     position: relative;
-    color: var(--nord9);
+    color: var(--nord8);
     
     &::after {
       // I don't remember why I used title instead of header,
@@ -159,7 +159,7 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
     top: 9px;
     height: 10px;
     width: 10px;
-    border-top: .5rem solid var(--nord9);
+    border-top: .5rem solid var(--nord8);
     border-bottom: .5rem solid transparent;
     border-left: .3rem solid transparent;
     border-right: .3rem solid transparent;
@@ -438,14 +438,14 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
               easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)',
             })
             arrowMove = arrow.animate([
-            { transform: 'rotate(0) '},
+            { transform: 'rotate(0) ', borderTopColor: "var(--nord8)"},
             { transform: `rotate(0) translateY(${distDownToTop}px)` },
             { transform: `translateY(${distDownToTop}px) rotate(90deg)` }, // rotate first before translate
             { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px) rotate(90deg)` },
             { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop}px)`},
             { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px)`},
             { transform: `translateX(-${distLeftToBorder}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
-            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`},
+            { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`, borderTopColor: "var(--nord10)"},
             ],
             {
               duration: 1500,
@@ -455,7 +455,7 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
             // must be less than 180 deg when composing transforms
             arrowSpin = arrow.animate([
             { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(-90deg)`,
-            opacity: "100%"},
+            opacity: "100%", borderTopColor: "var(--nord10)"},
             { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(0deg)`,
             opacity: "90%"},
             { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(90deg)`,
@@ -473,7 +473,7 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
             { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(630deg)`,
             opacity: "5%"},
             { transform: `translateX(${-distLeftToBorder + contentBox.width}px) translateY(${distDownToTop + distDownToBottom}px) rotate(720deg)`,
-            opacity: "0%"},
+            opacity: "0%", borderTopColor: "var(--nord10)"},
             ],{
               duration: 1000,
               iterations: 1,

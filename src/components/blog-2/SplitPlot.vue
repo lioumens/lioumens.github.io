@@ -696,7 +696,7 @@ p {
 
 .figcaption {
   transform: translate(20px, -20px);
-  color: #9f9f9f;
+  color: #b0b0b0;
 }
 
 
