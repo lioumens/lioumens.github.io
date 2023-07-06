@@ -13,6 +13,14 @@ const { pageTitle, activeNav } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZLF2E52Y04"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZLF2E52Y04');
+    </script>
     <slot name="head" />
     <title>{pageTitle}</title>
   </head>

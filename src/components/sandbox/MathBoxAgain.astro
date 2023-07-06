@@ -1,0 +1,73 @@
+---
+---
+
+<div id="mything" style="height:100%;width:100%"></div>
+
+<script>
+import "mathbox/mathbox.css"
+
+import * as THREE from "three"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import * as MathBox from "mathbox"
+
+const mything = document.getElementById("mything");
+
+const options = {
+  element: mything,
+  plugins: ['core', 'controls', 'cursor'],
+  controls: {
+    klass: OrbitControls
+  },
+};
+const root = MathBox.mathBox(options);
+const three = root.three
+// change background color
+three.renderer.setClearColor(new THREE.Color(0x3b4252), 1.0);
+const view = root
+  .cartesian({
+    range: [
+      [-2, 2],
+      [-1, 1],
+      [-1, 1],
+    ],
+    scale: [2, 1, 1],
+  })
+  .axis({
+    axis: 1,
+    width: 3,
+  })
+  .axis({
+    axis: 2,
+    width: 3,
+  })
+  .grid({
+    width: 2,  
+    divideX: 20,
+    divideY: 10,
+  });
+  root.select('axis').set('color', 'white');
+
+
+  var camera = root.camera({
+  proxy: true,
+  position: [0, 0, 3],
+});
+
+root.set('focus', 3)
+
+let data = view.interval({
+    expr: function(emit, x, i, t) {
+      emit(x, Math.sin(x + t) * Math.exp(-x * x));
+    },
+    width: 64,
+    channels: 2
+})
+
+let curve = view.line({
+    width: 5,
+    color: '#3090FF'
+})
+
+root.print()
+
+</script>
