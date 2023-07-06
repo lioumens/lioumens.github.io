@@ -13,10 +13,10 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 		<span class="nav-divider"/>
 		<span class="nav-divider"/>
 		<ul>
-			<a href="/"><li>About</li></a>
-			<a href="/blog"><li>Blog</li></a>
-			<a href="/resources"><li>Resources</li></a>
-			<a href="/tags"><li>Archive</li></a>
+			<li><a href="/">About</a></li>
+			<li><a href="/blog">Blog</a></li>
+			<li><a href="/resources">Resources</a></li>
+			<li><a href="/tags">Archive</a></li>
 			<div class="active"></div>
 		</ul>
 		<span class="nav-divider" />
@@ -40,10 +40,10 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 </div>
 <div class="top-drawer">
     <ul>
-        <a href="/"><li>About</li></a>
-        <a href="/blog"><li>Blog</li></a>
-        <a href="/resources"><li>Resources</li></a>
-        <a href="/tags"><li>Archive</li></a>
+        <li><a href="/">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li><a href="/tags">Archive</a></li>
     </ul>
 
 </div>
@@ -140,6 +140,15 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 			align-content: space-between;
 		}
 
+		& a {
+			color: $nord6;
+			// padding: 10px 14px;
+			text-decoration: none;
+			font-size: 1.2rem;
+            display: inline-block;
+            width: 100%;
+		}
+
 		& ul {
 			padding-left: 10px;
 			position: relative;
@@ -151,23 +160,17 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 			margin-left: 0px;
 		}
 		// Hover elements need to change math depending on how many elements
-		& a:nth-child(1):hover ~ .active {
+		& li:nth-child(1):hover ~ .active {
 			top: 4.5%;
 		}
-		& a:nth-child(2):hover ~ .active {
+		& li:nth-child(2):hover ~ .active {
 			top: 29%;
 		}
-		& a:nth-child(3):hover ~ .active {
+		& li:nth-child(3):hover ~ .active {
 			top: 54%;
 		}
-		& a:nth-child(4):hover ~ .active {
+		& li:nth-child(4):hover ~ .active {
 			top: 79%;
-		}
-		& a {
-			color: $nord6;
-			// padding: 10px 14px;
-			text-decoration: none;
-			font-size: 1.2rem;
 		}
 	}
 
@@ -256,14 +259,14 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-           border-radius: 5px;
+        border-radius: 5px;
         & .line {
             display: block;
             height: 3px;
             margin-bottom: 2px;
             margin-top: 2px;
             width: 20px;
-            background-color: $nord9;
+            background-color: var(--nord8);
             transition: transform .2s cubic-bezier(0.2, 0, 0.38, 0.9);
         }
         &:hover {
@@ -324,6 +327,8 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
         }
         & a {
             text-decoration: none;
+            display: inline-block;
+            width: 100%;
         }
         & li:hover {
             background-color: $nord0;

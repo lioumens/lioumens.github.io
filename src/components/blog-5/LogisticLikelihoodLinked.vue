@@ -84,7 +84,7 @@ style="max-width: 100%;width: 100%; height: auto;"
 alt="">
 </picture>
     <figcaption>
-        This figure is very computationally intensive, so I've disabled it by default and replaced it with a screenshot. If you'd like to play with it, I'd recommend at the very least being on a laptop. It'll freeze on mobile in my testing. <span @click="(e) => showComponent = !showComponent"><a style="cursor:pointer">Click here to enable/disable it.</a></span> Left click to rotate, right click to pan. Double click on the surface to reset view.
+        This figure is very computationally intensive, so I've disabled it by default and replaced it with a screenshot. If you'd like to play with it, I'd recommend at the very least being on a laptop. It'll freeze on mobile in my testing. <span @click="(e) => showComponent = !showComponent" style="cursor:pointer;color:var(--nord8)">Click here to enable/disable it.</span> Left click to rotate, right click to pan. Double click on the surface to reset view.
     </figcaption>
     </figure>
 </template>

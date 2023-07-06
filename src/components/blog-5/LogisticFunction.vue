@@ -171,15 +171,14 @@ function stepb0(){
   tl.to(b0, {duration: .5, delay: .5, value: 5})
   tl.to(b0, {duration: .5, delay: .5, value: 6})
 }
-const graphtop = ref() // holds anchor point
 
 function scrollToGraph() {
   const mediaQuery = window.matchMedia('(max-width: 1200px)')
   let visibleTop = mediaQuery.matches ? 50 : 0
-  if (graphtop.value.getBoundingClientRect().top <= visibleTop) {
+  if (svg.value.getBoundingClientRect().top <= visibleTop) {
     // doesn't. work on mobile
     // graph not visible
-    graphtop.value.scrollIntoView({behavior: "smooth"})
+    svg.value.scrollIntoView({behavior: "smooth"})
     return(true)
   } else {
     return(false)
@@ -330,7 +329,7 @@ onMounted(() => {
 
 
 <template>
-  <a ref="graphtop" id="logistic-plot-anchor" style="visibility:hidden;font-size:.1px;position:absolute;">Top of Logistic Plot</a>
+  <!-- <a ref="graphtop" id="logistic-plot-anchor" style="visibility:hidden;font-size:.1px;position:absolute;">Top of Logistic Plot</a> -->
   <div id="mojsparent"></div>
   <svg ref="svg" viewBox="0 0 600 200" style="user-select: none; -webkit-user-select: none;">
     <!-- <polyline class="logistic-line" :points="makeLogisticPoints" stroke="var(--nord6)" fill="none" stroke-width="2"></polyline> -->
