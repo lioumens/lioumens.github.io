@@ -3,6 +3,9 @@
 // import Footer from '../components/Footer.astro';
 import '../styles/global.scss';
 import SideNav from '../components/SideNav.astro';
+import {SEO} from "astro-seo"
+
+const defaultImage = new URL("home_compressed.svg", Astro.site)
 
 // configures to recieve these as properties
 const { pageTitle, activeNav } = Astro.props;
@@ -21,7 +24,27 @@ const { pageTitle, activeNav } = Astro.props;
 
       gtag('config', 'G-ZLF2E52Y04');
     </script>
-    <slot name="head" />
+    <slot name="seo">
+      <SEO
+        description="My digital home for personal thoughts and web experiments." 
+        openGraph={{
+          basic: {
+            title: "Michael's Digital Home",
+            type: "website",
+            image: defaultImage.href
+          },
+          optional: {
+            siteName: "Michael Liou",
+            description: "My digital home for personal thoughts and web experiments.",
+          }
+        }},
+        twitter={{
+          card: "summary",
+          title: "Michael's Digital Home",
+          site: "@lioumens",
+          creator: "@lioumens"
+        }} />
+    </slot>
     <title>{pageTitle}</title>
   </head>
   <body>

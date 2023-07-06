@@ -17,7 +17,7 @@ const activeNav = 0;
 			<figcaption class="home-caption">
 				We're a shoes-<span class="shoes-off-text">off</span> type of household...
 			</figcaption>
-			<img class="home-img" src="/home_compressed.svg" width=400px>	
+			<img class="home-img" src="/home_compressed.svg" width=400px height="400px" alt="Watercolor sketch of my digital home.">	
 		</figure>
 		<p>
 			I'm a statistics PhD student at the University of Wisconsin, Madison. I currently work as a <a href="https://calslab.cals.wisc.edu/stat-consulting/">statistical consultant</a> for the College of Agriculture and Life Sciences, specializing in experimental design &mdash; with many of my clients coming from the dairy, plant and veterinary sciences. My research interests are broadly in network statistics, dynamics-based modeling and correlation modeling. Part of my work has been supported by the <a href="https://qbi.wisc.edu/education/training-grants/biodata-science/">Bio-Data Science Training Grant</a> from the National Library of Medicine. I'm also passionate about promoting statistical literacy and <a href="https://cdis.wisc.edu/statistics-graduate-student-association/">local community engagement.</a>
@@ -37,11 +37,6 @@ const activeNav = 0;
 		<Image class="profpic" src={profpic} width="300px" height="445px" alt="Profile Picture"/>
 	</main>
 </BaseLayout>
-
-<!-- <BaseLayout pageTitle={pageTitle}>
-	<h2>My awesome blog subtitle</h2>
-	<Greeting client:load messages={["Hello", "Hi", "Hey", "Howdy"]} />
-</BaseLayout> -->
 
 <style lang="scss">
 	.home-text {
@@ -82,8 +77,9 @@ const activeNav = 0;
 			width: 300px;
 		}
 		.profpic {
-			width: 200px;
-			height: 300px;
+			width: 66%;
+			height: auto;
+
 		}
 	}
 	
