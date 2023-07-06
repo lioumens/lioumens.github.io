@@ -5,7 +5,8 @@ import PlotlySurface from "./PlotlySurface.vue"
 import {seqn} from "../../lib/util.ts"
 import {Matrix} from "ml-matrix"
 import Katex from "./Katex.vue"
-import screenshot from "../../assets/blog-5/logistic_beta_likelihood_fvs1d4_c_scale,w_1400.png?url"
+// import screenshot from "../../assets/blog-5/logistic_beta_likelihood_fvs1d4_c_scale,w_1400.png?url"
+import screenshot from "../../assets/blog-5/logistic_beta_likelihood_fvs1d4_c_scale,w_1073.png?url"
 
 const showComponent = ref(false)
 const x = ref([])
@@ -81,7 +82,9 @@ const coefMLE = computed(() => {
 <img
 :src="screenshot"
 style="max-width: 100%;width: 100%; height: auto;"
-alt="">
+alt="Screenshot of Regression Likelihood Figure." 
+height="993"
+width="1073" />
 </picture>
     <figcaption>
         This figure is very computationally intensive, so I've disabled it by default and replaced it with a screenshot. If you'd like to play with it, I'd recommend at the very least being on a laptop. It'll freeze on mobile in my testing. <span @click="(e) => showComponent = !showComponent" style="cursor:pointer;color:var(--nord8)">Click here to enable/disable it.</span> Left click to rotate, right click to pan. Double click on the surface to reset view.
