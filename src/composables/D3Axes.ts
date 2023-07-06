@@ -1,4 +1,4 @@
-import {unref, ref, onMounted, toValue, Ref} from "vue"
+import {onMounted, toValue, Ref} from "vue"
 import * as d3 from "d3"
 
 export interface D3AxesOptions {
@@ -8,12 +8,6 @@ export interface D3AxesOptions {
   /** x-axis label */
   xLabel?: string,
   yLabel?: string,
-  /** 
-   * where to place x-axis label 
-   * 
-   * @default "center"
-   * @todo implement everything else haha
-   */
   xLabelPosition?: "center" | "left" | "right" | "leftTop" | "rightTop" | "leftBottom" | "rightBottom",
   /** @default "center" */
   yLabelPosition?: "center" | "top" | "bottom" | "topRight" | "bottomLeft" | "topLeft" | "bottomRight",
