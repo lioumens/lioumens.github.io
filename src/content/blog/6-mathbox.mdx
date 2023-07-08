@@ -12,11 +12,11 @@ comments: false
 draft: true
 ---
 
-import MathBoxDemo from "../../components/sandbox/MathBoxDemo.vue";
-import MathBoxAgain from "../../components/sandbox/MathBoxAgain.astro";
+import MathBoxParent from "../../components/sandbox/MathBoxParent.vue";
+// import MathBoxAgain from "../../components/sandbox/MathBoxAgain.astro";
 
-Hello!
 
-<MathBoxDemo client:load />
+<MathBoxParent client:only="vue" />
+
 
 {/* <MathBoxAgain /> */}
