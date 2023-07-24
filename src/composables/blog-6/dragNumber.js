@@ -55,7 +55,7 @@ export default function useDragNumber(target, min, max, step, initial) {
         els.forEach(el => {
             el.style.cursor = "ew-resize"
             el.style.userSelect = "none"
-            el.style.zIndex = 20
+            el.style.zIndex = 10
             el.style.position = "relative"
             useEventListener(el, "pointerdown", startDrag)
             useEventListener(el, "pointermove", doDrag)

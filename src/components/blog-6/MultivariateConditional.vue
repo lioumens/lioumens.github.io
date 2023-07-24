@@ -358,7 +358,7 @@ onMounted(() => {
 
         <div class="conditional-slider-group">
             <v-app class="vuetify-app">
-                <v-row no-gutters class="justify-space-around slider-row mx-0">
+                <v-row dense class="justify-space-around slider-row mx-0">
                 <v-col class="d-flex flex-column">
                     <VSlider v-model="y" min="-3" max="3" step="0.1" class="mt-0" color="var(--nord14)" density="compact">
                         <!-- <template v-slot:append> -->
@@ -425,7 +425,7 @@ onMounted(() => {
         \begin{aligned}
         E[X | Y = \htmlClass{y-conditional}{y}] &= \htmlClass{mu1-conditional}{\mu_x} + \htmlClass{rho-conditional}{\rho} \frac{\htmlClass{sigma1-conditional}{\sigma_x}}{\htmlClass{sigma2-conditional}{\sigma_y}}(\htmlClass{y-conditional}{y} - \htmlClass{mu2-conditional}{\mu_y})\\
         &=\htmlClass{conditional-mean}{0.0} \\[1em]
-        Var[X | Y = \htmlClass{y-conditional}{y}] &= \htmlClass{sigma1-conditional}{\sigma^2_x}(1 - \htmlClass{rho-conditional}{\rho}^2) \\[.5em]
+        \mathrm{Var}[X | Y = \htmlClass{y-conditional}{y}] &= \htmlClass{sigma1-conditional}{\sigma^2_x}(1 - \htmlClass{rho-conditional}{\rho}^2) \\[.5em]
         &= \htmlClass{conditional-var}{1.0} \\[1em]
         \frac{\color{#bf616a} \blacksquare}{\color{#000000} \blacksquare}
         &= \frac{1}{f_{\tiny Y}(\htmlClass{y-conditional}{y})} \\[1em]

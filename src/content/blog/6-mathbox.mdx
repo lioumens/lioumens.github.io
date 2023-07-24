@@ -1,5 +1,5 @@
 ---
-title: 'An Interactive Introduction to the Multivariate Gaussian Distribution'
+title: 'An Interactive Introduction to the Bivariate Gaussian Distribution'
 pubDate: 2023-07-05
 description: "Exploring Mathbox for visualizations"
 author: 'Michael Liou'
@@ -15,7 +15,12 @@ draft: true
 import MathBoxParent from "../../components/sandbox/MathBoxParent.vue";
 import MultivariateConditionalParent from "../../components/blog-6/MultivariateConditionalParent.vue";
 import MultivariateMarginalParent from "../../components/blog-6/MultivariateMarginalParent.vue";
+import BivariateCombinationParent from "../../components/blog-6/BivariateCombinationParent.vue";
 // import MathBoxAgain from "../../components/sandbox/MathBoxAgain.astro";
+
+## Introduction
+
+It's not long after working with the normal distribution in one dimension that you realize you need to start working with vectors and matrices. Data rarely comes in isolation and we need more structure when working with multiple variables at a time. The bivariate Guassian distribution is normally the first step into adding more dimensions to our data, and the intuition that one builds from the 2D case is useful in higher dimensions once we start working with the more general multivariate Guassian distribution. Even then, the bivariate normal distribution deserves its own attention for its
 
 ## Density of Multivariate Gaussian
 
@@ -28,5 +33,9 @@ import MultivariateMarginalParent from "../../components/blog-6/MultivariateMarg
 ## Marginal Distribution
 
 <MultivariateMarginalParent client:only="vue" />
+
+## Linear Combinations
+
+<BivariateCombinationParent client:only="vue" />
 
 {/* <MathBoxAgain /> */}
