@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@astrojs/sitemap": "^1.3.3",
     "@astrojs/vue": "^2.2.1",
     "@fontsource-variable/crimson-pro": "^5.0.4",
     "@mojs/core": "^1.5.1",

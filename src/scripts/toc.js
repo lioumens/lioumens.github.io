@@ -3,9 +3,9 @@ window.addEventListener("DOMContentLoaded", () => {
         entries.forEach(entry => {
           const id = entry.target.children[0].getAttribute("id");
            if (entry.isIntersecting) {  
-            document.querySelector(`nav li a[href="#${id}"]`).parentElement.classList.add("active");
+            document.querySelector(`nav li a[href="#${id}"]`)?.parentElement.classList.add("active");
            } else {
-            document.querySelector(`nav li a[href="#${id}"]`).parentElement.classList.remove("active");
+            document.querySelector(`nav li a[href="#${id}"]`)?.parentElement.classList.remove("active");
            }
         })
     },{

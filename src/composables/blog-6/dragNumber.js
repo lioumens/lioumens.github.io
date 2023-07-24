@@ -43,23 +43,32 @@ export default function useDragNumber(target, min, max, step, initial) {
     function endDrag(event) {
         isDragging.value = false;
     }
+    function resetDrag(event) {
+        num.value = initial
+    }
 
     onMounted(() => {
-        const el = document.querySelector(target)
-        if (el) {
+        const els = document.querySelectorAll(target)
+        if (els.length === 0) {
+            throw new Error("No element found matching selector " + target)
+        }
+        els.forEach(el => {
             el.style.cursor = "ew-resize"
             el.style.userSelect = "none"
-            el.style.zIndex = 1000
+            el.style.zIndex = 20
             el.style.position = "relative"
-        }
+            useEventListener(el, "pointerdown", startDrag)
+            useEventListener(el, "pointermove", doDrag)
+            useEventListener(el, "lostpointercapture", endDrag)
+            useEventListener(el, "dblclick", resetDrag)
+            useEventListener(el, "dragstart", (e) => e.preventDefault())
+            useEventListener(el, "touchstart", (e) => e.preventDefault())
+        })
 
 
 
-        useEventListener(el, "pointerdown", startDrag)
-        useEventListener(el, "pointermove", doDrag)
-        useEventListener(el, "lostpointercapture", endDrag)
     })
 
-    return(num)
+    return({num, isDragging})
 
 }

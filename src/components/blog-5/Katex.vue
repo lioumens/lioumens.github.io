@@ -12,6 +12,6 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <span v-if="props.inline" class="math math-inline" v-html="katex.renderToString(props.src, {displayMode: !props.inline})"></span>
-    <div v-else class="math math-display" v-html="katex.renderToString(props.src, {displayMode: !props.inline})"></div>
+    <span v-if="props.inline" class="math math-inline" v-html="katex.renderToString(props.src, {displayMode: !props.inline, trust: true, strict: false})"></span>
+    <div v-else class="math math-display" v-html="katex.renderToString(props.src, {displayMode: !props.inline, trust: true, strict: false})"></div>
 </template>

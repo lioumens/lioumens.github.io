@@ -1,5 +1,5 @@
 ---
-title: 'Exploring Mathbox for visualizations'
+title: 'An Interactive Introduction to the Multivariate Gaussian Distribution'
 pubDate: 2023-07-05
 description: "Exploring Mathbox for visualizations"
 author: 'Michael Liou'
@@ -13,10 +13,20 @@ draft: true
 ---
 
 import MathBoxParent from "../../components/sandbox/MathBoxParent.vue";
+import MultivariateConditionalParent from "../../components/blog-6/MultivariateConditionalParent.vue";
+import MultivariateMarginalParent from "../../components/blog-6/MultivariateMarginalParent.vue";
 // import MathBoxAgain from "../../components/sandbox/MathBoxAgain.astro";
 
+## Density of Multivariate Gaussian
 
 <MathBoxParent client:only="vue" />
 
+## Conditional Distribution
+
+<MultivariateConditionalParent client:only="vue" />
+
+## Marginal Distribution
+
+<MultivariateMarginalParent client:only="vue" />
 
 {/* <MathBoxAgain /> */}

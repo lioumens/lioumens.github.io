@@ -3,6 +3,7 @@ import { defineConfig, sharpImageService } from 'astro/config';
 // integrations
 import vue from '@astrojs/vue';
 import mdx from "@astrojs/mdx";
+import sitemap from '@astrojs/sitemap';
 // import preact from "@astrojs/preact"; // not using preact
 
 // markdown plugins
@@ -20,7 +21,8 @@ import MDXCodeBlocks, { mdxCodeBlockAutoImport } from 'astro-mdx-code-blocks';
 export default defineConfig({
   site: "https://michaelliou.io",
   // Enable Vue to support Vue components.
-  integrations: [AutoImport({
+  integrations: [sitemap(),
+    AutoImport({
     imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
   }),
   //   AutoImport({
