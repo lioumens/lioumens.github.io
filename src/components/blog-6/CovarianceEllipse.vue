@@ -199,6 +199,10 @@ rhoEl : NodeListOf<HTMLElement>,
                     .svg-cov-ellipse {
                         transform-origin: 300px 100px;
                     }
+                    .SVGBox {
+                        user-select: none;
+                        -webkit-user-select: none;
+                    }
                     .cov-ellipse-applet {
                         display: grid;
                         grid-template-columns: 1fr 50%;
