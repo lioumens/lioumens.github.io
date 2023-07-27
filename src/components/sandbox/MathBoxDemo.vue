@@ -5,6 +5,7 @@ import "mathbox/mathbox.css"
 import * as THREE from "three"
 import { scaleLinear } from "d3-scale"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"
+import { Vector3 } from "three/src/math/Vector3.js";
 // import Mathbox from "mathbox"
 // import * as MathBox from "mathbox"
 // import * as MathBox from "mathbox/build/bundle/mathbox"
@@ -79,6 +80,9 @@ onMounted(() => {
         controls: {
             klass: OrbitControls
         },
+        camera: {
+            up: new Vector3(0, 0, 1),
+        },
     };
 
     const root = MathBox.mathBox(options);
@@ -88,52 +92,57 @@ onMounted(() => {
     three.controls.minDistance = 1
     three.renderer.setClearColor(new THREE.Color(0x3b4252), 1.0);
 
+    // const sliceXZ = root
+    //   .cartesian({
+    //     range: [
+    //       [-3, 3],
+    //       [-3, 3],
+    //       [-0, .4],
+    //     ],
+    //     rotation: [0, 0, 0],
+    //     position: [0, 0, 0],
+    //     scale: [1, 1, .5],
+    //   })
+    //   .grid({
+    //     axes: [1, 3],
+    //     divideX: 10,
+    //     divideY: 10,
+    //     width: 1,
+    //     opacity: .2,
+    //     color: "#2e3440",
+    //   })
+    //   .visible(true)
+    // const sliceYZ = root
+    //   .cartesian({
+    //     range: [
+    //       [-3, 3],
+    //       [-3, 3],
+    //       [-0, .4],
+    //     ],
+    //     rotation: [0, 0, 0],
+    //     position: [0, 0, 0],
+    //     scale: [1, 1, .5],
+    //   })
+    //   .grid({
+    //     axes: [2, 3],
+    //     divideX: 10,
+    //     divideY: 10,
+    //     width: 1,
+    //     opacity: .2,
+    //     color: "#2e3440",
+    //   })
+    //   .visible(false)
 
-    const sliceView = root
-      .cartesian({
-        range: [
-          [-3, 3],
-          [-0, .4],
-          [-3, 3],
-        ],
-        rotation: [0, 0, 0],
-        position: [0, 0, 0], // x z y
-        scale: [1, .5, 1],
-      })
-      .grid({
-        axes: [1, 2],
-        divideX: 10,
-        divideY: 10,
-        width: 1,
-        opacity: .2,
-        color: "#2e3440",
-      }).interval({
-        expr: function (emit, x, i, t) {
-        //   emit(x, x**2);
-          emit(x, 1/(Math.sqrt(2*Math.PI)) * Math.exp(-1 * x**2/2))
-        },
-        width: 60,
-        channels: 2,
-        items: 1,
-        range: [-3, 3]
-      })
-      .swizzle({
-        order: "xy",
-      })
-      .line({
-        width: 2,
-        color: "#3090FF",
-      });
 
 
     const view = root
     .cartesian({
         range: [
         [-3, 3],
-        [0, .4],
         [-3, 3],
+        [0, .4],
         ],
-        scale: [1, .5, 1],
+        scale: [1, 1, .5],
         position: [0,0 , 0] // shift the origin
     })
     .axis({
@@ -189,8 +198,6 @@ onMounted(() => {
         height: 100,
         rangeX: [-3, 3],
         rangeY: [-3, 3]
-    }).swizzle({
-        order: "xzy"
     })
     let surface = view.surface({
         shaded: true,
@@ -261,7 +268,7 @@ onMounted(() => {
     let scale2 = view.scale({
         divide: 5,
         origin: [0, 0, 0], // goes through the origin, makes sense
-        axis: 3,
+        axis: 2,
         nice: true,
     }).ticks({
         width: 1,
@@ -280,8 +287,8 @@ onMounted(() => {
     view.array({
         data: [
             [3, 0, 0],
-            [0, 0, 3],
-            [0, 0.4, 0],
+            [0, 3, 0],
+            [0, 0, .4],
         ],
         channels: 3, 
         live: false,
@@ -421,11 +428,11 @@ watch(rho, (newRho) => {
         rhoEl.innerText = (newRho * sig1.value * sig2.value).toFixed(2)
     });
 })
-useLinkHover(".mu2", mu2Active)
-useLinkHover(".sig1", sig1Active)
-useLinkHover(".sig2", sig2Active)
-useLinkHover(".rho", rhoActive)
-useLinkHover(".mu1", mu1Active)
+useLinkHover(".mu1, .bivariate-density--slider__mu1", mu1Active)
+useLinkHover(".mu2, .bivariate-density--slider__mu2", mu2Active)
+useLinkHover(".sig1, .bivariate-density--slider__sig1", sig1Active)
+useLinkHover(".sig2, .bivariate-density--slider__sig2", sig2Active)
+useLinkHover(".rho, .bivariate-density--slider__rho", rhoActive)
 
 </script>
 
@@ -440,27 +447,26 @@ useLinkHover(".mu1", mu1Active)
 
     <div class="bivariate-applet">
         <div id="mathboxContainer" ref="mathboxContainer" style="min-height:350px;width:100%;margin:0 auto;"></div>
-
         <div class="bivariate-slider-group">
             <v-app class="vuetify-app">
                 <v-row class="justify-space-around slider-row mt-1">
-                <VSlider v-model="mu1" min="-2" max="2" step="0.1" class="mt-0" color="var(--nord6)" density="compact">
+                <VSlider v-model="mu1" min="-2" max="2" step="0.1" class="mt-0 bivariate-density--slider__mu1" color="var(--nord12)" density="compact">
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>
-                <VSlider v-model="mu2" min="-2" max="2" step="0.1" class="mt-0" color="var(--nord11)" density="compact">
+                <VSlider v-model="mu2" min="-2" max="2" step="0.1" class="mt-0 bivariate-density--slider__mu2" color="var(--nord11)" density="compact">
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>
-                <VSlider v-model="sig1" min="0.1" max="3" step="0.01" class="mt-0" color="var(--nord8)">
+                <VSlider v-model="sig1" min="0.2" max="3" step="0.01" class="mt-0 bivariate-density--slider__sig1" color="var(--nord8)">
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>
-                <VSlider v-model="sig2" min="0.1" max="3" step="0.01" class="mt-0" color="var(--nord10)">
+                <VSlider v-model="sig2" min="0.2" max="2" step="0.01" class="mt-0 bivariate-density--slider__sig2" color="var(--nord10)">
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>
-                <VSlider v-model="rho" min="-.9" max=".9" step="0.01" class="mt-0" color="var(--nord13)" density="compact">
+                <VSlider v-model="rho" min="-.9" max=".9" step="0.01" class="mt-0 bivariate-density--slider__rho" color="var(--nord13)" density="compact">
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>

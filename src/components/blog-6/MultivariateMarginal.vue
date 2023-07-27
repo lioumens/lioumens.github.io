@@ -440,9 +440,8 @@ useLinkHover(".rho-marginal", rhoMargActive)
             <div class="bivariate-marginal-applet">
                 <div id="mvn-marginal-box" class="mvn-marginal-box" ref="mvnMarginalBox" style="min-height:350px;width:100%;margin:0 auto;">
                     <div class="marginal-animation-control">
-                        
-                        <VBtn class="marginal-play-control" variant="text" @click="togglePlay()">{{ isPlaying ? "Pause" : "Play" }}</VBtn>
                         <VBtn class="marginal-integration-control" variant="text" @click="toggleIntegration()">{{ isIntegrating ? "Profile" : "Integrate" }}</VBtn>
+                        <VBtn class="marginal-play-control" variant="text" @click="togglePlay()">{{ isPlaying ? "Pause" : "Play" }}</VBtn>
                     </div>
                 </div>
                 
@@ -637,9 +636,9 @@ useLinkHover(".rho-marginal", rhoMargActive)
                                     flex-direction: column;
                                     align-items: end;
                                     & .marginal-integration-control {
-                                        margin-top: 5px;
                                     }
                                     & .marginal-play-control {
+                                        margin-top: 5px;
                                     }
                                 }
                                 
