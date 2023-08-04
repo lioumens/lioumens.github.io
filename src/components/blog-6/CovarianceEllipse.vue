@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import {ref, computed, onMounted, watch, watchEffect} from "vue"
 import Katex from "../blog-5/Katex.vue"
 import katex from "katex"
@@ -18,29 +19,42 @@ const lambda1 = computed(() => (trace.value + Math.sqrt(trace.value**2 - 4 * det
 const lambda2 = computed(() => (trace.value - Math.sqrt(trace.value**2 - 4 * det.value)) / 2)
 // const theta = computed(() => Math.atan2(2 * b.value, a.value - d.value) / 2)
 const theta = computed(() => Math.atan2(v1b.value, v1a.value))
-const v1a = computed(() => Math.abs(rho.value) < .0001 ? 1 : lambda1.value - d.value)
-const v1b = computed(() =>  Math.abs(rho.value) < .0001 ? 0 : b.value)
-const v2a = computed(() => Math.abs(rho.value) < .0001 ? 0 : lambda2.value - d.value)
-const v2b = computed(() => rho.value == 0 ? 1 : b.value)
+const v1a = computed(() => (Math.abs(rho.value) < .0001) ? 
+                            ((sig2.value >  sig1.value) ? 0 : 1) : 
+                                lambda1.value - d.value)
+const v1b = computed(() =>  (Math.abs(rho.value) < .0001) ?
+                            ((sig2.value > sig1.value) ? 1 : 0): 
+                                b.value)
+const v2a = computed(() => (Math.abs(rho.value) < .0001) ? 
+                            ((sig2.value > sig1.value) ? 1 : 0): 
+                                lambda2.value - d.value)
+const v2b = computed(() => (Math.abs(rho.value) < .0001) ? 
+                            ((sig2.value > sig1.value) ? 0 : 1) :
+                                b.value)
 // const theta = computed(() => Math.atan2(lambda1.value - a.value, b.value))
 
 const basescale = 45
-const minor_radius = computed(() => Math.sqrt((rho == 0 && sig1 < sig2) ? lambda1.value : lambda2.value)*basescale)
-const major_radius = computed(() => Math.sqrt((rho == 0 && sig1 < sig2) ? lambda2.value : lambda1.value)*basescale)
+const minor_radius = computed(() => Math.sqrt((rho.value == 0 && sig1.value < sig2.value) ?
+                                                lambda1.value : 
+                                                lambda2.value)*basescale)
+
+const major_radius = computed(() => Math.sqrt((rho.value == 0 && sig1.value < sig2.value) ?
+                                                lambda2.value :
+                                                lambda1.value)*basescale)
 
 
-const {num:sig1, isDragging:sig1EllipseActive} = useDragNumber(".sigma1-ellipse", 0.5, 2, 0.01, 1)
-const {num:sig2, isDragging:sig2EllipseActive} = useDragNumber(".sigma2-ellipse", 0.5, 2, 0.01, 1)
-const {num:rho, isDragging:rhoEllipseActive} = useDragNumber(".rho-ellipse", -0.9, 0.9, 0.01, 0)
+const {num:sig1, isDragging:sig1EllipseActive} = useDragNumber(".sigma1-ellipse",  0.5,   2, 0.01, 1)
+const {num:sig2, isDragging:sig2EllipseActive} = useDragNumber(".sigma2-ellipse",  0.5,   2, 0.01, 1)
+const {num:rho , isDragging:rhoEllipseActive}  = useDragNumber(".rho-ellipse",    -0.9, 0.9, 0.01, 0)
 
 useLinkHover(".sigma1-ellipse, .ellipse-slider__sig1", sig1EllipseActive)
 useLinkHover(".sigma2-ellipse, .ellipse-slider__sig2", sig2EllipseActive)
-useLinkHover(".rho-ellipse, .ellipse-slider__rho", rhoEllipseActive)
+useLinkHover(".rho-ellipse,    .ellipse-slider__rho",  rhoEllipseActive)
 
 
 let sig1El : HTMLElement | null, 
-sig2El : HTMLElement | null, 
-rhoEl : NodeListOf<HTMLElement>, 
+    sig2El : HTMLElement | null, 
+    rhoEl : NodeListOf<HTMLElement>, 
     lambda1El : HTMLElement | null,
     lambda2El : HTMLElement | null,
     v1aEl : HTMLElement | null,
@@ -49,39 +63,40 @@ rhoEl : NodeListOf<HTMLElement>,
     v2bEl: HTMLElement | null,
     thetaEl: HTMLElement | null
     
-    onMounted(() => {
-        sig1El = document.querySelector(".sigma1-latex-number>.mord")
-        sig2El = document.querySelector(".sigma2-latex-number>.mord")
-        rhoEl = document.querySelectorAll(".rho-latex-number>.mord")
-        lambda1El = document.querySelector(".lambda1-latex-number>.mord")
-        lambda2El = document.querySelector(".lambda2-latex-number>.mord")
-        v1aEl = document.querySelector(".v1a-latex-number>.mord")
-        v1bEl = document.querySelector(".v1b-latex-number>.mord")
-        v2aEl = document.querySelector(".v2a-latex-number>.mord")
-        v2bEl = document.querySelector(".v2b-latex-number>.mord")
-        thetaEl = document.querySelector(".theta-latex-number>.mord")
-        
-    })
+onMounted(() => {
+    sig1El = document.querySelector(".sigma1-latex-number>.mord")
+    sig2El = document.querySelector(".sigma2-latex-number>.mord")
+    rhoEl = document.querySelectorAll(".rho-latex-number>.mord")
+    lambda1El = document.querySelector(".lambda1-latex-number>.mord")
+    lambda2El = document.querySelector(".lambda2-latex-number>.mord")
+    v1aEl = document.querySelector(".v1a-latex-number>.mord")
+    v1bEl = document.querySelector(".v1b-latex-number>.mord")
+    v2aEl = document.querySelector(".v2a-latex-number>.mord")
+    v2bEl = document.querySelector(".v2b-latex-number>.mord")
+    thetaEl = document.querySelector(".theta-latex-number>.mord")
     
-    watch([sig1, sig2, rho], () =>{
-        if (sig1El) sig1El.innerText = (sig1.value ** 2).toFixed(2)
-        if (sig2El) sig2El.innerText = (sig2.value ** 2).toFixed(2)
-        if (rhoEl) {
-            rhoEl.forEach(el => {
-                el.innerText = (rho.value * sig1.value * sig2.value).toFixed(2)
-            })
-        }
-        if (lambda1El) lambda1El.innerText = lambda1.value.toFixed(1)
-        if (lambda2El) lambda2El.innerText = lambda2.value.toFixed(1)
-        if (v1aEl) v1aEl.innerText = v1a.value.toFixed(1)
-        if (v1bEl) v1bEl.innerText = v1b.value.toFixed(1)
-        if (v2aEl) v2aEl.innerText = v2a.value.toFixed(1)
-        if (v2bEl) v2bEl.innerText = v2b.value.toFixed(1)
-        if (thetaEl) thetaEl.innerText = ( (sig2.value > sig1.value && rho.value == 0) ? "90.0" : 
-            (Math.abs(theta.value - Math.PI) < .001) ? 
-                "0.0" : 
-                Math.abs(theta.value * 180 / Math.PI).toFixed(1)) + "°"
-    })
+})
+    
+watch([sig1, sig2, rho], () =>{
+    if (sig1El) sig1El.innerText = (sig1.value ** 2).toFixed(2)
+    if (sig2El) sig2El.innerText = (sig2.value ** 2).toFixed(2)
+    if (rhoEl) {
+        rhoEl.forEach(el => {
+            el.innerText = (rho.value * sig1.value * sig2.value).toFixed(2)
+        })
+    }
+    if (lambda1El) lambda1El.innerText = lambda1.value.toFixed(1)
+    if (lambda2El) lambda2El.innerText = lambda2.value.toFixed(1)
+    if (v1aEl) v1aEl.innerText = v1a.value.toFixed(1)
+    if (v1bEl) v1bEl.innerText = v1b.value.toFixed(1)
+    if (v2aEl) v2aEl.innerText = v2a.value.toFixed(1)
+    if (v2bEl) v2bEl.innerText = v2b.value.toFixed(1)
+    if (thetaEl) thetaEl.innerText = ( (sig2.value > sig1.value && rho.value == 0) ? 
+                                    "90.0" : 
+                                    (Math.abs(theta.value - Math.PI) < .001) ? 
+    "0.0" : 
+    Math.abs(theta.value * 180 / Math.PI).toFixed(1)) + "°"
+})
     
 </script>
 
@@ -96,68 +111,123 @@ rhoEl : NodeListOf<HTMLElement>,
         <p>Theta: {{ theta*180 / Math.PI }}</p> -->
         <!-- <p>Message is: {{ message }}</p> -->
         
-        <div class="cov-ellipse-applet">
-            <div class="svg-section">
-                <svg class="SVGBox" ref="SVGBox" viewBox="0 0 200 200" version="1.1">
-                    <line x1="0" y1="100" x2="200" y2="100" stroke="#efefef" stroke-width="1" stroke-opacity=".2" />
-                    <g :transform="`rotate(${Math.abs(-theta*180 / Math.PI + 180) < .0001 ? 0 : -theta*180 / Math.PI})`" style="transform-origin: center">
-                        <ellipse class="svg-cov-ellipse" cx="100" cy="100" :rx="Math.sqrt((rho == 0 && sig1 < sig2) ? lambda2 : lambda1)*basescale" :ry="Math.sqrt((rho == 0 && sig1 < sig2) ? lambda1 : lambda2)*basescale" fill="none" stroke="var(--nord6)" />
-                        <line x1="100" 
-                        :y1="`${100 + Math.sqrt((rho == 0 && sig1 < sig2) ? lambda1 : lambda2)*basescale}`"
-                        :y2="`${100 - Math.sqrt((rho == 0 && sig1 < sig2) ? lambda1 : lambda2)*basescale}`"
-                        x2="100" 
-                        stroke-width="2" :stroke="rho == 0 && (sig1 < sig2) ? 'var(--nord14)' : 'var(--nord15)'" />
-                        <line
-                        :x1="`${100 - Math.sqrt((rho == 0 && sig1 < sig2) ? lambda2 : lambda1) * basescale}`"
-                        y1="100" y2="100" 
-                        :x2="`${100 + Math.sqrt((rho == 0 && sig1 < sig2) ? lambda2 : lambda1)*basescale}`"
-                        stroke-width="2" 
-                        :stroke="rho == 0 && (sig1 < sig2) ? 'var(--nord15)' : 'var(--nord14)'"/>
-                        <image :href="rho == 0 && (sig1 < sig2) ? '/src/assets/blog-6/minor_axis_label.svg' : '/src/assets/blog-6/major_axis_label.svg'" :x="`${100 + Math.max(Math.sqrt((rho == 0 && sig1 >= sig2) ? lambda1 : lambda2)*basescale / 2.2, 22)}`" y="100" :height="20" :width="20" style="transform-origin:center;transform-box:fill-box;transform: translate(-50%, -90%)
-                            "></image>
-                            <image :href="rho == 0 && (sig1 < sig2) ? '/src/assets/blog-6/major_axis_label.svg' : '/src/assets/blog-6/minor_axis_label.svg'"
-                            :x="(rho == 0 && sig2 > 1.61) ? 85 : 100"
-                            :y="`${100 - Math.min(Math.sqrt((rho == 0 && sig1 < sig2) ? lambda1 : lambda2)*basescale, (rho==0) ? 65 : 120) - 12}`"
-                            :height="20" :width="20" style="transform-origin:center;transform-box:fill-box;transform: translate(-50%, -50%)"></image>
-                        </g>
-                        <path v-if="rho != 0" :d="`M ${100 + minor_radius / 1.5 * Math.sign(theta)} 100 A ${major_radius} ${minor_radius} ${theta * 180 / Math.PI} 0 ${theta >= 0 ? 0 : 1} ${100 + Math.cos(theta) * minor_radius / 1.5 * Math.sign(theta) } ${100 - Math.sin(theta) * minor_radius / 1.5 * Math.sign(theta)}`" stroke="var(--nord11)" stroke-width="1" fill="none"/>
-                            <text v-if="rho != 0" :x="100 + Math.sign(theta) * minor_radius / 1.5" y="111" font-size="11" fill="var(--nord11)" style="font-family: monospace">θ</text>
-                        </svg>
-                    </div>
-                    <div class="control-section>">
-                        <Katex src="\begin{aligned}
-                        \Sigma &= \begin{bmatrix}
-                        \htmlClass{sigma1-ellipse}{\sigma^2_x}& \htmlClass{rho-ellipse}{\rho} \htmlClass{sigma1-ellipse}{\sigma_x}\htmlClass{sigma2-ellipse}{\sigma_y} \\
-                        \htmlClass{rho-ellipse}{\rho} \htmlClass{sigma1-ellipse}{\sigma_x}\htmlClass{sigma2-ellipse}{\sigma_y} & \htmlClass{sigma2-ellipse}{\sigma^2_y}
-                        \end{bmatrix} \\[1em]
-                        &= \begin{bmatrix}
-                        \htmlClass{sigma1-latex-number}{1.00} & \htmlClass{rho-latex-number}{0.00} \\
-                        \htmlClass{rho-latex-number}{0.00} & \htmlClass{sigma2-latex-number}{1.00}
-                        \end{bmatrix}
-                        \end{aligned}" :inline="false">
-                    </Katex>
-                    <v-app class="ellipse-vuetify-app">
-                        <v-row>
-                            <v-col class="d-flex flex-column ellipse-slider-col">
-                                <VSlider v-model="sig1" min="0.5" max="2" step="0.01" class="mt-0 ellipse-slider__sig1" color="var(--nord8)">
-                                    <!-- <template v-slot:append> -->
-                                        <!-- </template> -->
-                                    </VSlider>
-                                    <v-label class="vuetify-slider-label sigma1-ellipse  justify-center">
-                                        <span v-html="katex.renderToString('\\sigma_x')"></span>&nbsp;=&nbsp;{{ sig1.toFixed(2) }}
-                                    </v-label>
-                                </v-col>
+<div class="cov-ellipse-applet">
+    <div class="svg-section">
+        <svg class="SVGBox" ref="SVGBox" viewBox="0 0 200 200" version="1.1">
+            <line x1="0" y1="100" x2="200" y2="100" stroke="#efefef" stroke-width="1" stroke-opacity=".2" />
+            <g :transform="`rotate(${Math.abs(-theta*180 / Math.PI + 180) < .0001 ? 0 : -theta*180 / Math.PI})`"
+                style="transform-origin: center">
+                <ellipse
+                    class="svg-cov-ellipse"
+                    cx="100"
+                    cy="100" 
+                    :rx="Math.sqrt(lambda1)*basescale"
+                    :ry="Math.sqrt(lambda2)*basescale" fill="none" stroke="var(--nord6)" />
+
+                <!-- The vertical line -->
+                <line 
+                    x1="100"
+                    x2="100"
+                    :y1="`${100 + Math.sqrt(lambda2) * basescale}`"
+                    :y2="`${100 - Math.sqrt(lambda2) *basescale}`"
+                    stroke-width="2" 
+                    stroke="var(--nord15)" />
+                
+                <!-- The horizontal line -->
+                <line
+                    y1="100"
+                    y2="100" 
+                    :x1="`${100 - Math.sqrt(lambda1) * basescale}`"
+                    :x2="`${100 + Math.sqrt(lambda1) * basescale}`"
+                stroke-width="2" 
+                stroke="var(--nord14)"/>
+
+                <!-- minor label -->
+                <image 
+                    href="/src/assets/blog-6/major_axis_label.svg"
+                    :x="`${100 + Math.max(Math.sqrt(lambda1)*basescale / 2.2, 22)}`"
+                    y="100"
+                    :height="20"
+                    :width="20"
+                    style="transform-origin:center;
+                           transform-box:fill-box;
+                           transform: translate(-50%, -90%)">
+                </image>
+
+                <!-- major label -->
+                <image 
+                    href="/src/assets/blog-6/minor_axis_label.svg"
+                    :x="(rho == 0 && lambda2 > 2.5) ? 85 : 100"
+                    :y="`${100 - Math.min(Math.sqrt(lambda2)*basescale, (rho==0) ? 65 : 120) - 12}`"
+                    :height="20" :width="20" style="transform-origin:center;transform-box:fill-box;transform: translate(-50%, -50%)">
+                </image>
+            </g>
+
+            <!-- angle label -->
+            <path v-if="rho != 0" 
+                :d="`M ${100 + minor_radius / 1.5 * Math.sign(theta)} 100
+                     A ${major_radius}
+                       ${minor_radius} 
+                       ${theta * 180 / Math.PI} 
+                       0 
+                       ${theta >= 0 ? 0 : 1} 
+                       ${100 + Math.cos(theta) * minor_radius / 1.5 * Math.sign(theta)}
+                       ${100 - Math.sin(theta) * minor_radius / 1.5 * Math.sign(theta)}`"
+                stroke="var(--nord11)"
+                stroke-width="1" 
+                fill="none"/>
+
+            <text v-if="rho != 0"
+                :x="100 + Math.sign(theta) * minor_radius / 1.5"
+                y="111"
+                font-size="11"
+                fill="var(--nord11)"
+                style="font-family: monospace">
+                θ
+            </text>
+        </svg>
+    </div>
+    <div class="control-section>">
+        <Katex 
+            src="\begin{aligned}
+                 \Sigma &=
+                  \begin{bmatrix}
+                   \htmlClass{sigma1-ellipse}{\sigma^2_x} & 
+                     \htmlClass{rho-ellipse}{\rho}
+                     \htmlClass{sigma1-ellipse}{\sigma_x}
+                     \htmlClass{sigma2-ellipse}{\sigma_y} \\
+
+                   \htmlClass{rho-ellipse}{\rho}
+                   \htmlClass{sigma1-ellipse}{\sigma_x}
+                   \htmlClass{sigma2-ellipse}{\sigma_y} &
+                     \htmlClass{sigma2-ellipse}{\sigma^2_y}
+                  \end{bmatrix} \\[1em]
+                 &= 
+                  \begin{bmatrix}
+                    \htmlClass{sigma1-latex-number}{1.00} & \htmlClass{rho-latex-number}{0.00} \\
+                    \htmlClass{rho-latex-number}{0.00} & \htmlClass{sigma2-latex-number}{1.00}
+                  \end{bmatrix}
+                 \end{aligned}"
+            :inline="false">
+        </Katex>
+        <v-app class="ellipse-vuetify-app">
+            <v-row>
+                <v-col class="d-flex flex-column ellipse-slider-col">
+                    <VSlider v-model="sig1" min="0.5" max="2" step="0.01" class="mt-0 ellipse-slider__sig1" color="var(--nord8)">
+                    </VSlider>
+                    <v-label class="vuetify-slider-label sigma1-ellipse  justify-center">
+                        <span v-html="katex.renderToString('\\sigma_x')"></span>&nbsp;=&nbsp;{{ sig1.toFixed(2) }}
+                    </v-label>
+                </v-col>
                                 
-                                <v-col class="d-flex flex-column ellipse-slider-col">
-                                    <VSlider v-model="sig2" min="0.5" max="2" step="0.01" class="mt-0 ellipse-slider__sig2" color="var(--nord10)">
-                                        <!-- <template v-slot:append> -->
-                                            <!-- </template> -->
-                                        </VSlider>
-                                        <v-label class="vuetify-slider-label justify-center sigma2-ellipse">
-                                            <span v-html="katex.renderToString('\\sigma_y')"></span>&nbsp;=&nbsp;{{ sig2.toFixed(2) }}
-                                        </v-label>
-                                    </v-col>
-                                    <v-col class="d-flex flex-column px-0 mx-0 ellipse-slider-col">
+                <v-col class="d-flex flex-column ellipse-slider-col">
+                    <VSlider v-model="sig2" min="0.5" max="2" step="0.01" class="mt-0 ellipse-slider__sig2" color="var(--nord10)">
+                    </VSlider>
+                    <v-label class="vuetify-slider-label justify-center sigma2-ellipse">
+                        <span v-html="katex.renderToString('\\sigma_y')"></span>&nbsp;=&nbsp;{{ sig2.toFixed(2) }}
+                    </v-label>
+                </v-col>
+                <v-col class="d-flex flex-column px-0 mx-0 ellipse-slider-col">
                                         <VSlider v-model="rho" min="-.9" max=".9" step="0.01" class="ellipse-slider__rho" color="var(--nord13)" density="compact">
                                             <!-- <template v-slot:append> -->
                                                 <!-- </template> -->
@@ -261,21 +331,21 @@ rhoEl : NodeListOf<HTMLElement>,
                             color: var(--nord13);
                         }
                     }
-
+                    
                     @media screen and (max-width:700px) {
-                    .cov-ellipse-applet {
-                        grid-template-columns: 1fr;
-                        grid-template-rows: .5fr 1fr .3fr;
-                        grid-template-areas: 
-                        "control"
-                        "svg"
-                        "info";
-                        & .info-section {
-                            padding-top: 0px;
-                            z-index:1;
-                            margin-top: -20px;
+                        .cov-ellipse-applet {
+                            grid-template-columns: 1fr;
+                            grid-template-rows: .5fr 1fr .3fr;
+                            grid-template-areas: 
+                            "control"
+                            "svg"
+                            "info";
+                            & .info-section {
+                                padding-top: 0px;
+                                z-index:1;
+                                margin-top: -20px;
+                            }
                         }
                     }
-                }
                     
                 </style>
