@@ -1,5 +1,5 @@
 ---
-title: 'An Interactive Introduction to the Bivariate Gaussian Distribution'
+title: 'An Interactive Guide to the Bivariate Gaussian Distribution'
 pubDate: 2023-07-05
 description: "Exploring Mathbox for visualizations"
 author: 'Michael Liou'
@@ -65,15 +65,24 @@ The kernel of the function is $(\mathbf{z} - \bm{\mu}_{\mathbf{z}})'\Sigma^{-1}(
 
 ### The Covariance Ellipse
 
-How do you draw an ellipse? There's the center and two radii, one for the *major* axis and one for the *minor* axis. The covariance matrix $\Sigma$ has all the information you need to draw the ellipse. The center of the ellipse is at $\bm{\mu}_\mathbf{z}$, and the radii are the square roots of the eigenvalues of $\Sigma$. The eigenvectors of $\Sigma$ are the directions of the major and minor axes.
+The major components of drawing an ellispe are the center, and two diameters. One for the *major* axis and one for the *minor* axis. The major axis goes through the center and is the longest line you can draw, the minor axis is perpendicular to that, also through the center. The covariance matrix $\Sigma$ has all the information you need to draw the ellipse if you make the center of the ellipse at $\bm{\mu}_\mathbf{z}$. The radii are the square roots of the eigenvalues of $\Sigma$. The eigenvectors of $\Sigma$ give the directions of the major and minor axes.
 
 <CovarianceEllipse client:only="vue" />
 
 
-
 ## Conditional Distribution
 
+The bivariate distribution has many beautiful symmetries, and I think they are highlighted well by the conditional distribution. The formula for the conditional distribution is a little more complicated at first but I think the picture and mental model is much more intuitive. Given that $(X, Y)$ are jointly bivariate normal, the conditional distribution $X | Y=y$ is interpreted as "I know the value of $Y$ to be $y$, what is the variability and probability distribution left in the $X$ direction." Since these random variables had a joint distribution, knowing the value of one of them should influence the information I know about the other one. 
+
+If I know that $Y=2$, I'm thinking about slicing my density function along the plane of $y=2$. Once I take the slice, we will need a scaling factor in order to make sure the slice integrates to 1 for a valid probability distribution.
+
 <MultivariateConditionalParent client:only="vue" />
+
+Here are some things to notice:
+
+* The conditional distribution is a 1d Gaussian distribution.
+* The conditional mean is a function fo $y$ only when $\rho \neq 0$. Since $\rho$ controls the "shearness" of the ellipse, the conditional mean shifts more
+* Even when $\rho \neq 0$, the conditional variance is not affected by $\sigma_y$.
 
 ## Marginal Distribution
 
