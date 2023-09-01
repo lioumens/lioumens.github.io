@@ -18,6 +18,9 @@ import useLinkHover from "../../composables/blog-6/linkHover.ts"
 import Slider from "../blog-6/Slider.vue"
 import {VSlider} from "vuetify/components/VSlider"
 import "vuetify/components/VGrid/"
+import "vuetify/components/VApp/"
+import "vuetify/components/VInput/"
+import "vuetify/components/VLabel/"
 
 // const element = document.querySelector("#my-thing")
 
