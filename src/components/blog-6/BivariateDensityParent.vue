@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import MathBoxDemo from './MathBoxDemo.vue';
+import BivariateDensity from './BivariateDensity.vue';
 </script>
 
 <template>
     <Suspense>
-        <MathBoxDemo />
+        <BivariateDensity />
     </Suspense>
 </template>

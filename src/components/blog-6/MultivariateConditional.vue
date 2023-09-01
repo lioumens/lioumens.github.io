@@ -24,16 +24,16 @@ const mvnConditionalBox = ref(null)
 // const rho = ref(0)
 // const y = ref(0)
 
-const {num:mu1, isDragging:mu1CondActive} = useDragNumber(".mu1-conditional", -2, 2, 0.1, 0)
-const {num:mu2, isDragging:mu2CondActive} = useDragNumber(".mu2-conditional", -2, 2, 0.1, 0)
-const {num:y, isDragging:yCondActive} = useDragNumber(".y-conditional", -3, 3, 0.1, 0)
-const {num:sigma1, isDragging:sigma1CondActive} = useDragNumber(".sigma1-conditional", .2, 2, 0.01, 1)
-const {num:sigma2, isDragging:sigma2CondActive} = useDragNumber(".sigma2-conditional", .2, 2, 0.01, 1)
-const {num:rho, isDragging:rhoCondActive} = useDragNumber(".rho-conditional", -.9, .9, 0.01, 0)
+const {num: mu1, isDragging: mu1CondActive} = useDragNumber(".mu1-conditional", -2, 2, 0.1, 0)
+const {num: mu2, isDragging: mu2CondActive} = useDragNumber(".mu2-conditional", -2, 2, 0.1, 0)
+const {num: x, isDragging: xCondActive} = useDragNumber(".x-conditional", -3, 3, 0.1, 0)
+const {num: sigma1, isDragging: sigma1CondActive} = useDragNumber(".sigma1-conditional", .2, 2, 0.01, 1)
+const {num: sigma2, isDragging: sigma2CondActive} = useDragNumber(".sigma2-conditional", .2, 2, 0.01, 1)
+const {num: rho, isDragging: rhoCondActive} = useDragNumber(".rho-conditional", -.9, .9, 0.01, 0)
 
 useLinkHover(".mu1-conditional", mu1CondActive)
 useLinkHover(".mu2-conditional", mu2CondActive)
-useLinkHover(".y-conditional", yCondActive)
+useLinkHover(".x-conditional", xCondActive)
 useLinkHover(".sigma1-conditional", sigma1CondActive)
 useLinkHover(".sigma2-conditional", sigma2CondActive)
 useLinkHover(".rho-conditional", rhoCondActive)
@@ -47,25 +47,25 @@ let root;
 //     // console.log("cond_sd: ", cond_sd, "cond_mean: ", cond_mean)
 // })
 
-watch(y, () => {
-    root?.select("#slice").set({position: [0, y.value / 3, 0]})
+watch(x, () => {
+    root?.select("#slice").set({position: [x.value / 3, 0, 0]})
 })
 
 const cond_mean = computed(() => {
-    return(mu1.value + rho.value * sigma1.value / sigma2.value * (y.value - mu2.value))
+    return(mu2.value + rho.value * sigma2.value / sigma1.value * (x.value - mu1.value))
 })
 
 const cond_factor = computed(() => {
-    return(1/(Math.sqrt(2*Math.PI)*sigma2.value) * Math.exp(-1 * (y.value - mu2.value)**2 / 2 / sigma2.value ** 2))
+    return(1/(Math.sqrt(2*Math.PI)*sigma1.value) * Math.exp(-1 * (x.value - mu1.value)**2 / 2 / sigma1.value ** 2))
 })
 
 let condMeanEl, condVarEl, condFactorEl;
-watch([y, mu1, mu2, rho, sigma1, sigma2], () => {
+watch([x, mu1, mu2, rho, sigma1, sigma2], () => {
     if (condMeanEl) {
         condMeanEl.innerText =  cond_mean.value.toFixed(1)
     }
     if (condVarEl) {
-        condVarEl.innerText = (sigma1.value**2 * (1 - rho.value**2)).toFixed(1)
+        condVarEl.innerText = (sigma2.value**2 * (1 - rho.value**2)).toFixed(1)
     }
     if (condFactorEl) {
         condFactorEl.innerText = cond_factor.value.toFixed(3)
@@ -205,7 +205,7 @@ onMounted(() => {
         expr: function(emit, x, y, i, j, t) {
             // emit(x, a.value * x * x - b.value * y * y, y);
             const z = ((x - mu1.value)**2) / sigma1.value**2  + 
-                      ((y-mu2.value)**2) / sigma2.value**2 - 
+                      ((y - mu2.value)**2) / sigma2.value**2 - 
                       2 * rho.value * (x - mu1.value) * (y - mu2.value) / sigma1.value/ sigma2.value
             emit(x,y,
                  1 / (2 * Math.PI * sigma1.value * sigma2.value * Math.sqrt(1 - rho.value**2)) * 
@@ -240,7 +240,7 @@ onMounted(() => {
         id: "slice"
       })
       .grid({
-        axes: [1, 3],
+        axes: [2, 3],
         divideX: 10,
         divideY: 10,
         width: 1,
@@ -249,15 +249,15 @@ onMounted(() => {
         // color: "#c0c0c0",
       })
       .interval({
-        expr: function (emit, x, i, t) {
+        expr: function (emit, y, i, t) {
         //   emit(x, x**2);
         // 
         // mean is \mu_1 + \rho \sigma_1 / sigma_2 * (x2 - mu2)
         // var is (1 - \rho^2) * \sigma_1^2
-          const cond_sd = Math.sqrt((1  - rho.value**2) * sigma1.value**2)
-          const cond_mean = mu1.value + rho.value * sigma1.value / sigma2.value * (y.value - mu2.value)
-          const norm_factor = 1/(Math.sqrt(2*Math.PI)*sigma2.value) * Math.exp(-1 * (y.value - mu2.value)**2 / 2 / sigma2.value ** 2)
-          emit(x, 0, 1/(Math.sqrt(2*Math.PI) * cond_sd) * Math.exp(-1 * (x - cond_mean)**2 / 2 / cond_sd**2) * norm_factor)
+          const cond_sd = Math.sqrt((1  - rho.value**2) * sigma2.value**2)
+          const cond_mean = mu2.value + rho.value * sigma2.value / sigma1.value * (x.value - mu1.value)
+          const norm_factor = 1/(Math.sqrt(2*Math.PI)*sigma1.value) * Math.exp(-1 * (x.value - mu1.value)**2 / 2 / sigma1.value ** 2)
+          emit(0, y, 1/(Math.sqrt(2*Math.PI) * cond_sd) * Math.exp(-1 * (y - cond_mean)**2 / 2 / cond_sd**2) * norm_factor)
         },
         width: 60,
         channels: 3,
@@ -270,15 +270,15 @@ onMounted(() => {
         zIndex: 1,
       })
       .interval({
-        expr: function (emit, x, i, t) {
+        expr: function (emit, y, i, t) {
         //   emit(x, x**2);
         // 
         // mean is \mu_1 + \rho \sigma_1 / sigma_2 * (x2 - mu2)
         // var is (1 - \rho^2) * \sigma_1^2
-          const cond_sd = Math.sqrt((1  - rho.value**2) * sigma1.value**2)
-          const cond_mean = mu1.value + rho.value * sigma1.value / sigma2.value * (y.value - mu2.value)
-          const norm_factor = 1/(Math.sqrt(2*Math.PI)*sigma2.value) * Math.exp(-1 * (y.value - mu2.value)**2 / 2 / sigma2.value ** 2)
-          emit(x, 0, 1/(Math.sqrt(2*Math.PI) * cond_sd) * Math.exp(-1 * (x - cond_mean)**2 / 2 / cond_sd**2))
+          const cond_sd = Math.sqrt((1  - rho.value**2) * sigma2.value**2)
+          const cond_mean = mu2.value + rho.value * sigma2.value / sigma1.value * (x.value - mu1.value)
+          const norm_factor = 1/(Math.sqrt(2*Math.PI)*sigma2.value) * Math.exp(-1 * (x.value - mu2.value)**2 / 2 / sigma2.value ** 2)
+          emit(0, y, 1/(Math.sqrt(2*Math.PI) * cond_sd) * Math.exp(-1 * (y - cond_mean)**2 / 2 / cond_sd**2))
         },
         width: 60,
         channels: 3,
@@ -292,7 +292,7 @@ onMounted(() => {
     })
     .array({
         id: "slice-labels",
-        data: [[-2.9, y.value, .4], [2.4, y.value, .4]],
+        data: [[x.value, -2.9, .4], [x.value, 2.4, .4]],
         channels: 3,
         live: true
     })
@@ -303,7 +303,7 @@ onMounted(() => {
         expr: function(emit, el, i, j, k, l, time) {
             // emit latex in order of the data
             emit(
-                el("latex", null, `\\color{#a3be8c}y=${y.value.toFixed(1)}`)
+                el("latex", null, `\\color{#a3be8c}x=${x.value.toFixed(1)}`)
             )
             // emit(
             //     el("latex", null, "\\color{#a3be8c}\\frac{1}{f_Y(y)}= " + cond_factor.value.toFixed(3))
@@ -360,12 +360,12 @@ onMounted(() => {
             <v-app class="vuetify-app">
                 <v-row dense class="justify-space-around slider-row mx-0">
                 <v-col class="d-flex flex-column">
-                    <VSlider v-model="y" min="-3" max="3" step="0.1" class="mt-0" color="var(--nord14)" density="compact">
+                    <VSlider v-model="x" min="-3" max="3" step="0.1" class="mt-0" color="var(--nord14)" density="compact">
                         <!-- <template v-slot:append> -->
                         <!-- </template> -->
                     </VSlider>
-                    <v-label class="vuetify-slider-label y-conditional justify-center ylabel">
-                        <span v-html="katex.renderToString('y')"></span>&nbsp;=&nbsp;{{ y.toFixed(2) }}
+                    <v-label class="vuetify-slider-label x-conditional justify-center ylabel">
+                        <span v-html="katex.renderToString('x')"></span>&nbsp;=&nbsp;{{ x.toFixed(1) }}
                     </v-label>
                 </v-col>
                 <v-col class="d-flex flex-column">
@@ -423,12 +423,12 @@ onMounted(() => {
 
         <Katex src="
         \begin{aligned}
-        E[X | Y = \htmlClass{y-conditional}{y}] &= \htmlClass{mu1-conditional}{\mu_x} + \htmlClass{rho-conditional}{\rho} \frac{\htmlClass{sigma1-conditional}{\sigma_x}}{\htmlClass{sigma2-conditional}{\sigma_y}}(\htmlClass{y-conditional}{y} - \htmlClass{mu2-conditional}{\mu_y})\\
+        E[Y | X = \htmlClass{x-conditional}{x}] &= \htmlClass{mu2-conditional}{\mu_y} + \htmlClass{rho-conditional}{\rho} \frac{\htmlClass{sigma2-conditional}{\sigma_y}}{\htmlClass{sigma1-conditional}{\sigma_x}}(\htmlClass{x-conditional}{x} - \htmlClass{mu1-conditional}{\mu_x})\\
         &=\htmlClass{conditional-mean}{0.0} \\[1em]
-        \mathrm{Var}[X | Y = \htmlClass{y-conditional}{y}] &= \htmlClass{sigma1-conditional}{\sigma^2_x}(1 - \htmlClass{rho-conditional}{\rho}^2) \\[.5em]
+        \mathrm{Var}[Y | X = \htmlClass{x-conditional}{x}] &= \htmlClass{sigma2-conditional}{\sigma^2_y}(1 - \htmlClass{rho-conditional}{\rho}^2) \\[.5em]
         &= \htmlClass{conditional-var}{1.0} \\[1em]
         \frac{\color{#bf616a} \blacksquare}{\color{#000000} \blacksquare}
-        &= \frac{1}{f_{\tiny Y}(\htmlClass{y-conditional}{y})} \\[1em]
+        &= \frac{1}{f_{\tiny X}(\htmlClass{x-conditional}{x})} \\[1em]
         &= \htmlClass{conditional-factor}{0.399}
         \end{aligned}"
         :inline="false"></Katex>
@@ -545,7 +545,7 @@ onMounted(() => {
         color: var(--nord11);
     }
 }
-:deep(.y-conditional) {
+:deep(.x-conditional) {
     &.active {
         text-shadow: var(--nord14) 0px 0px 10px;
         color: var(--nord14);

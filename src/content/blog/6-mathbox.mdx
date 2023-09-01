@@ -1,27 +1,46 @@
 ---
 title: 'An Interactive Guide to the Bivariate Gaussian Distribution'
-pubDate: 2023-07-05
-description: "Exploring Mathbox for visualizations"
+pubDate: 2023-08-08
+description: "The bivariate normal (Gaussian) distribution is fundamental to multivariate statistics that has many beautiful symmetries. This blog post uses mathbox to interactively show some of the properties of this distribution, like the intuition behind the conditional distribution formulas, and an animation of the marginal distribution. The elliptical contours of the density distribution are determined by the eigenvectors and eigenvalues and an interactive graphic for the directions of those axes are also in this post."
 author: 'Michael Liou'
-slug: 'mathbox'
+slug: 'interactive-guide-to-bivariate-gaussian-distribution'
+socialImage:
+  url: "../../assets/blog-6/bivariate_normal_social.png"
+  alt: "Visualization of Conditional Normal Distribution"
 tags:
   - statistics
-  - devlog
-toc: false
-comments: false
-draft: true
+toc: true
+comments: true
+draft: false
 ---
 
-import MathBoxParent from "../../components/sandbox/MathBoxParent.vue";
+
+import BivariateCover from "../../components/blog-6/BivariateCover.astro";
+import BivariateDensityParent from "../../components/blog-6/BivariateDensityParent.vue";
 import MultivariateConditionalParent from "../../components/blog-6/MultivariateConditionalParent.vue";
 import MultivariateMarginalParent from "../../components/blog-6/MultivariateMarginalParent.vue";
 import BivariateCombinationParent from "../../components/blog-6/BivariateCombinationParent.vue";
 import CovarianceEllipse from "../../components/blog-6/CovarianceEllipse.vue";
+import Proof from "../../components/Proof.astro"
+import ProofExplanations from "../../components/blog-6/ProofExplanations.astro"
+import Callout from "../../components/blog-6/Callout.astro"
+import "../../styles/blog-6/post.css"
+import MajorAxisVsRegression from "../../components/blog-6/MajorAxisVsRegression.astro"
+import BivariateEllipsePlot from "../../components/blog-6/BivariateEllipsePlot.astro"
+import MarginalMeasureScreenshot from "../../components/blog-6/MarginalMeasureScreenshot.astro"
+// import "../../scripts/blog-6/tippy_explanations.js"
 // import MathBoxAgain from "../../components/sandbox/MathBoxAgain.astro";
+
+
+<BivariateCover />
 
 ## Introduction
 
 It's not long after working with the normal distribution in one dimension that you realize you need to start working with vectors and matrices. Data rarely comes in isolation and we need more statistical tools to work with multiple variables at a time. The bivariate Gaussian distribution is normally the first step into adding more dimensions, and the intuition that one builds from the 2D case is useful in higher dimensions with the multivariate Gaussian.
+
+<Callout type="note">
+I use "bivariate Gaussian" and "bivariate Normal" distribution interchangeably, sometimes "2d Normal". These all mean the same thing.
+</Callout>
 
 ## Density of the Bivariate Normal
 
@@ -40,7 +59,7 @@ The story is similar with the bivariate normal distribution, which is defined wi
 If you examine the density function, you can pick out the parts that that it shares with the 1d Gaussian. The interesting parts of this distribution lie in the the new parameter $\rho$, which is the correlation between the two variables, and controls how much one variable moves with the other.
 
 
-<MathBoxParent client:only="vue" />
+<BivariateDensityParent client:only="vue" />
 
 Here are some things to notice as you play with the function above:
 
@@ -53,7 +72,11 @@ Here are some things to notice as you play with the function above:
 * The ridge line is closer to the $x$-axis when $\sigma_x > \sigma_y$, and closer to the $y$-axis when $\sigma_y > \sigma_x$.
 * When $\sigma_x = \sigma_y$, as $\rho$ ranges from -1 to 1, the ridge line can range from $-45\degree$ to $45\degree$ (from the $y$-axis). When the ratio of $\sigma_x$ to $\sigma_y$ is more extreme, the power of $\rho$ to change the slope of the ridge line is much more limited.
 
-You should get the sense that the density of the bivariate normal is fundamentally about ellipses. It's ellipses all the way down! This is not a coincidence -- the shape of that ellipse is entirely controlled by the covariance matrix. If we rewrite the density function in vector/matrix terms so that the covariance matrix $\operatorname{Var}\left[\begin{smallmatrix}X \\ Y\end{smallmatrix}\right] = \Sigma$ shows up explicitly, we get:
+You should get the sense that the density of the bivariate normal is fundamentally about ellipses. It's ellipses all the way down! This is not a coincidence -- the shape of that ellipse is entirely controlled by the covariance matrix. 
+
+<BivariateEllipsePlot />
+
+If we rewrite the density function in vector/matrix terms so that the covariance matrix $\operatorname{Var}\left[\begin{smallmatrix}X \\ Y\end{smallmatrix}\right] = \Sigma$ shows up explicitly, we get:
 
 $$
 f(\mathbf{z};\mu_z, \Sigma) = \frac{1}{2\pi}|\Sigma|^{-1/2}\exp \left(-\frac{(\mathbf{z} - \bm{\mu}_{\mathbf{z}})'\Sigma^{-1}(\mathbf{z} - \bm{\mu}_{\mathbf{z}})}{2}\right)
@@ -61,35 +84,254 @@ $$
 
 where $\mathbf{z} = \left[\begin{smallmatrix}x \\ y\end{smallmatrix}\right]$ and $\bm{\mu}_\mathbf{z} = \left[\begin{smallmatrix}\mu_x \\ \mu_y\end{smallmatrix}\right]$
 
-The kernel of the function is $(\mathbf{z} - \bm{\mu}_{\mathbf{z}})'\Sigma^{-1}(\mathbf{z} - \bm{\mu}_{\mathbf{z}})$, and has a special name. It is the Mahalonobis distance (squared) between $z$ and the bivariate normal distribution, and the function responsible for the elliptical contours.
+The kernel of the function is $\htmlStyle{white-space: nowrap}{(\mathbf{z} - \bm{\mu}_{\mathbf{z}})'\Sigma^{-1}(\mathbf{z} - \bm{\mu}_{\mathbf{z}})}$, and has a special name. It is the Mahalonobis distance (squared) between $z$ and the bivariate normal distribution, and the function responsible for the elliptical contours.
 
 ### The Covariance Ellipse
 
-The major components of drawing an ellispe are the center, and two diameters. One for the *major* axis and one for the *minor* axis. The major axis goes through the center and is the longest line you can draw, the minor axis is perpendicular to that, also through the center. The covariance matrix $\Sigma$ has all the information you need to draw the ellipse if you make the center of the ellipse at $\bm{\mu}_\mathbf{z}$. The radii are the square roots of the eigenvalues of $\Sigma$. The eigenvectors of $\Sigma$ give the directions of the major and minor axes.
+The primary components of drawing an ellipse are the center, and two diameters. One for the *major* axis and one for the *minor* axis. The major axis goes through the center and is the longest line you can draw, the minor axis is perpendicular to that, also through the center. The covariance matrix $\Sigma$ has all the information you need to draw the ellipse if you make the center of the ellipse at $\bm{\mu}_\mathbf{z}$. The radii are the square roots of the eigenvalues of $\Sigma$. The eigenvectors of $\Sigma$ give the directions of the major and minor axes.
 
 <CovarianceEllipse client:only="vue" />
+
+<Proof title="Eigen- details" hMargin="0px" vMargin="0px">
+The details for this are no more than a standard 2x2 eigenproblem, and there are some simple formulas that we can use to get the eigenvalues and eigenvectors in this context.
+
+
+$$
+\begin{aligned}
+\Sigma \mathbf{v} &= \lambda \mathbf{v} \\
+(\Sigma - \lambda I)\mathbf{v} &= 0 \\
+\implies \det{(\Sigma - \lambda I)} &= 0 \\
+\end{aligned}
+$$
+
+If we label $\Sigma = \left[\begin{smallmatrix}a & b \\ c & d\end{smallmatrix}\right]$, with $b = c$, then the characteristic polynomial is 
+
+$$
+\begin{aligned}
+(a - \lambda)(d - \lambda) - bc &= 0 \\
+\lambda^2 - (a + d)\lambda + (ad - bc) &= 0 \\
+\implies \lambda &= \frac{(a + d) \pm \sqrt{(a+d)^2 - 4(ad - bc)}}{2} \\
+\end{aligned}
+$$
+
+Since $T \colonequals a + d$ is the trace of $\Sigma$ (or $M \colonequals \frac{a + d}{2}$, the mean of the variances) and $D \colonequals ad - bc$ is the determinant of $\Sigma$, we can write this as
+
+$$
+\begin{aligned}
+\lambda = \frac{T}{2} \pm \sqrt{\frac{T^2}{4} - D} \\
+= M \pm \sqrt{M^2 - D}
+\end{aligned}
+$$
+
+For a single eigenvector $\vec{v}_1$, we examine the equation
+
+$$
+\begin{aligned}
+(\Sigma - \lambda I)\vec{v}_1 &= 0 \\
+\begin{bmatrix}a - \lambda & b \\ c&d - \lambda\end{bmatrix}\begin{bmatrix}v_{11} \\ v_{12} \end{bmatrix} &= \begin{bmatrix}0 \\ 0\end{bmatrix}
+\end{aligned}
+$$
+
+which implies that both $(a - \lambda)v_{11} + bv_{12} = 0$ and $cv_{11} + (d - \lambda)v_{12} = 0$. Since the matrix $\Sigma - \lambda I$ is singular, we only need to solve one of these equations because the other equation is some constant multiple of the first. A simple solution to the first equation is simply letting $v_{11} = b$ and $v_{12} = -(a - \lambda)$, (since $\lambda$ represents two eigenvalues, the other eigenvector will use the other eigenvalue). This will work unless $b = 0$. In that case, we can solve the second equation by letting $v_{11} = d - \lambda$ and $v_{12} = -c$. If both $b$ and $c$ are 0, then the matrix is diagonal and our eigenvectors are $[1\, 0]', [0\, 1]'$.
+
+Since $b=c$ in our covariance matrix, we just have 2 cases. That is, our eigenvectors are
+
+$$
+\begin{align*}
+\vec{v}_1 &= \begin{bmatrix}b \\ \lambda_1 - a\end{bmatrix}, &\vec{v}_2 &= \begin{bmatrix}b \\ \lambda_2 - a\end{bmatrix} \tag{$b \neq 0$}\\[1.5em]
+\vec{v}_1 &= \begin{bmatrix}1 \\ 0\end{bmatrix}, &\vec{v}_2 &= \begin{bmatrix}0\\ 1\end{bmatrix} \tag{$b = c =0$}
+\end{align*}
+$$
+
+$\vec{v}_1, \vec{v}_2$ may switch in the latter case depending on if $d > a$ for the eigenvector to match the respective eigenvalue.
+
+The angle for the major axis is $\theta = \operatorname{atan2}(v_{\small 12}, v_{\small 11})$, where [atan2](https://en.wikipedia.org/wiki/Atan2) is a modified $\arctan (\cdot)$ function to ensure the angle is always from the positive x-axis.
+
+</Proof>
 
 
 ## Conditional Distribution
 
-The bivariate distribution has many beautiful symmetries, and I think they are highlighted well by the conditional distribution. The formula for the conditional distribution is a little more complicated at first but I think the picture and mental model is much more intuitive. Given that $(X, Y)$ are jointly bivariate normal, the conditional distribution $X | Y=y$ is interpreted as "I know the value of $Y$ to be $y$, what is the variability and probability distribution left in the $X$ direction." Since these random variables had a joint distribution, knowing the value of one of them should influence the information I know about the other one. 
+The bivariate distribution has many beautiful symmetries, and I think they are highlighted well by the conditional distribution. The formula for the conditional distribution is a little more complicated at first but I think the picture and mental model is much more intuitive. Given that $(X, Y)$ are jointly bivariate normal, the conditional distribution $Y | X=x$ is interpreted as "I know the value of $X$ to be $x$, what is the variability and probability distribution left in the random variable $Y$." Since these random variables had a joint distribution, knowing the value of one of them should influence the information I know about the other one. 
 
-If I know that $Y=2$, I'm thinking about slicing my density function along the plane of $y=2$. Once I take the slice, we will need a scaling factor in order to make sure the slice integrates to 1 for a valid probability distribution.
+If I know that $X=2$, I'm thinking about slicing my density function along the plane of $x=2$. Once I take the slice, we will need a scaling factor in order to make sure the slice integrates to 1 for a valid probability distribution.
 
 <MultivariateConditionalParent client:only="vue" />
 
 Here are some things to notice:
 
 * The conditional distribution is a 1d Gaussian distribution.
-* The conditional mean is a function fo $y$ only when $\rho \neq 0$. Since $\rho$ controls the "shearness" of the ellipse, the conditional mean shifts more
-* Even when $\rho \neq 0$, the conditional variance is not affected by $\sigma_y$.
+* When $\rho = 0$, there are no terms that depend on $x$ or with a subscript of $x$. In fact, it reduces to the marginal distribution of $Y$, which implies the random variables are statistically independent!
+* The conditional mean is a function of $x$ only when $\rho \neq 0$. Since $\rho$ controls the "shearness" of the ellipse, the conditional mean shifts more when $|\rho|$ is larger.
+* Even when $\rho \neq 0$, the conditional variance is not affected by $\sigma_x$.
+
+<Proof title="Conditional Formulas" hMargin="0rem">
+
+The most straight forward way to derive the conditional distribution formulas for a bivariate normal distribution is to use the definition of conditional probability (and some patient algebra):
+
+$$
+\begin{aligned}
+f(y | x) &= \frac{f(x, y)}{f(x)} \\
+&= {\small
+\frac{
+  \frac{1}{2\pi \sigma_x\sigma_y\sqrt{1 - \rho^2}} \times \exp \left(-\frac{1}{2(1-\rho^2)}\left[\left(\frac{x-\mu_x}{\sigma_x}\right)^2 + \left(\frac{y-\mu_y}{\sigma_y}\right)^2 - \frac{2\rho(x-\mu_x)(y-\mu_y)}{\sigma_x\sigma_y}\right]\right)
+}{
+  \frac{1}{\sigma_x\sqrt{2\pi}} \times \exp \left(-\frac{1}{2}\left(\frac{x-\mu_x}{\sigma_x}\right)^2\right)
+}
+}
+\end{aligned}
+$$
+
+The marginal distribution of $X$ is a 1d Gaussian distribution, with mean $\mu_x$ and variance $\sigma_x^2$. This result is presented later in this blog post, but is often used to define the bivariate Gaussian distribution in some textbooks -- any linear combination of the variables is also normally distributed.
+
+We'll work with the constant term and the things inside the exponential term separately. The constant simplifies:
+
+$$
+\frac{
+  \frac{1}{2\pi \sigma_x\sigma_y\sqrt{1 - \rho^2}}
+}{
+  \frac{1}{\sigma_x\sqrt{2\pi}}
+} = \frac{1}{\sqrt{2\pi \sigma_y^2 (1 - \rho^2)}}
+$$
+
+Since in a normal distribution, the variance shows up in the constant term, we get a hint of what the conditional variance will be, $\sigma_y^2(1 - \rho^2)$.
+
+The exponential term simplifies to:
+
+$$
+{\scriptsize
+\begin{aligned}
+&\exp \left(-\frac{1}{2(1-\rho^2)}\left[\left(\frac{x-\mu_x}{\sigma_x}\right)^2 + \left(\frac{y-\mu_y}{\sigma_y}\right)^2 - \frac{2\rho(x-\mu_x)(y-\mu_y)}{\sigma_x\sigma_y}\right] \\[2em]
+- \left[-\frac{1}{2}\left( \frac{x-\mu_x}{\sigma_x}\right)^2\right]\right)
+\\
+&\htmlClass{proof--conditional__step1 proof-explanation}{
+  \htmlData{help=give last term common denominator and bring closer to relevant expressions}{
+    \overset{\tiny ?}{=}}}
+\exp
+\left(-\frac{1}{2(1-\rho^2)}\left[\left(\frac{x-\mu_x}{\sigma_x}\right)^2 -(1-\rho^2)\left( \frac{x-\mu_x}{\sigma_x}\right)^2 + \left(\frac{y-\mu_y}{\sigma_y}\right)^2 - \frac{2\rho(x-\mu_x)(y-\mu_y)}{\sigma_x\sigma_y}\right] \right) \\[1em]
+
+&\htmlClass{proof--conditional__step2 proof-explanation}{
+  \htmlData{help=cancel out terms}{
+  \overset{\tiny ?}{=}}}
+\exp \left(-\frac{1}{2(1-\rho^2)}
+  \left[
+    \rho^2\left( \frac{x-\mu_x}{\sigma_x}\right)^2 +
+    \left(\frac{y-\mu_y}{\sigma_y}\right)^2 -
+    \frac{2\rho(x-\mu_x)(y-\mu_y)}{\sigma_x\sigma_y}
+  \right] \right) \\[1em]
+
+&\htmlClass{proof--conditional__step3 proof-explanation}{
+  \htmlData{help=factor binomial}{
+    \overset{\tiny ?}{=}}}
+\exp \left(
+  -\frac{1}{2(1-\rho^2)}
+    \left[
+      \rho\left( \frac{x-\mu_x}{\sigma_x}\right) +
+      \left(\frac{y-\mu_y}{\sigma_y}\right)
+    \right]^2 
+\right) \\[1em]
+
+&\htmlClass{proof--conditional__step4 proof-explanation}{
+    \htmlData{help=take sigma out of squared term}{
+      \overset{\tiny ?}{=}}}
+\exp \left(-\frac{1}{2\sigma_y^2(1-\rho^2)}
+  \left[
+    \rho\frac{\sigma_y}{\sigma_x}\left( x-\mu_x\right) +
+    \left(y-\mu_y\right)
+  \right]^2 \right) \\[1em]
+
+&\htmlClass{proof--conditional__step5 proof-explanation}{
+  \htmlData{help=rearrange terms to show conditional mean and variance explicitly}{
+    \overset{\tiny ?}{=}}}
+\exp \left(-\frac{1}{2\underbrace{\sigma_y^2(1-\rho^2)}_{\text{conditional variance}}}
+  \left[
+    y - 
+    \underbrace{\left(\mu_y +
+      \rho\frac{\sigma_y}{\sigma_x}\left( x-\mu_x\right)\right)}_{\text{conditional mean}}
+  \right]^2 \right) \\[1em]
+\end{aligned}
+}
+$$
+
+In total, if we combine the constant term and the exponential term,
+
+$$
+{\small
+f(y|x) = \frac{1}{\sqrt{2\pi \sigma_y^2 (1 - \rho^2)}}
+\exp \left(-\frac{\left[
+    y - \left(\mu_y +
+      \rho\frac{\sigma_y}{\sigma_x}\left( x-\mu_x\right)\right)
+  \right]^2}{2\sigma_y^2(1-\rho^2)}
+   \right)
+}
+$$
+
+we get the pdf of the conditional distribution with mean $\operatorname{E}[Y|X=x] = \mu_y + \rho\frac{\sigma_y}{\sigma_x}(x-\mu_x)$ and variance $\operatorname{Var}[Y|X=x] = \sigma_y^2(1-\rho^2)$:
+
+</Proof>
+
+### Regression Perspective
+
+There is an intimate relationship between conditional distributions and regression. Suppose we are in a simple linear regression scenario regressing $Y$ on $X$. We can interpret $\rho\frac{\sigma_y}{\sigma_x}$ as the population slope of the best fit line. Remember that $\rho, \sigma_x, \sigma_y$ together change the major axis of the ellipse, and thus the main direction of the relationship for these two variables. In order to see the resemblance of the formula, notice:
+
+$$
+\begin{aligned}
+\rho\frac{\sigma_y}{\sigma_x} &= \frac{\rho \sigma_x \sigma_y}{\sigma_x^2} \\
+&= \frac{\operatorname{Cov}(X, Y)}{\operatorname{Var}(X)}
+\end{aligned}
+$$
+
+The slope of regression can be pulled out from the covariance matrix directly, if we label $\Sigma = \left[\begin{smallmatrix}a & b \\ c & d\end{smallmatrix}\right]$ then $\rho\frac{\sigma_y}{\sigma_x} = \frac{b}{a}$. If we substitute with the sample version, we get
+
+$$
+\begin{aligned}
+\frac{\operatorname{\widehat{Cov}}(X,Y)}{\operatorname{\widehat{Var}}(X)}
+&= \frac{\frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\frac{1}{n-1}\sum_{i=1}^n (x_i - \bar{x})^2} \\
+&= \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} \\
+&= \hat \beta_1
+\end{aligned}
+$$
+
+This is the formula for the slope estimate in the simple linear regression of $\htmlStyle{white-space: nowrap}{y_i = \beta_0 + \beta_1 x_i + \varepsilon_i}$ assuming normal errors. Written in this manner,
+
+$$
+\begin{aligned}
+\operatorname{E}[Y | X = x] &= \mu_y + \rho\frac{\sigma_y}{\sigma_x}(x-\mu_x) \\
+&= \mu_y + \beta_1 (x - \mu_x)
+\end{aligned}
+$$
+
+ we have a very intercept plus slope like interpretation that the conditional mean will shift based on best fit regression line, depending on how far shifted we are from the center of the bivariate distribution.
+
+
+<Callout type="warning">
+Note that the slope of this regression line is **not** the same as the major-axis line of the covariance ellipse that runs through the bulk of the bivariate distribution. Even though they trend in roughly the same direction, they represent different concepts.
+
+<MajorAxisVsRegression />
+
+The short explanation of why these are different is that the major axis line is the direction of the eigenvector, which deals with distances from points directly to the line, perpendicular, whereas the regression lines deal strictly in *vertical* or *horizontal* distances between points and the line, depending on if we regress y ~ x or x ~y.
+
+
+</Callout>
+
 
 ## Marginal Distribution
 
+The marginal distribution is trying to disregard one of the variables altogether. If I average out all the variability across the dimension I don't care about, what is the probability that is left? The mental model I have for marginals is to integrate out one of the dimensions so that the density is all "squished" into the dimension I care about. 
+
 <MultivariateMarginalParent client:only="vue" />
 
-## Linear Combinations
+Some things to notice:
 
-<BivariateCombinationParent client:only="vue" />
+* Only 2/5 of the parameters determine the marginal distribution. $\rho$ is left out of both marginal distributions in the x and y directions.
+* In the bivariate normal, you can either think about the "squishing into 1 dimension" as a projection of the density into that dimensions, and then scaling the distribution appropriately so that everything adds up to 1. Or you can think about is as truly summing up everything in the excess dimensions and integrating. I've added a button so that you can see these different perspectives.
+* The location of the 1d grid is somewhat arbitrary. It doesn't need to be at $y=0$, we're just integrating out the entire dimension.
 
-{/* <MathBoxAgain /> */}
+<Callout type="thought">
+**Integrating in 2d vs 1d**
+
+<MarginalMeasureScreenshot />
+
+Plotting the 2d Gaussian next to the 1d Gaussian makes me appreciate some subtleties of measure theory. If you have low variance, and an extreme value of $\rho$, you can make the 2d density appear MUCH larger than its 1d marginal distribution, and yet, the area under both of them is ALWAYS 1. This was quite shocking for me to see at first! Integrating, the density will actually appear to shrink. The half-rationale for this is that the integration is happening over the 2 dimensional space vs a 1 dimensional space (against lesbegue measure in $\mathbb{R}^2$ vs $\mathbb{R}$), which are totally different. A point in 2d space is technically holding less "weight" than its 1d counterpart, a "point" in 1d is  holding the weight of the entire real line perpendicular to it when calculating the integration. Before seeing these animations, I always thought the marginal distribution of the bivariate normal was straight forward and "made sense", but now I'm more impressed that more terms like rho *don't* appear in the marginal distributions. Although measure theory was designed as an extension of geometric concepts like area and volume, I think of it as more an algebraic discipline since physical intuitions can often fall apart, e.g. [Banach-Tarski paradox](https://www.youtube.com/watch?v=s86-Z-CbaHA).
+
+</Callout>

@@ -1,0 +1,25 @@
+---
+---
+
+
+<script>
+
+import tippy, {createSingleton} from 'tippy.js';
+import 'tippy.js/dist/tippy.css'; // optional for styling
+import 'tippy.js/animations/shift-away.css';
+
+window.addEventListener("load", () => {
+    const tippyInstances = tippy(".proof-explanation", {
+        content(reference) {
+            return reference.firstElementChild.getAttribute('data-help')
+        },
+    });
+    const singleton = createSingleton(tippyInstances, {
+        placement: 'top',
+        animation: 'shift-away',
+        theme: 'material',
+        delay: 0,
+        arrow: false
+    });
+})
+</script>

@@ -1,0 +1,48 @@
+---
+import zblender from "../../assets/blog-6/zrender_final.mp4"
+---
+
+<svg viewBox="0 0 618 360" width="0" height="0">
+    <defs>
+      <clipPath id="myClip">
+        <circle cx="309" cy="180" r="200" />
+      </clipPath>
+    </defs>
+</svg>
+<figure class="zrender-wrapper">
+ <video class="zrender" width="618" height="360" autoplay="autoplay" loop="true" muted="true" playsinline title="I regret how much this red Z looks like the Zotero logo...">
+ <source src={zblender} type="video/mp4" />
+ Sorry your browser does not support this video.
+ </video>
+ <figcaption>The normal distribution moves into 3D! </figcaption>
+</figure>
+
+
+<style lang="scss">
+.zrender-wrapper {
+    /* object-fit: cover; */
+    /* object-position: center center; */
+    /* object-fit: cover; */
+    display:grid;
+    height: fit-content;
+
+  & > figcaption {
+    text-align: center;
+   } 
+}
+
+.zrender {
+    display: block;
+    justify-self: center;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    -webkit-mask-image: radial-gradient(closest-side, black 70%, rgba(0, 0, 0, 0) 99%);
+    mask-image: radial-gradient(closest-side, black 70%, rgba(0, 0, 0, 0) 99%);
+    /* mask: radial-gradient(ellipse closest-side, black 70%, rgba(0, 0, 0, 0) 99%);
+    -webkit-mask: radial-gradient(ellipse closest-side, black 70%, rgba(0, 0, 0, 0) 99%); */
+    /* clip-path: url(#myClip); */
+    /* -webkit-mask-image: linear-gradient(to bottom, transparent 25%, black 75%);
+    mask-image: linear-gradient(to bottom, transparent 25%, black 75%); */
+}
+</style>

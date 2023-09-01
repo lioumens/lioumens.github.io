@@ -1,0 +1,29 @@
+---
+import BivariateEllipsePlot from '../../assets/blog-6/bivariate_ellipses.svg'
+---
+
+<figure class="fig-bivariate-ellipse-plot">
+    <img src={BivariateEllipsePlot.src}
+         alt="Bivariate Ellipses"
+         height="384"
+         width="403" />
+    <figcaption>
+        Elliptical contours of a bivariate normal distribution.
+    </figcaption>
+</figure>
+
+<style lang="scss">
+.fig-bivariate-ellipse-plot {
+    & img {
+        margin: 0px auto;
+        display: block;
+        max-width: 80%;
+        height: fit-content;
+        transform: translateX(-5%);
+    }
+    & figcaption {
+        font-size: .85rem;
+    }
+}
+
+</style>

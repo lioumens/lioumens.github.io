@@ -1,0 +1,21 @@
+---
+import Screenshot from "../../assets/blog-6/2d_v_1d_Gaussian.png"
+import {Image} from 'astro:assets'
+---
+
+<figure class="measure-theory-thought-screenshot">
+    <Image src={Screenshot} alt="The 2d Gaussian Distribution can look much larger than the 1d Guassian distribution." height={Screenshot.height} width={Screenshot.width}/>
+    <figcaption>The 2d normal distribution (red hill) can look much larger than the 1d normal distribution (black curve), even though both integrate to 1.</figcaption>
+</figure>
+
+<style lang="scss">
+    .measure-theory-thought-screenshot {
+        & > img {
+            display: block;
+            margin: 0px auto;
+            max-width: 90%;
+            height: auto;
+        }
+    }
+
+</style>

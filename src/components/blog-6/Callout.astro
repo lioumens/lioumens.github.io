@@ -1,0 +1,87 @@
+---
+interface Props {
+    type : "note" | "warning" | "caution" | "thought"
+  
+}
+
+import { Icon } from 'astro-icon'
+
+const {type = "note"} = Astro.props
+
+const icon = {
+    note: "ion:information",
+    warning: "ph:warning",
+    // caution: "clarity:error-solid",
+    caution: "ic:round-error",
+    thought: "mdi:think-outline"
+}
+
+const calloutColor = 
+    (type == "note" && "#5e81ac") || // nord 10
+    (type == "warning" && "#ebcb8b") || //nord 13
+    (type == "caution" && "#bf616a") || // nord 11
+    (type == "thought" && "#b48ead") // nord 15
+---
+
+
+<div class="m-callout--frame">
+    <!-- <svg viewBox="0 0 50 50">
+        <defs>
+            <circle id="iconClip" cx="25" cy="25" r="10" />
+        </defs>
+    </svg> -->
+
+    <div class="m-callout--icon"> 
+        <Icon name={icon[type]}/> 
+    </div>
+<slot/>
+</div>
+
+<style define:vars={{ calloutColor }}>
+
+
+[astro-icon="ion:information"]  {
+    color: var(--calloutColor);
+}
+[astro-icon="ph:warning"]  {
+    color: var(--calloutColor);
+}
+[astro-icon="ic:round-error"]  {
+    color: var(--calloutColor);
+}
+[astro-icon="mdi:think-outline"]  {
+    color: var(--calloutColor);
+}
+
+.m-callout--frame {
+    position: relative;
+    /* background-color: blue; */
+    border-radius: 20px;
+    border-width: 3px;
+    border-color: var(--calloutColor);
+    border-style: solid;
+    /* height: 200px; */
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    padding-left: 30px;
+    padding-right: 30px;
+    box-shadow: var(--shadow-elevation-medium);
+
+} 
+
+.m-callout--icon {
+    background-color: var(--nord1);
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 60px;
+    height: 40px;
+    /* padding: 0px 0px; */
+    /* inset: 20px; */
+    border-radius: 50px;
+    position: absolute;
+    left: 40px;
+    top: -25px;
+}
+</style>
+

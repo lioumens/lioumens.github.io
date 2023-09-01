@@ -195,7 +195,7 @@ onMounted(() => {
         I color coded the sliders, but <code>prop</code> is more a proxy for controlling the number of observed <Katex src="y_i" />. The observations are actually calculated by the function <span style="white-space: nowrap"><Katex display=false src="\sum_i^n y_i = \mathrm{round}(n \times \text{prop})"/>.</span> The MLE will bounce around due to that round function since our observations need to be a whole number.
     </li>
     <li>
-        The maximum of the function (MLE) tends to <ActionText @click="varyProp()">follow the proportion of 1's</ActionText> observed in the data, as expected. If we saw a baseball player hit 20 / 100 pitches, we'd instinctively say they have a 20% change of hitting pitches.
+        The maximum of the function (MLE) tends to <ActionText @click="varyProp()">follow the proportion of 1's</ActionText> observed in the data, as expected. If we saw a baseball player hit 20 / 100 pitches, we'd instinctively say they have a 20% chance of hitting pitches.
     </li>
     <li>
         Notice changing <Katex src="n"/> does <ActionText @click="varyN()">not change the location of the maximum</ActionText> (other than rounding) but it <em>does</em> change the curvature of the likelihood around the maximum. The curvature is intimately related to the standard error, so it would make sense that as we observe more data with the same proportion of 1's, we'd be more certain about our estimate of <Katex src="p"/>.

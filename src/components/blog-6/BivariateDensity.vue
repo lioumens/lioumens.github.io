@@ -437,13 +437,16 @@ useLinkHover(".rho, .bivariate-density--slider__rho", rhoActive)
 </script>
 
 <template>
-    <Katex src="\begin{aligned}
-    &f(x, y;\htmlClass{mu1}{\mu_x}, \htmlClass{mu2}{\mu_y}, \htmlClass{sig1}{\sigma_x},\htmlClass{sig2}{\sigma_y}, \htmlClass{rho}{\rho}) =
+    <Katex src="
+    {\small
+    \begin{aligned}
+        &f(x, y;\htmlClass{mu1}{\mu_x}, \htmlClass{mu2}{\mu_y}, \htmlClass{sig1}{\sigma_x},\htmlClass{sig2}{\sigma_y}, \htmlClass{rho}{\rho}) =
     \frac{1}{2\pi\htmlClass{sig1}{\sigma_x}\htmlClass{sig2}{\sigma_y}\sqrt{1 - \htmlClass{rho}{\rho}^2}} \;\times\\
     &\quad\exp{\left(-\frac{1}{2(1-\htmlClass{rho}{\rho}^2)}\left[\left(\frac{x-\htmlClass{mu1}{\mu_x}}{\htmlClass{sig1}{\sigma_x}}\right)^2 +
     \left(\frac{y - \htmlClass{mu2}{\mu_y}}{\htmlClass{sig2}{\sigma_y}}\right)^2 -
     \left(\frac{2\htmlClass{rho}{\rho}(x - \htmlClass{mu1}{\mu_x})(y-\htmlClass{mu2}{\mu_y})}{\htmlClass{sig1}{\sigma_x}\htmlClass{sig2}{\sigma_y}}\right)\right]\right)}
-    \end{aligned}" :inline="false" />
+    \end{aligned}
+    }" :inline="false" />
 
     <div class="bivariate-applet">
         <div id="mathboxContainer" ref="mathboxContainer" style="min-height:350px;width:100%;margin:0 auto;"></div>

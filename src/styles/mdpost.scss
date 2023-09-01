@@ -99,6 +99,7 @@ figcaption {
     overflow-x: auto;
     max-width: 100%;
     overflow-y: hidden;
+    cursor: default;
 
   & .tag .vlist-t2 {
     margin-right: 0; // normally -2px, which triggers scroll bar
@@ -112,7 +113,9 @@ figcaption {
 }
 .math-inline > .katex {
     font-size: 1.2rem;
+    cursor: default;
 }
+
 @media screen and (max-width: 500px) {
     .katex-display > .katex {
         font-size: 1rem;

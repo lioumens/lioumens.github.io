@@ -1,0 +1,29 @@
+---
+import MajorAxisVsRegression from '../../assets/blog-6/major_axis_vs_regression.svg'
+import Katex from '../blog-5/Katex.vue';
+---
+
+<!-- <Fragment set:html={MajorAxisVsRegression} /> -->
+<figure class="fig-major-axis-and-regression">
+    <img src={MajorAxisVsRegression.src} alt="Major Axis vs Regression" 
+    height="403", width="384"/>
+    <figcaption>
+        This plot shows a bivariate normal scatterplot with 
+        <Katex src="\\htmlStyle{font-size: .85rem}{\\sigma_x=1, \\sigma_y=1.5,\\rho=.5}" :inline="true"></Katex> with the covariance ellipse axes and related regression lines. Population slopes are shown, the lines are not subject to sampling variation.
+    </figcaption>
+</figure>
+
+<style lang="scss">
+.fig-major-axis-and-regression {
+    & img {
+        margin: 0px auto;
+        display: block;
+        max-width: 80%;
+        height: fit-content;
+        transform: translateX(-5%);
+    }
+    & figcaption {
+        font-size: .85rem;
+    }
+}
+</style>

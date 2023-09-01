@@ -276,7 +276,7 @@ watch([sig1, sig2, rho], () =>{
                     .cov-ellipse-applet {
                         display: grid;
                         grid-template-columns: 1fr 50%;
-                        grid-template-rows: 1fr 1fr;
+                        grid-template-rows: 1fr .5fr;
                         grid-template-areas: 
                         "svg control"
                         "svg info";
