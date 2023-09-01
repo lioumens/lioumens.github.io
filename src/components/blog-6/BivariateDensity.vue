@@ -17,6 +17,7 @@ import useDragNumber from "../../composables/blog-6/dragNumber.js"
 import useLinkHover from "../../composables/blog-6/linkHover.ts"
 import Slider from "../blog-6/Slider.vue"
 import {VSlider} from "vuetify/components/VSlider"
+import "vuetify/components/VGrid/"
 
 // const element = document.querySelector("#my-thing")
 
