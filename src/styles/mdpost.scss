@@ -1,4 +1,4 @@
-// include vuetify explicitly
+// include vuetify explicitly, fixes dev/prod differences
 @use 'vuetify' with (
     $utilities: "true",
     $color-pack: false,

@@ -142,9 +142,9 @@ watch([sig1, sig2, rho], () =>{
                 stroke-width="2" 
                 stroke="var(--nord14)"/>
 
-                <!-- minor label -->
+                <!-- major label -->
                 <image 
-                    href="/src/assets/blog-6/major_axis_label.svg"
+                    href="../../assets/blog-6/major_axis_label.svg"
                     :x="`${100 + Math.max(Math.sqrt(lambda1)*basescale / 2.2, 22)}`"
                     y="100"
                     :height="20"
@@ -154,9 +154,9 @@ watch([sig1, sig2, rho], () =>{
                            transform: translate(-50%, -90%)">
                 </image>
 
-                <!-- major label -->
+                <!-- minor label -->
                 <image 
-                    href="/src/assets/blog-6/minor_axis_label.svg"
+                    href="../../assets/blog-6/minor_axis_label.svg"
                     :x="(rho == 0 && lambda2 > 2.5) ? 85 : 100"
                     :y="`${100 - Math.min(Math.sqrt(lambda2)*basescale, (rho==0) ? 65 : 120) - 12}`"
                     :height="20" :width="20" style="transform-origin:center;transform-box:fill-box;transform: translate(-50%, -50%)">
