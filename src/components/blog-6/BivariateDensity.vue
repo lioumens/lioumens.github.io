@@ -21,6 +21,7 @@ import "vuetify/components/VGrid/"
 import "vuetify/components/VApp/"
 import "vuetify/components/VInput/"
 import "vuetify/components/VLabel/"
+import "vuetify/directives"
 
 // const element = document.querySelector("#my-thing")
 

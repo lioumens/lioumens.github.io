@@ -21,9 +21,10 @@ import MDXCodeBlocks, { mdxCodeBlockAutoImport } from 'astro-mdx-code-blocks';
 export default defineConfig({
   site: "https://michaelliou.io",
   // Enable Vue to support Vue components.
-  integrations: [sitemap(),
+  integrations: [
+    sitemap(),
     AutoImport({
-    imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
+      imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
   }),
   //   AutoImport({
   //     imports: ['./src/components/MyCodeBlock/MyCodeBlock.astro'],

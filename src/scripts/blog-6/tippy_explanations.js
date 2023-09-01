@@ -10,7 +10,7 @@ tippy("#proof--conditional__step1", {
     // appendTo: document.body,
     placement: 'top',
     animation: 'shift-away',
-    arrow: "small"
+    arrow: "small",
     theme: 'nord',
     // popperOptions: {
     //     positionFixed: true, // if interactive is cutting off, from FAQ
