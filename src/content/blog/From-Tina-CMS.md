@@ -56,11 +56,11 @@ nav.side {
 }
 ```
 
-$\frac{a}{b} = \int A \, \mathrm{d}x$
+<!-- $\frac{a}{b} = \int A \, \mathrm{d}x$ -->
 
 And this is the display mathematics
 
-$$
+<!-- $$
 \underbrace{\htmlStyle{color:orange}{x}}_{\text{underbrace}} + \htmlStyle{color:green}{y}
 $$
 
@@ -68,7 +68,7 @@ The markdown document now supports LaTeX!
 
 $$
 \LaTeX
-$$
+$$ -->
 
 <style lang="sass">
     /* .katex-display { font-size: 3em; } */

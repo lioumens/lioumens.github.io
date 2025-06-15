@@ -10,6 +10,7 @@ import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import remarkSectionize from 'remark-sectionize';
 import rehypeKatex from 'rehype-katex';
+import astroExpressiveCode from "astro-expressive-code";
 // import remarkMermaid from 'remark-mermaid'
 
 // astro-mdx-code-blocks
@@ -23,20 +24,26 @@ export default defineConfig({
   // Enable Vue to support Vue components.
   integrations: [
     sitemap(),
-  // removed block because need to redo code blocks, auto import was only used for the mdx component "astro-mdx-code-blocks"
-  //   AutoImport({
-  //     imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
-  // }),
-  //   AutoImport({
-  //     imports: ['./src/components/MyCodeBlock/MyCodeBlock.astro'],
-  // }),
+    // removed block because need to redo code blocks, auto import was only used for the mdx component "astro-mdx-code-blocks"
+    //   AutoImport({
+    //     imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
+    // }),
+    //   AutoImport({
+    //     imports: ['./src/components/MyCodeBlock/MyCodeBlock.astro'],
+    // }),
     // MDXCodeBlocks(),
-    vue({appEntrypoint: '/src/pages/_app'}), // for vuetify plugins
-    mdx()],
+    // for vuetify plugins
+    vue({appEntrypoint: '/src/pages/_app'}),
+    astroExpressiveCode(),
+    mdx()
+  ],
   // base: "/astro-website" // base routing also given here....since deployed at subpath
   experimental: {
     // assets no longer experimental as of Astro 3.0
     // assets: true
+  },
+  legacy: {
+    collections: true
   },
   markdown: {
     drafts: false,

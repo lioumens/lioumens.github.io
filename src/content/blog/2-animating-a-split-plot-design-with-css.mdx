@@ -62,7 +62,7 @@ There are a number of ways to animate SVG elements, [GSAP](https://greensock.com
 
 The main components of the animation are setup in a grid utility system, and the main styling variables are defined as variables in Sass.
 
-```html
+```html title="html"
 <g class="rep">
   <rect class="x1 y1"/>
     <text x="185" y="135"> Rep 1</text>
@@ -86,9 +86,9 @@ The main components of the animation are setup in a grid utility system, and the
   <rect class="x3 y3 a3"/><text class="x3 y3 a3">A3</text>
 </g>
 ```
+The sass styling positions the html elements in the grid, along with the size of each of the elements.
 
-
-```scss
+```scss title="scss"
 /* svg vars */
 $svg-height: 500px;
 $svg-width: 700px;

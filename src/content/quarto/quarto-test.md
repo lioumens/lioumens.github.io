@@ -73,9 +73,9 @@ You can add options to executable code like this
 The `echo: false` option disables the printing of code (only output is
 displayed).
 
-$$
+<!-- $$
 \int_{a}^b \exp(x) \,\mathrm{d}x = \frac{1}{1 + \frac{1}{1 + \frac{1}{1 + x}}}
-$$
+$$ -->
 
 Inline code seems to work okay 4
 

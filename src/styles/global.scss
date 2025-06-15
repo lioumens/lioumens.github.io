@@ -1,7 +1,9 @@
 // colors
 // @import "nord/src/sass/nord.scss";
+// first imports the css variables
+// second imports the sass variables
+@use "./nord";
 @import "./nord.css";
-@import "../../node_modules/nord/src/sass/nord.scss";
 
 :root {
   --primary-text: var(--nord6);
@@ -49,7 +51,7 @@ html {
     height: 100%;
     // height: 100vh;
     min-width: 300px;
-    background-color: $nord1;
+    background-color: var(--nord1);
     scroll-behavior: smooth;
 }
 body {
