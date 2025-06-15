@@ -402,7 +402,7 @@ export default {
 
 <style lang="scss" scoped>
 @use "sass:math";
-@import "node_modules/nord/src/sass/nord.scss";
+@use "../../styles/nord" as *;
 
 
 .container {

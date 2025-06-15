@@ -66,7 +66,7 @@ Let's look at 3 svg text elements:
 2. Styled with the `style=` attribute
 3. Setting attributes directly, but styled the same as 2.
 
-```html
+```html title="html"
 <svg viewBox="-10 -15 130 40">
   <!-- Background and origin code omitted -->
 
@@ -144,7 +144,7 @@ It's worth noting that `fill` and `dominant-baseline` are not really CSS propert
 
 The partial overlap between CSS property and SVG attribute names is confusing enough, but even more frustrating, is that the attributes modifiable through styles differ by element. For example, styles for `x` and `y` do *not* work for text, but it *does* work for `rect`, and for `circle` (with `cx` and `cy`). Check out how these two rectangles differ when styled by SVG attribute or CSS.
 
-```html
+```html title="html"
 <svg viewBox="0 0 100 30">
 <!-- text, background and origin code omitted  -->
 
@@ -223,7 +223,6 @@ True synchronization in CSS animations simply doesn't exist. The model for havin
 {/* https://birtles.wordpress.com/2013/06/26/introducing-web-animations/ */}
 <BlockQuote source="Brian Birtles" quote="Web Animations is essentially a common model for animation that underlies CSS and SVG. It covers the common features of both plus a few only found in one or the other."/>
 
-
 Here are some resources and links to get started with using and understanding WAAPI:
 
 * [Brian Birtles](https://birtles.wordpress.com/), editor for the WAAPI working draft, has a [great blog post introducing the API](https://birtles.wordpress.com/2013/06/26/introducing-web-animations/), along with the story of how it was put together, as well as the motivations for doing so. If you're interested in the details of why WAAPI is more performant with webpage compositing, [Brian also explains the implementation](https://hacks.mozilla.org/2016/08/animating-like-you-just-dont-care-with-element-animate/) of the core `Element.animate()`.
@@ -235,7 +234,9 @@ First let's look at a minimal example of a moving red square:
 
 <WAAPIExample figure="simple"/>
 
-```html
+<br/>
+
+```html title="html"
 <div id="waapi-example-box"
      style="height:20px;
             width:20px;
@@ -243,7 +244,9 @@ First let's look at a minimal example of a moving red square:
 </div> 
 ```
 
-```js
+The javascript selects the box element when the page has loaded and adds the translation animations.
+
+```js title="js"
 window.onload = function() {
     const waapiBox = document.querySelector("#waapi-example-box");
 
@@ -266,7 +269,7 @@ window.onload = function() {
 
 The code used in the Latin Square design animation is not all that different. There is some additional javascript code to figure out positioning depending on which label is being animated, and we also use the `offset` key to specify the timing of the keyframes. Finally, we use a `forEach` call to start the animation for each row label.
 
-```javascript
+```javascript title="js"
 /* positioning dictionary */
 const rowLabels = {
       "row-label1" : {xPos: x1, yPos: y0},
@@ -334,7 +337,7 @@ Let's add some more moving boxes and see how we can synchronize them.
 
 <WAAPIExample2 client:only="vue" />
 
-```js
+```js title="js"
 /* Vue Boilerplate removed */
 function add() {
 
@@ -357,7 +360,7 @@ The core logic is to append object to the DOM, call the `Element.animate()`, and
 
 Some other neat features of WAAPI, is that we can call `getAnimations()` on either the `Document` we get an array of all the currently running animations on the page. We can also call `getAnimations()` on individual elements as we did above, as we can have multiple animation objects attached to the same element with different timings. This function is useful for pausing or starting all animations on the the page. For the Latin Square Design, that's the functionality implemented when clicking on the design.
 
-```js
+```js title="js"
 /* Vue boilerplate removed */
 
 function toggleAnimations() {
@@ -375,7 +378,7 @@ Finally, it's neat that you can attach multiple animation triggers onto the same
 <WAAPIExample3 client:only="vue"/>
 
 
-```js
+```js title="js"
 /* Vue boilerplate removed, js modified.*/
 
 const rotateKey = {
