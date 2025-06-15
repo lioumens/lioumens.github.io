@@ -34,7 +34,9 @@ export default defineConfig({
     // MDXCodeBlocks(),
     // for vuetify plugins
     vue({appEntrypoint: '/src/pages/_app'}),
-    astroExpressiveCode(),
+    astroExpressiveCode({
+      themes: ['material-theme-palenight', 'plastic'], // i don't really like the nord theme, there's not good separation
+    }),
     mdx()
   ],
   // base: "/astro-website" // base routing also given here....since deployed at subpath

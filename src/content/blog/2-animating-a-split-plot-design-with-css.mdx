@@ -120,7 +120,7 @@ $y3: $y2 + $rep-height + $rep-gap;
 
 Once the elements are positioned, we can coordinate the CSS animations by defining the keyframes as percentages along a main timeline. The strategy is to have all the animations run in a 10 second loop, and then fill forward/backward the CSS properties for the periods that the animation is not active. For example, the animation of one of the whole-plot factors is active from keyframes 15%–20%, the CSS for that animation would be:
 
-```scss
+```scss title="scss"
 /* animation only active from 15% to 20% */
 @keyframes randomize-wp-x1-y1 {
   0%, 15% {
@@ -136,7 +136,7 @@ Once the elements are positioned, we can coordinate the CSS animations by defini
 
 Since we're animating several similar elements, we can use one of Sass's best features and iterate through each column and row with `@each`.
 
-```scss
+```scss title="scss"
 /* each row will animate together */
 $x-pos-wp: (
   x1: $x1,
@@ -181,7 +181,7 @@ The other elements are animated with similar keyframe loops, for `fill-opacity` 
 The click interactivity is quite limited as it is much easier to do with javascript, but there's a well known hack using [invisible radio button](https://stackoverflow.com/a/32721572) to trigger conditional styling with CSS. The structure of the html is a series of input radio buttons, linked together by `name="terms"`.
 
 
-```html
+```html title="html"
 <input type="radio" id="rep-def" name="terms" checked>
 <label for="rep-def">Replicate</label>
 <!-- description for Replicate -->
@@ -199,7 +199,7 @@ Now once all the radio buttons are linked together, we can use the `:checked` ps
 
 I am using the pseudoelement `::before` to create the highlighting effect, so we can take advantage of the `+` selector in CSS to select the label after the radio button. Finally, we can add a hover effect to the label when the radio button is not checked, and style the `::after` pseudoelement, which is used to create the underlining effect.
 
-```css
+```css title="css"
 /* Make radio buttons invisible */
 [type="radio"] {
   opacity: 0;
@@ -226,7 +226,7 @@ label {
 Coordinating the highlighting of the text and svg highlight is a bit of a hack, that takes advantage of another useful css selector `~` which indicates a sister element. Again, we are checking the status of the pseudo-class `:checked` to trigger the highlighting. The drawing motion of the square highlight is also a bit of a hack, since we're using the `stroke-dashoffset` property. We let the offset be very large first, such that the offset is longer than the perimeter of the rectangle, and as the animation progresses, the offset is reduced to zero, which draws the rectangle.
 
 
-```scss
+```scss title="scss"
 #rep-def:checked ~ svg > #rep-highlight {
   opacity: 100%;
   fill: none;
@@ -247,7 +247,7 @@ Coordinating the highlighting of the text and svg highlight is a bit of a hack, 
 
 Here we run into a limitation of CSS animations -- we are limited by the *relative* selection operators to be able to coordinate action states between the radio button and other elements. For example, moving up to a parent with CSS is [difficult](https://stackoverflow.com/questions/1014861/is-there-a-css-parent-selector) and we would need to introduce javascript to have more precision on which elements are bound together for animation. Finally, there is another quirk in trying to reuse the code for highlighting and click interactivity -- the animations needs to extend to a different width for each of the section headers. Thus, the animations keyframes need to take an "argument" for the width, otherwise we would need to define keyframes for every width. We can get around this by using a `@mixin` with the Sass preprocessing, but we can also [use css-variables in the keyframes](https://css-tricks.com/using-custom-properties-to-wrangle-variations-in-keyframe-animations/), and set *local* values depending on which class/element is being animated. This is the skeleton of that strategy:
 
-```css
+```css title="css"
 /* define the keyframe with css variable */
 @keyframes highlight {
   0% {
