@@ -13,8 +13,8 @@ import rehypeKatex from 'rehype-katex';
 // import remarkMermaid from 'remark-mermaid'
 
 // astro-mdx-code-blocks
-import AutoImport from 'astro-auto-import';
-import MDXCodeBlocks, { mdxCodeBlockAutoImport } from 'astro-mdx-code-blocks';
+// import AutoImport from 'astro-auto-import';
+// import MDXCodeBlocks, { mdxCodeBlockAutoImport } from 'astro-mdx-code-blocks';
 
 
 // https://astro.build/config
@@ -23,18 +23,20 @@ export default defineConfig({
   // Enable Vue to support Vue components.
   integrations: [
     sitemap(),
-    AutoImport({
-      imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
-  }),
+  // removed block because need to redo code blocks, auto import was only used for the mdx component "astro-mdx-code-blocks"
+  //   AutoImport({
+  //     imports: [mdxCodeBlockAutoImport('./src/components/MyCodeBlock/MyCodeBlock.astro')]
+  // }),
   //   AutoImport({
   //     imports: ['./src/components/MyCodeBlock/MyCodeBlock.astro'],
   // }),
-    MDXCodeBlocks(),
+    // MDXCodeBlocks(),
     vue({appEntrypoint: '/src/pages/_app'}), // for vuetify plugins
     mdx()],
   // base: "/astro-website" // base routing also given here....since deployed at subpath
   experimental: {
-    assets: true
+    // assets no longer experimental as of Astro 3.0
+    // assets: true
   },
   markdown: {
     drafts: false,
