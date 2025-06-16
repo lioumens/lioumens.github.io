@@ -119,7 +119,9 @@ figcaption {
   }
 
 }
-.math-inline > .katex {
+// .math-inline removed in pre 0.16
+// .math-inline > .katex {
+p > .katex {
     font-size: 1.2rem;
     cursor: default;
 }

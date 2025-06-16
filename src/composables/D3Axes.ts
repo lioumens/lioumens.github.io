@@ -1,4 +1,5 @@
-import {onMounted, toValue, Ref} from "vue"
+import { onMounted, toValue } from "vue"
+import type {Ref} from 'vue'
 import * as d3 from "d3"
 
 export interface D3AxesOptions {

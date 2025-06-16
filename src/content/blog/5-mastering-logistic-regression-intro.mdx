@@ -23,6 +23,7 @@ import BinaryLikelihood from "../../components/blog-5/BinaryLikelihood.vue"
 import LogisticLikelihoodLinked from "../../components/blog-5/LogisticLikelihoodLinked.vue"
 import HauckDonner from "../../components/blog-5/HauckDonner.vue"
 
+
 ## Introduction
 
 At it's core, a logistic regression is nothing more than fitting a special function to data that takes the values between 0 and 1. The most common use cases are when the response of interest is a *dichotomous* variable, meaning that the variable we're modeling can take either of exactly 2 values. For example, a coin flip can be modeled as a dichotomous variable, where heads is 1 and tails is 0. Whether someone had breakfast or not today is also dichotomous. Sometimes, dichotomous variables are created from continuous variables. For example, high blood pressure can be modeled as dichotomous by creating a cutoff value for what is considered high blood pressure ($\geq 130$ systolic mm Hg). The "regression" part of the name comes in when you want to associate the response with some explanatory variables. For example, if you want to know the relationship between the number of hours you study (explanatory) and passing/failing an exam (response), we can use a logistic regression to model the strength of that relationship.

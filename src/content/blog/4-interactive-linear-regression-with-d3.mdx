@@ -48,13 +48,13 @@ We'll build a little demo you see in nearly every intro to d3 tutorial, but with
 ### The d3 way
 Starting with an empty svg element, we can add circles directly to the DOM using d3 select statements and the `selection.append()`
 
-```html
+```html title="html"
 <svg class="svgBox"
      viewBox="0 0 400 100">
 </svg>
 ```
-
-```js
+<br/>
+```js title="js"
 import * as d3 from "d3"
 
 const svg = d3.select(".svgBox") // get svg element
@@ -70,7 +70,7 @@ svg.append("circle") // add circle to svg
 
 If we look at the resulting html, this is what we'd see: 
 
-```html
+```html title="html"
 <!-- after d3 -->
 <svg class="svgBox"
      viewBox="0 0 400 100">
@@ -80,7 +80,7 @@ If we look at the resulting html, this is what we'd see:
 
 Adding multiple circles from data will make use of the join statement,
 
-```js
+```js title="js"
 import * as d3 from "d3"
 
 const xpos = [50, 150, 250, 350]
@@ -115,7 +115,7 @@ If this is the first time you're seeing a data join statement in d3, it's a litt
 
 Now we can create a bunch of circles with random sizes and colors, by passing in functions into `attr()` and `style()`.
 
-```js
+```js title="js"
 import * as d3 from "d3"
 
 const xpos = [50, 150, 250, 350]
@@ -134,14 +134,15 @@ svg.selectAll("circle")
 
 If we wrap the code up in a function and add a button,
 
-```html
+```html title="html"
 <svg class="svgBox"
      viewBox="0 0 400 100">
 </svg>
 <button class="randomize-button">Randomize</button>
 ```
+<br/>
 
-```js
+```js title="js"
 import * as d3 from "d3"
 
 const xpos = [50, 150, 250, 350]
@@ -176,7 +177,7 @@ Awesome, I think this is already quite mesmerizing. Now we'll implement the same
 
 I'll be using the options API in Vue 3 as I think very well suited to creating one off components like these demos.  Let's first set up some state variables of what we want Vue to track, I think it makes sense to track the circles as a list of objects, each with their own attributes.
 
-```vue
+```vue title="vue"
 <script>
 export default {
   data() {
@@ -200,8 +201,9 @@ export default {
 }
 </script>
 ```
+<br/>
 
-```vue-html
+```vue-html title="vue-html"
 <template>
   <svg viewBox="0 0 400 100">
     <circle v-for="(circle, index) in circles"
@@ -232,7 +234,7 @@ It's quite easy to bind reactive states to various elements in Vue, whereas in d
 
 These examples are illustrative of each respective style of approach, but let's start mixing the libraries together. In this demo, I'll make a d3 function that modifies the fill of the circles directly, *stealing* control away from Vue's state tracking. What will break? We'll make it so if you click on the bubbles, they'll change to orange. The d3 way of adding event listeners is to use `selection.on()` with a callback function dealing with the event (first argument) and the data (second argument). We'll set up the d3 style event listener in the `mounted()` lifecycle method of the Vue component to ensure that the selection is able to find the DOM elements.
 
-```vue
+```vue title="vue"
 <script>
 export default {
    /* data and methods same as before */
@@ -264,12 +266,14 @@ My general opinion is that if the state variables are used by multiple subscribe
 
 We'll start with the easier `d3.drag()` utility and then I'll show how to implement a basic version of it in Vue more manually, and another version in which we mix them. For the minimal example, we'll start with an empty svg again,
 
-```html
+```html title="html"
 <svg class="svgBox" viewBox="0 0 400 200">
 </svg>
 ```
 
-```js
+<br/>
+
+```js title="js"
 import * as d3 from "d3"
 
 // define drag behavior
@@ -302,7 +306,7 @@ Dragging an object has at least 3 events we can define, when the user starts dra
 <figcaption style="color:var(--secondary-text)">Drag Implementation in d3</figcaption>
 </figure>
 
-```js
+```js title="js"
 import * as d3 from "d3"
 
 // define drag behavior in 3 parts: start, drag, end
@@ -337,7 +341,7 @@ svg.append("circle")
 
 In order to implement the dragging behavior in Vue, we first need to have an element that listens to the three main parts of the dragging event. Similar to the d3 example, we need to define a method for the start, during, and end of the dragging motion. In Vue, this takes the form of having multiple directives, `@pointerdown`, `@pointermove`, `@pointerup`: 
 
-```vue-html
+```vue-html title="vue-html"
 <template>
     <svg viewBox="0 0 400 200" ref="dragBox" preserveAspectRatio="xMinYMin meet">
       <circle ref="dragCircle"
@@ -352,7 +356,7 @@ In order to implement the dragging behavior in Vue, we first need to have an ele
 
 We're referencing the methods `startDrag`, `dragging`, and `stopDrag` for the three events. The other directives are to prevent the default behavior when dragging on a touchscreen and scrolling. The attribute binds to the reactive variables should look familiar. In this case, we are tracking the properties of the circle element in a single object, along with a boolean variable for whether or not we're currently dragging the circle.
 
-```vue
+```vue title="vue"
 <script>
 export default {
   data() {
@@ -373,7 +377,7 @@ export default {
 
 The methods for dragging behavior are thus defined in three parts as follows:
 
-```vue
+```vue title="vue"
 <script>
 // utility functions
 function clamp(value, lo, hi) {
@@ -441,7 +445,7 @@ Here's our strategy now:
 
 Here's the code for the minimal functionality: 
 
-```vue
+```vue title="vue"
 <script>
 import * as d3 from "d3"
 export default {
@@ -501,7 +505,7 @@ We've got one more consideration before putting everything together into our lin
 
 Using the same empty svg as before, we can add the d3 axes by first creating the linear scale, then creating the axis. The axis can be attached to the SVG element, and positioned appropriately.
 
-```js
+```js title="js"
 import * as d3 from "d3"
 
 let xScale = d3.scaleLinear()
@@ -529,7 +533,7 @@ d3 has a variety of [scales](https://github.com/d3/d3-scale) that are meant to m
 
 The scale that we've created may seem like just an ordinary object holding the information about the domain and range, but it's actually *a function*. We can call the scale with an argument and also get the mapped value in the range. Furthermore, the scales come with an `.invert()` method that gives the reverse mapping.
 
-```js
+```js title="js"
 xScale(30) // returns 265
 yScale(0) // returns 370
 
@@ -544,7 +548,7 @@ $$
 
 Since these coordinate transformations are somewhat common, we'll wrap it up in a utility function for future use.
 
-```js
+```js title="js"
 export function convertClientToSVGCoord(svg, clientX, clientY) {
     const pt = new DOMPoint(clientX, clientY) // gives the same coordinates as pt
     const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -554,7 +558,7 @@ export function convertClientToSVGCoord(svg, clientX, clientY) {
 
 Now our main vue logic for keeping the state variables consistent with our pointer location can be written as follows. We have all the locations of the point in each coordinate system transformed through this function starting from the client coordinates.
 
-```vue
+```vue title="vue"
 <script>
 export default {
    /* data split out above */
@@ -593,7 +597,7 @@ $$
 
 These are implemented in the methods section of the Vue component by aggregating the data from the list of points we're tracking, and calculating the numerator and denominator of the slope first.
 
-```vue
+```vue title="vue"
 <script>
 export default {
     data() {
@@ -633,7 +637,7 @@ export default {
 
 Calculating the slope and intercept is not enough if we want to display the fitted line on screen. The line SVG element takes endpoints as its attributes. I simply set one of the values to be the y-intercept since that value is already calculated, and simply set the other point to be longer than the size of of the SVG viewport. With this method, the line will run through the x-axis, which doesn't look great, so I also added a clipping mask to the line so that the line doesn't extend past the boundaries of our plot. An invisible stroke is also added to the outside of the circle to make the points easier to drag.
 
-```vue
+```vue title="vue"
 <script>
 export default {
    // data and methods split out above

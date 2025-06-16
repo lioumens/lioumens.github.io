@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import useD3Axes from "../../composables/D3Axes.ts"
-import {ref, computed, onMounted} from "vue"
+import {ref, computed, onMounted } from "vue"
 import {VSlider} from 'vuetify/components/VSlider'
 import katex from "katex"
 import Katex from "./Katex.vue";
