@@ -11,7 +11,7 @@ import { Icon } from 'astro-icon'
 </div>
 
 <style lang="scss" define:vars={{ tagAlign, tagSize, tagDisplay }}>
-    @import "../../node_modules/nord/src/sass/nord.scss";
+    @use "../styles/nord" as *;
     [astro-icon="fe:tag"] {
         // width: 16px;
         // height: 16px;

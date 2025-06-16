@@ -119,6 +119,7 @@
 </template>
 
 <style lang="scss" scoped>
+@use 'sass:color';
 $svg-height: 500px;
 $svg-width: 700px;
 $rep-width: 450px;
@@ -141,13 +142,13 @@ $y3: $y2 + $rep-height + $rep-gap;
 
 $factor-a-text-color: #5e81ac;
 /* // $factor-b-text-color: #D08770; // brownish color */
-$factor-b-text-color: darken(#8fbcbb, 10);
+$factor-b-text-color: color.adjust(#8fbcbb, $lightness: -10%);
 
 $a2-color: $factor-a-text-color;
-$a1-color: lighten($a2-color, 20);
-$a3-color: darken($a2-color, 20);
+$a1-color: color.adjust($a2-color, $lightness: 20%);
+$a3-color: color.adjust($a2-color, $lightness: -20%);
 $b1-color: $factor-b-text-color;
-$b2-color: darken($b1-color, 20);
+$b2-color: color.adjust($b1-color, $lightness: -20%);
 
 $dot-fill-color: $b1-color;
 $triangle-fill-color: $b2-color;
@@ -160,7 +161,7 @@ $rep-stroke-color:#2E3440; /* nord0 */
 $wp-stroke-color: $rep-stroke-color;
 $sp-stroke-color: $rep-stroke-color;
 
-$highlight-color: lighten(#A3BE8C, 0); /* nord aurora */
+$highlight-color: #A3BE8C; /* nord aurora */
 $hover-color: #81A1C1;
 
 #dot-fill circle {

@@ -20,7 +20,7 @@ const { quote, source } = Astro.props;
 
 
 <style lang="scss">
-    @import "nord/src/sass/nord.scss";
+    @use "../styles/nord" as *;
     .quote {
         /* z-index: -2; */
         position: relative;

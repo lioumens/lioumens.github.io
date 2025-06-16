@@ -70,7 +70,7 @@ const { activeNav, class:className, widthTrigger = "1050px" } = Astro.props;
 </script>
 
 <style lang="scss" define:vars={{ activeNav, widthTrigger }}>
-	@import "../../node_modules/nord/src/sass/nord.scss";
+    @use "../styles/nord" as *;
 
     h2 {
         margin: 30px 0px 10px 0px;

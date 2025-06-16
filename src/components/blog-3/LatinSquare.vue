@@ -594,7 +594,7 @@ export default {
 // position the squares
 @for $i from 1 through 9 {
     //HACK: decided to try using css variables, but they're ugly to make
-    $x : floor(math.div($i - 1,  3));
+    $x : math.floor(math.div($i - 1,  3));
     $y : ($i + 2) %3;
     
     .square#{$i} {
