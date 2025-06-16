@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {InputHTMLAttributes} from "vue"
+import type {InputHTMLAttributes} from "vue"
 
 interface SliderProps {
     min: number

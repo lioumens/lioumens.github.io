@@ -466,7 +466,7 @@ useLinkHover(".rho, .bivariate-density--slider__rho", rhoActive)
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>
-                <VSlider v-model="sig1" min="0.2" max="3" step="0.01" class="mt-0 bivariate-density--slider__sig1" color="var(--nord8)">
+                <VSlider v-model="sig1" min="0.2" max="2" step="0.01" class="mt-0 bivariate-density--slider__sig1" color="var(--nord8)">
                     <!-- <template v-slot:append> -->
                     <!-- </template> -->
                 </VSlider>
