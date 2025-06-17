@@ -366,12 +366,14 @@ if (title.length > 20) throw new Error("title too long, must be less than 20 cha
       const qed = this.querySelector('.m-proof--qed');
       
       // prevent default click behavior on details element
-      details.addEventListener('click', (e) => {
-        e.preventDefault();
-      })
+      if (details) {
+        details.addEventListener('click', (e) => {
+          e.preventDefault();
+        })
+      }
       let borderAnim1 = 0, borderAnim2 = 0, borderAnim3 = 0;
       let proofAnim = 0;
-      let proofReveal, arrowMove, arrowSpin, qedSpin;
+      let proofReveal: Animation | null = null, arrowMove: Animation | null = null, arrowSpin: Animation | null = null, qedSpin: Animation | null = null;
       header.addEventListener('click', (e) => {
         if (details.hasAttribute("open")) {
           // console.log(proofReveal) // i have no idea why this errors here
