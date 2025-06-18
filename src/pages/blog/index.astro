@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 
 // Component Imports
 import BaseLayout from '../../layouts/BaseLayout.astro'
@@ -15,17 +15,15 @@ const allPosts = await getCollection("blog", ({ data }) => {
 	return data.draft !== true
 })
 
-
 // sorts in place, do i need to change const?
 allPosts.sort((a, b) => {
 	return b.data.pubDate - a.data.pubDate
 })
 
-const quartoPosts = await getCollection("quarto", ({ data }) => {
-	return data.draft !== true
-})
-
-// console.log(allPosts[0].tags)
+// const quartoPosts = await getCollection("quarto", ({ data }) => {
+// 	return data.draft !== true
+// })
+// console.log(allPosts.map((post) => {return {id: post.id}}))
 
 // astro directive to return array of objects, all of them
 // const allPosts = await getCollection("blog")
@@ -41,8 +39,8 @@ const activeNav = 1 // sets side nav position
 		<h1>Recent Posts</h1>
 		<hr />
 		<ul>
-			<!-- {quartoPosts.map(post => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)} -->
-			{allPosts.map((post) => <BlogPost url={"/blog/" + post.slug} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
+			<!-- {quartoPosts.map(post => <BlogPost url={"/blog/" + post.id} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)} -->
+			{allPosts.map((post) => <BlogPost url={`/blog/${post.id}`} title={post.data.title} date={dateFormatter.format(post.data.pubDate)} tags={post.data.tags}/>)}
 		</ul> 
 	</main>
 </BaseLayout>

@@ -44,9 +44,6 @@ export default defineConfig({
     // assets no longer experimental as of Astro 3.0
     // assets: true
   },
-  legacy: {
-    collections: true
-  },
   markdown: {
     drafts: false,
     shikiConfig: {

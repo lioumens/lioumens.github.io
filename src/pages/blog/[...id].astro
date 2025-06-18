@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
 
 export async function getStaticPaths() {
@@ -7,19 +7,19 @@ export async function getStaticPaths() {
     const blogEntries = await getCollection("blog", ({ data }) => {
         return import.meta.env.DEV || (data.draft !== true)
     })
-    const quartoEntries = await getCollection('quarto');
+    // const quartoEntries = await getCollection('quarto');
 
-    const all = [...blogEntries, ...quartoEntries]
+    // const all = [...blogEntries, ...quartoEntries]
+    const all = [...blogEntries]
 
-    
     return all.map((entry) => ({
-        params: { slug: entry.slug },
+        params: { id: entry.id },
         props: { entry },
         }));
 }
 
 const { entry } = Astro.props;
-const { Content, headings} = await entry.render();
+const { Content, headings} = await render(entry);
 
 
 // console.log(headings)
