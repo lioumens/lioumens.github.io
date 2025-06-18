@@ -1,0 +1,17 @@
+#+TITLE: README
+
+* Overview
+- =src=
+  + =assets=
+  + =components=
+    - individual
+  + =content=
+    - content collections belong here
+    - the loader looks for both md and mdx files here
+  + =layouts=
+- =public=
+  - assets that do not need processing and will be on the website as is.
+- =content/posts=
+  - not sure what this is
+- =test=
+  test.ts files in order for unit teseting of the library commands I use.
